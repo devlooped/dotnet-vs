@@ -8,6 +8,8 @@ variables:
   value: 3.1.x
 - name: SleetVersion
   value: 2.3.33
+- name: PowerShellVersion
+  value: 7.0.0-rc.2
 
 stages:
 
@@ -36,12 +38,14 @@ stages:
         ArtifactType: Container
 
     - task: UseDotNet@2
+      displayName: 'Use .NETCore $(DotNetVersion)'
       inputs:
+        packageType: runtime
         version: $(DotNetVersion)
         performMultiLevelLookup: true
 
-    - script: dotnet tool update -g --version 7.0.0-rc.2 PowerShell >nul || dotnet tool list -g
-      displayName: 'UsePowerShell'
+    - script: dotnet tool update -g --version $(PowerShellVersion) PowerShell >nul || dotnet tool list -g
+      displayName: 'Use PowerShell $(PowerShellVersion)'
 
     - pwsh: |
         if ((dotnet tool list -g | select-string sleet) -ne $null) {
@@ -52,7 +56,13 @@ stages:
           }
         }
         dotnet tool install -g Sleet --version $(SleetVersion)
-      displayName: 'Check Sleet installed version'
+      displayName: 'Use Sleet $(SleetVersion)'
 
-    - script: 'sleet push --config none $(Build.ArtifactStagingDirectory)/package -f --verbose -p "SLEET_FEED_CONNECTIONSTRING=$(SLEET_FEED_CONNECTIONSTRING)"'
-      displayName: 'Push package via Sleet'
+    - script: 'sleet push --config none $(Build.ArtifactStagingDirectory) -f --verbose -p "SLEET_FEED_CONNECTIONSTRING=$(SLEET_FEED_CONNECTIONSTRING)"'
+      displayName: 'Push Package'
+
+    - task: PublishBuildArtifacts@1
+      displayName: Upload Package
+      inputs:
+        PathtoPublish: $(Build.ArtifactStagingDirectory)
+        ArtifactName: artifacts
