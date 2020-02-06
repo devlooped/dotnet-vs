@@ -1,0 +1,58 @@
+variables:
+- group: Sleet
+- name: Configuration
+  value: Release
+- name: PackageOutputPath
+  value: $(Build.ArtifactStagingDirectory)
+- name: DotNetVersion
+  value: 3.1.x
+- name: SleetVersion
+  value: 2.3.33
+
+stages:
+
+- stage: Build
+  jobs:
+  - job: Build
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+    - checkout: self
+      submodules: recursive
+      clean: true
+
+    - task: MSBuild@1
+      displayName: Build
+      inputs:
+        configuration: $(Configuration)
+        msbuildArguments: -r
+
+    - task: PublishBuildArtifacts@1
+      displayName: Upload
+      condition: succeeded()
+      inputs:
+        PathtoPublish: $(Build.ArtifactStagingDirectory)
+        ArtifactName: package
+        ArtifactType: Container
+
+    - task: UseDotNet@2
+      inputs:
+        version: $(DotNetVersion)
+        performMultiLevelLookup: true
+
+    - script: dotnet tool update -g --version 7.0.0-rc.2 PowerShell >nul || dotnet tool list -g
+      displayName: 'UsePowerShell'
+
+    - pwsh: |
+        if ((dotnet tool list -g | select-string sleet) -ne $null) {
+          if ((dotnet tool list -g | select-string sleet | select-string $(SleetVersion)) -eq $null) {
+            dotnet tool uninstall -g sleet
+          } else {
+            return
+          }
+        }
+        dotnet tool install -g Sleet --version $(SleetVersion)
+      displayName: 'Check Sleet installed version'
+
+    - script: 'sleet push --config none $(Build.ArtifactStagingDirectory)/package -f --verbose -p "SLEET_FEED_CONNECTIONSTRING=$(SLEET_FEED_CONNECTIONSTRING)"'
+      displayName: 'Push package via Sleet'

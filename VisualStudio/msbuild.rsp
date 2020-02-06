@@ -1,0 +1,6 @@
+-r
+-v:m
+-bl
+-nowarn:NU5105
+-ds
+-p:PackOnBuild=true
