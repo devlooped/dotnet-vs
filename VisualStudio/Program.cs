@@ -15,13 +15,10 @@ namespace VisualStudio
                 Console.WriteLine("Usage: visualstudio [command] [options]");
                 Console.WriteLine("list [options]");
                 list.WriteHelp(Console.Out);
-                Console.ReadLine();
                 return -1;
             }
 
-            var exitCode = await list.ExecuteAsync(args.Skip(1), Console.Out);
-            Console.ReadLine();
-            return exitCode;
+            return await list.ExecuteAsync(args.Skip(1), Console.Out);
         }
     }
 }
