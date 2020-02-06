@@ -13,10 +13,10 @@ dotnet tool update -g dotnet-visualstudio --no-cache --add-source https://www.kz
 Supported commands:
 
 ```
-visualstudio list
+visualstudio list [options]
 ```
 
-Supports same parameters as `vswhere.exe`:
+Supports same options as `vswhere.exe`:
 
 ```
   -all           Finds all instances even if they are incomplete and may not launch.

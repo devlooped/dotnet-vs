@@ -24,6 +24,7 @@ namespace VisualStudio
                 { "pre", "also searches prereleases", a => parsed = parsed.Add("-prerelease") },
                 { "p|property:", "name of a property to return, optionally containing '.' delimiter to separate object and property names", p => parsed = parsed.Add("-property").Add(p) },
                 { "f|format:", "json, xml or text", f => parsed = parsed.Add("-format").Add(f) },
+                { "<>", v => parsed = parsed.Add(v) },
                 { "?|h|help", "display this help plus vswhere.exe help", _ => help = true },
             };
         }
