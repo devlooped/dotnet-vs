@@ -13,6 +13,7 @@ namespace VisualStudio
         {
             if (args.Length == 0 || !"list".Equals(args[0], StringComparison.OrdinalIgnoreCase))
             {
+                Console.WriteLine("Usage: visualstudio [options]");
                 list.WriteHelp(Console.Out);
                 Console.ReadLine();
                 return -1;

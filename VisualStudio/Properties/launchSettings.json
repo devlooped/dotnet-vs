@@ -2,7 +2,7 @@
   "profiles": {
     "VisualStudio": {
       "commandName": "Project",
-      "commandLineArgs": "list -all -pre"
+      "commandLineArgs": "list -all -pre -?"
     }
   }
 }

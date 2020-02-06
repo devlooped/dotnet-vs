@@ -14,6 +14,7 @@ namespace VisualStudio
     {
         readonly OptionSet options;
         ImmutableArray<string> parsed = ImmutableArray.Create<string>("-format", "json");
+        bool help = false;
         
         public ListCommand()
         {
@@ -22,7 +23,8 @@ namespace VisualStudio
                 { "a|all", "finds all instances even if they are incomplete and may not launch", a => parsed = parsed.Add("-all") },
                 { "pre", "also searches prereleases", a => parsed = parsed.Add("-prerelease") },
                 { "p|property:", "name of a property to return, optionally containing '.' delimiter to separate object and property names", p => parsed = parsed.Add("-property").Add(p) },
-                { "f|format:", "json, xml or text.", f => parsed = parsed.Add("-format").Add(f) },
+                { "f|format:", "json, xml or text", f => parsed = parsed.Add("-format").Add(f) },
+                { "?|h|help", "display this help", _ => help = true },
             };
         }
 
@@ -31,12 +33,27 @@ namespace VisualStudio
             var vswhere = Path.Combine(Path.GetDirectoryName((Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly()).Location), "vswhere.exe");
             var psi = new ProcessStartInfo(vswhere)
             {
-                RedirectStandardOutput = true
+                RedirectStandardOutput = true,
+                ArgumentList = 
+                {
+                    "-nologo"
+                }
             };
 
             try
             {
                 var extraArgs = options.Parse(args);
+                
+                if (help)
+                {
+                    Console.WriteLine("Usage: visualstudio list [options]");
+                    options.WriteOptionDescriptions(output);
+                    output.WriteLine("vswhere.exe:");
+                    psi.ArgumentList.Add("-?");
+                    output.WriteLine(Process.Start(psi).StandardOutput.ReadToEnd());
+                    return 0;
+                }
+                
                 foreach (var arg in parsed)
                 {
                     psi.ArgumentList.Add(arg);
