@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,7 +12,8 @@ namespace VisualStudio
         {
             if (args.Length == 0 || !"list".Equals(args[0], StringComparison.OrdinalIgnoreCase))
             {
-                Console.WriteLine("Usage: visualstudio [options]");
+                Console.WriteLine("Usage: visualstudio [command] [options]");
+                Console.WriteLine("list [options]");
                 list.WriteHelp(Console.Out);
                 Console.ReadLine();
                 return -1;
