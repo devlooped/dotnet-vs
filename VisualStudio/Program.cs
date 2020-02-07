@@ -14,12 +14,12 @@ namespace VisualStudio
 
         static async Task<int> Main(string[] args)
         {
-            if (args.Length == 0 || !commands.ContainsKey(args[0]))
+            if (args?.Length == 0 || !commands.ContainsKey(args[0]))
             {
                 Console.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} [command] [options]");
                 foreach (var item in commands)
                 {
-                    Console.WriteLine($"  {item.Key} [options]");
+                    Console.WriteLine($"::{item.Key}::");
                     await item.Value.ShowOptions(Console.Out);
                 }
                 return -1;
