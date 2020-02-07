@@ -7,7 +7,7 @@ A global tool for managing and querying Visual Studio installations
 Installing or updating (same command for both):
 
 ```
-dotnet tool update -g dotnet-vs --no-cache --add-source https://www.kzu.io/index.json
+dotnet tool update -g dotnet-vs --no-cache --add-source https://pkg.kzu.io/index.json
 ```
 
 Supported commands:
