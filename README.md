@@ -2,7 +2,7 @@
 
 A global tool for managing and querying Visual Studio installations
 
-[![Build Status](https://dev.azure.com/kzu/oss/_apis/build/status/dotnet-visualstudio?branchName=master)](https://dev.azure.com/kzu/oss/_build/latest?definitionId=32&branchName=master)
+[![Build Status](https://dev.azure.com/kzu/oss/_apis/build/status/dotnet-vs?branchName=master)](https://dev.azure.com/kzu/oss/_build/latest?definitionId=32&branchName=master)
 
 Installing or updating (same command for both):
 
