@@ -1,4 +1,4 @@
-# dotnet-visualstudio
+# dotnet-vs
 
 A global tool for managing and querying Visual Studio installations
 
