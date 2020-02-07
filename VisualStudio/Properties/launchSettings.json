@@ -2,7 +2,8 @@
   "profiles": {
     "VisualStudio": {
       "commandName": "Project",
-      "commandLineArgs": "list -all -pre -sort -p:instanceId -requires Microsoft.VisualStudio.Workload.NetCrossPlat"
+      "commandLineArgs": "list"
+      //"commandLineArgs": "list -all -pre -sort -p:instanceId -requires Microsoft.VisualStudio.Workload.NetCrossPlat"
     }
   }
 }

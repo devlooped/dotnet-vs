@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -6,19 +7,26 @@ namespace VisualStudio
 {
     class Program
     {
-        static ListCommand list = new ListCommand();
+        static Dictionary<string, Command> commands = new Command[]
+        {
+            new WhereCommand(),
+        }.ToDictionary(c => c.Name, StringComparer.OrdinalIgnoreCase);
 
         static async Task<int> Main(string[] args)
         {
-            if (args.Length == 0 || !"list".Equals(args[0], StringComparison.OrdinalIgnoreCase))
+            if (args.Length == 0 || !commands.ContainsKey(args[0]))
             {
-                Console.WriteLine("Usage: visualstudio [command] [options]");
-                Console.WriteLine("list [options]");
-                list.WriteHelp(Console.Out);
+                Console.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} [command] [options]");
+                foreach (var item in commands)
+                {
+                    Console.WriteLine($"  {item.Key} [options]");
+                    await item.Value.ShowOptions(Console.Out);
+                }
                 return -1;
             }
 
-            return await list.ExecuteAsync(args.Skip(1), Console.Out);
+            var command = commands[args[0]];
+            return await command.ExecuteAsync(args.Skip(1), Console.Out);
         }
     }
 }

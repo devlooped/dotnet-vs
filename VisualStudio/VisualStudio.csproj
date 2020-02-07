@@ -6,11 +6,11 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
 
-    <AssemblyName>VisualStudio</AssemblyName>
+    <AssemblyName>vs</AssemblyName>
     <RootNamespace>VisualStudio</RootNamespace>
 
-    <PackageId>dotnet-visualstudio</PackageId>
-    <ToolCommandName>visualstudio</ToolCommandName>
+    <PackageId>dotnet-vs</PackageId>
+    <ToolCommandName>vs</ToolCommandName>
     <PackAsTool>true</PackAsTool>
   </PropertyGroup>
 
@@ -18,10 +18,18 @@
     <PackageReference Include="GitInfo" Version="2.0.20" PrivateAssets="all" />
     <PackageReference Include="vswhere" Version="2.8.4" PrivateAssets="all" />
     <PackageReference Include="Mono.Options" Version="6.6.0.161" />
+    <PackageReference Include="MSBuilder.ThisAssembly.Metadata" Version="0.1.4" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="$(VSWhereDir)vswhere.exe" CopyToOutputDirectory="PreserveNewest" Pack="true" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>AssemblyName</_Parameter1>
+      <_Parameter2>$(AssemblyName)</_Parameter2>
+    </AssemblyAttribute>
   </ItemGroup>
 
 </Project>
