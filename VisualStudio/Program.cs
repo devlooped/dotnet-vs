@@ -9,18 +9,24 @@ namespace VisualStudio
     {
         static Dictionary<string, Command> commands = new Command[]
         {
+            new InstallCommand(),
             new WhereCommand(),
         }.ToDictionary(c => c.Name, StringComparer.OrdinalIgnoreCase);
 
         static async Task<int> Main(string[] args)
         {
-            if (args?.Length == 0 || !commands.ContainsKey(args[0]))
+#if DEBUG
+            System.Diagnostics.Debugger.Launch();
+#endif
+
+            if (args.Length == 0 || !commands.ContainsKey(args[0]))
             {
-                Console.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} [command] [options]");
+                Console.Write($"Usage: {ThisAssembly.Metadata.AssemblyName} [command] [options]");
                 foreach (var item in commands)
                 {
+                    Console.WriteLine();
                     Console.WriteLine($"::{item.Key}::");
-                    await item.Value.ShowOptions(Console.Out);
+                    item.Value.ShowOptions(Console.Out);
                 }
                 return -1;
             }

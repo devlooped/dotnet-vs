@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -20,28 +21,41 @@ namespace VisualStudio
 
         public override async Task<int> ExecuteAsync(IEnumerable<string> args, TextWriter output)
         {
-            foreach (var arg in args)
+            var workloads = new WorkloadOptions("-requires");
+            var extra = workloads.Parse(args);
+
+            foreach (var arg in workloads.Arguments)
+            {
+                psi.ArgumentList.Add(arg);
+            }
+            foreach (var arg in extra)
             {
                 psi.ArgumentList.Add(arg);
             }
 
-            // If we only have the default `-nologo` we add
-            if (psi.ArgumentList.Count == 1)
-                return await ShowOptions(output);
+            if (args.Any(x => x == "-?" || x == "-h" || x == "-help"))
+            {
+                Console.Write($"Usage: {ThisAssembly.Metadata.AssemblyName} {Name} ");
+                ShowOptions(output);
+                return 0;
+            }                
 
             return await ProcessOutput(psi, line => output.WriteLine(line));
         }
 
-        public override async Task<int> ShowOptions(TextWriter output)
+        public override void ShowOptions(TextWriter output)
         {
+            Console.WriteLine("[vswhere.exe options]");
             psi.ArgumentList.Add("-?");
-            return await ProcessOutput(psi, line =>
+            var process = Process.Start(psi);
+            string line;
+            while ((line = process.StandardOutput.ReadLine()) != null)
             {
-                if (line.StartsWith("Usage:"))
-                    Console.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} {Name} [vswhere.exe options]");
-                else
-                    Console.WriteLine(line);
-            });
+                if (line.StartsWith("Usage:") || line.StartsWith("Options:"))
+                    continue;
+
+                Console.WriteLine(line);
+            }
         }
 
         private async Task<int> ProcessOutput(ProcessStartInfo psi, Action<string> lineAction)

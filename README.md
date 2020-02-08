@@ -12,6 +12,25 @@ dotnet tool update -g dotnet-vs --no-cache --add-source https://pkg.kzu.io/index
 
 Supported commands:
 
+## install
+
+```
+vs install [options]
+```
+
+|   Option   | Description                |
+|------------|----------------------------|
+|pre,preview |Install preview version     |
+|int,internal|Install internal (aka 'dogfood') version |
+|sku         |Edition, one of [e|ent|enterprise], [p|pro|professional] or [c|com|community] |
+
+You can add specific workload IDs by using the provided switches (see below).
+
+See the [documentation for the Visual Studio installer command line options](https://docs.microsoft.com/en-us/visualstudio/install/use-command-line-parameters-to-install-visual-studio?view=vs-2019#install-options) 
+for the full list of arguments that can be provided.
+
+Common options are `--passive` and `--wait`, for example.
+
 ## where
 
 ```
@@ -61,3 +80,34 @@ Formats:
   value          A single property specified by the -property parameter (no logo).
   xml            An XML data set containing instances (no logo).
 ```
+
+A shorthand notation is available for `-requires [workload ID]` via the supported 
+workload ID switches (see below).
+
+See also [vswhere on GitHub](https://github.com/microsoft/vswhere).
+
+## Workload ID switches
+
+For commands that receive workload ID switches (i.e. `vs where -requires [WORKLOAD_ID]` or 
+`vs install --add [WORKLOAD_ID]`), the following aliases are available:
+
+|  Switch   | Workload ID |
+|-----------|----------------------------|
+| --mobile  | Microsoft.VisualStudio.Workload.NetCrossPlat |
+| --core    | Microsoft.VisualStudio.Workload.NetCoreTools |
+| --azure   | Microsoft.VisualStudio.Workload.Azure |
+| --data    | Microsoft.VisualStudio.Workload.Data |
+| --desktop | Microsoft.VisualStudio.Workload.ManagedDesktop |
+| --unity   | Microsoft.VisualStudio.Workload.ManagedGame |
+| --native  | Microsoft.VisualStudio.Workload.NativeDesktop |
+| --xamarin | Microsoft.VisualStudio.Workload.NetCrossPlat |
+| --web     | Microsoft.VisualStudio.Workload.NetWeb |
+| --node    | Microsoft.VisualStudio.Workload.Node |
+| --office  | Microsoft.VisualStudio.Workload.Office |
+| --py      | Microsoft.VisualStudio.Workload.Python |
+| --python  | Microsoft.VisualStudio.Workload.Python |
+| --uwp     | Microsoft.VisualStudio.Workload.Universal |
+| --vsx     | Microsoft.VisualStudio.Workload.VisualStudioExtension |
+
+The switches are converted to the appropriate argument automatically, such as into 
+`-requires [ID]` or `--add [ID]`.

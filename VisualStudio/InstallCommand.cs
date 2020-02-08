@@ -1,0 +1,131 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using Mono.Options;
+
+namespace VisualStudio
+{
+    public class InstallCommand : Command
+    {
+        readonly OptionSet options;
+        readonly WorkloadOptions workloads;
+        ImmutableArray<string> parsed = ImmutableArray.Create<string>();
+        bool help = false;
+        bool preview;
+        bool dogfood;
+        string sku;
+
+        public InstallCommand()
+        {
+            options = new OptionSet
+            {
+                { "pre|preview", "Install preview version", _ => preview = true },
+                { "int|internal", "Install internal (aka 'dogfood') version", _ => dogfood = true },
+                { "sku=", "Edition, one of [e|ent|enterprise], [p|pro|professional] or [c|com|community]", s => sku = s },
+            };
+            workloads = new WorkloadOptions("--add")
+            {
+                { "?|h|help", "Display this help", h => help = h != null },
+            };
+        }
+
+        public override string Name => "install";
+
+        public override async Task<int> ExecuteAsync(IEnumerable<string> args, TextWriter output)
+        {
+            try
+            {
+                var extra = workloads.Parse(options.Parse(args));
+                if (help)
+                {
+                    ShowUsage(output);
+                    return 0;
+                }
+
+                var uri = new StringBuilder("https://aka.ms/vs/16/");
+                if (preview)
+                    uri = uri.Append("pre/");
+                else if (dogfood)
+                    uri = uri.Append("intpreview/");
+                else
+                    uri = uri.Append("release/");
+
+                uri = uri.Append("vs_");
+                if (sku.StartsWith('e'))
+                    uri = uri.Append("enterprise");
+                else if (sku.StartsWith("p"))
+                    uri = uri.Append("professional");
+                else if (sku.StartsWith("c"))
+                    uri = uri.Append("community");
+                else
+                    throw new OptionException("Invalid SKU", "sku");
+
+                uri = uri.Append(".exe");
+                var bootstrapper = await DownloadAsync(uri.ToString(), output);
+
+                var psi = new ProcessStartInfo(bootstrapper);
+                foreach (var arg in workloads.Arguments)
+                {
+                    psi.ArgumentList.Add(arg);
+                }
+                foreach (var arg in extra)
+                {
+                    psi.ArgumentList.Add(arg);
+                }
+
+                var process = Process.Start(psi);
+                process.WaitForExit();
+
+                return process.ExitCode;
+            }
+            catch (OptionException e)
+            {
+                output.WriteLine(e.Message);
+                ShowUsage(output);   
+            }
+
+            return 0;
+        }
+
+        public override void ShowOptions(TextWriter output)
+        {
+            options.WriteOptionDescriptions(output);
+            output.WriteLine("Workload ID aliases:");
+            workloads.ShowOptions(output);
+        }
+
+        private void ShowUsage(TextWriter output)
+        {
+            ShowUsage(output, options);
+            output.WriteLine("Workload ID aliases:");
+            workloads.ShowOptions(output);
+        }
+
+        private async Task<string> DownloadAsync(string bootstrapperUrl, TextWriter output)
+        {
+            using (var client = new HttpClient())
+            {
+                output.WriteLine($"Downloading {bootstrapperUrl}");
+                var request = new HttpRequestMessage(HttpMethod.Get, bootstrapperUrl);
+                var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                response.EnsureSuccessStatusCode();
+                var filePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(request.RequestUri.AbsolutePath));
+                using (var httpStream = await response.Content.ReadAsStreamAsync())
+                {
+                    using (var fileStream = File.Create(filePath))
+                    {
+                        await httpStream.CopyToAsync(fileStream, 8 * 1024);
+                    }
+                }
+
+                return filePath;
+            }
+        }
+    }
+}
