@@ -19,7 +19,7 @@ namespace VisualStudio
         bool help = false;
         bool preview;
         bool dogfood;
-        string sku;
+        string sku = "community";
 
         public InstallCommand()
         {
@@ -27,7 +27,7 @@ namespace VisualStudio
             {
                 { "pre|preview", "Install preview version", _ => preview = true },
                 { "int|internal", "Install internal (aka 'dogfood') version", _ => dogfood = true },
-                { "sku=", "Edition, one of [e|ent|enterprise], [p|pro|professional] or [c|com|community]", s => sku = s },
+                { "sku:", "Edition, one of [e|ent|enterprise], [p|pro|professional] or [c|com|community]. Defaults to 'community'.", s => sku = s },
             };
             workloads = new WorkloadOptions("--add")
             {

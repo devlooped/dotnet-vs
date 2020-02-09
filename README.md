@@ -14,24 +14,40 @@ Supported commands:
 
 ## install
 
+Installs a specific edition of Visual Studio.
+
 ```
 vs install [options]
 ```
 
-|   Option   | Description                |
-|------------|----------------------------|
-|pre,preview |Install preview version     |
-|int,internal|Install internal (aka 'dogfood') version |
-|sku         |Edition, one of [e|ent|enterprise], [p|pro|professional] or [c|com|community] |
+|   Option       | Description                |
+|----------------|----------------------------|
+| pre,preview    |Install preview version     |
+| int,internal   |Install internal (aka 'dogfood') version |
+| sku            |Edition, one of [e|ent|enterprise], [p|pro|professional] or [c|com|community]. Defaults to `community`. |
 
 You can add specific workload IDs by using the provided switches (see below).
 
 See the [documentation for the Visual Studio installer command line options](https://docs.microsoft.com/en-us/visualstudio/install/use-command-line-parameters-to-install-visual-studio?view=vs-2019#install-options) 
 for the full list of arguments that can be provided.
 
-Common options are `--passive` and `--wait`, for example.
+Common options are `--passive`, `quiet` and `--wait`, for example.
+
+Examples:
+
+```
+// Installs VS enterprise with the Xamarin/Mobile workload
+vs install -sku:enterprise +mobile
+
+// Install VS community with the .NET Core, ASP.NET and Azure workloads, 
+// shows installation progress and waits for it to finish before returning
+vs install +core +web +azure
+```
 
 ## where
+
+Locates the installed version(s) of Visual Studio that satisfy the requested 
+requirements, optionally retrieving installation properties from it.
 
 ```
 vs where [options]
@@ -110,4 +126,7 @@ For commands that receive workload ID switches (i.e. `vs where -requires [WORKLO
 | --vsx     | Microsoft.VisualStudio.Workload.VisualStudioExtension |
 
 The switches are converted to the appropriate argument automatically, such as into 
-`-requires [ID]` or `--add [ID]`.
+`-requires [ID]` or `--add [ID]`. Additionally, the switches can also be specified 
+with a single `-` (like `-mobile`) or with a `+` (like `+mobile`), which might make 
+for a more intuitive command line, such as `vs install +mobile -sku:enterprise`.
+
