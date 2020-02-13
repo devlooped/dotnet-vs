@@ -22,6 +22,7 @@ namespace VisualStudio
         string version;
         bool first;
         bool wait;
+        string id;
 
         ImmutableArray<string> parsed = ImmutableArray.Create<string>();
 
@@ -29,9 +30,10 @@ namespace VisualStudio
         {
             options = new OptionSet
             {
-                { "pre|preview", "Run preview version", _ => preview = true },
-                { "int|internal", "Run internal (aka 'dogfood') version", _ => dogfood = true },
+                { "pre|preview", "Run preview version", p => preview = p != null },
+                { "int|internal", "Run internal (aka 'dogfood') version", d => dogfood = d != null },
                 { "sku:", "Run specific edition. One of [e|ent|enterprise], [p|pro|professional] or [c|com|community].", s => sku = SkuOption.Parse(s) },
+                { "id:", "Run a specific instance by its ID", i => id = i },
                 { "f|first:", "If more than one instance matches the criteria, run the first one sorted by descending build version.", f => first = f != null },
                 { "v|version:", "Run specific (semantic) version, such as 16.4 or 16.5.3.", v => version = v },
                 { "w|wait", "Wait for the started Visual Studio to exit.", w => wait = w != null },
@@ -62,7 +64,8 @@ namespace VisualStudio
                     whereArgs.Add("Microsoft.VisualStudio.Product." + sku);
                 }
 
-                if (preview || dogfood)
+                // We must include prerelease also when a specific ID was provided.
+                if (preview || dogfood || !string.IsNullOrEmpty(id))
                     whereArgs.Add("-prerelease");
 
                 whereArgs.Add("-format");
@@ -74,15 +77,24 @@ namespace VisualStudio
                     return result;
 
                 IEnumerable<VisualStudioInstance> instances = where.Instances.OrderByDescending(i => i.Catalog.BuildVersion);
-                if (preview && dogfood)
-                    instances = instances.Where(i => i.ChannelId.EndsWith("Preview", StringComparison.OrdinalIgnoreCase));
-                else if (preview)
-                    instances = instances.Where(i => i.ChannelId.EndsWith(".Preview", StringComparison.OrdinalIgnoreCase));
-                else if (dogfood)
-                    instances = instances.Where(i => i.ChannelId.EndsWith(".IntPreview", StringComparison.OrdinalIgnoreCase));
 
-                if (version != null)
-                    instances = instances.Where(i => i.Catalog.ProductSemanticVersion.StartsWith(version));
+                if (!string.IsNullOrEmpty(id))
+                {
+                    // Providing an ID overrides all other filters
+                    instances = instances.Where(i => i.InstanceId.Equals(id, StringComparison.OrdinalIgnoreCase));
+                }
+                else
+                {
+                    if (preview && dogfood)
+                        instances = instances.Where(i => i.ChannelId.EndsWith("Preview", StringComparison.OrdinalIgnoreCase));
+                    else if (preview)
+                        instances = instances.Where(i => i.ChannelId.EndsWith(".Preview", StringComparison.OrdinalIgnoreCase));
+                    else if (dogfood)
+                        instances = instances.Where(i => i.ChannelId.EndsWith(".IntPreview", StringComparison.OrdinalIgnoreCase));
+
+                    if (version != null)
+                        instances = instances.Where(i => i.Catalog.ProductSemanticVersion.StartsWith(version));
+                }
 
                 string devenv = null;
 
