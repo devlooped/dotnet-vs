@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Mono.Options;
 
 namespace VisualStudio
 {
@@ -10,16 +11,26 @@ namespace VisualStudio
         static Dictionary<string, Command> commands = new Command[]
         {
             new InstallCommand(),
+            new RunCommand(),
             new WhereCommand(),
         }.ToDictionary(c => c.Name, StringComparer.OrdinalIgnoreCase);
 
         static async Task<int> Main(string[] args)
         {
 #if DEBUG
-            System.Diagnostics.Debugger.Launch();
+            //System.Diagnostics.Debugger.Launch();
 #endif
 
-            if (args.Length == 0 || !commands.ContainsKey(args[0]))
+            var help = false;
+            var command = "run";
+            var options = new OptionSet
+            {
+                { "?|h|help", "Display this help", h => help = h != null },
+            };
+
+            options.Parse(args);
+
+            if (args.Length == 1 && help)
             {
                 Console.Write($"Usage: {ThisAssembly.Metadata.AssemblyName} [command] [options]");
                 foreach (var item in commands)
@@ -28,11 +39,18 @@ namespace VisualStudio
                     Console.WriteLine($"::{item.Key}::");
                     item.Value.ShowOptions(Console.Out);
                 }
-                return -1;
+                return 0;
             }
 
-            var command = commands[args[0]];
-            return await command.ExecuteAsync(args.Skip(1), Console.Out);
+            var commandArgs = args.ToList();
+
+            if (args.Length > 0 && commands.ContainsKey(args[0]))
+            {
+                command = args[0];
+                commandArgs.RemoveAt(0);
+            }
+
+            return await commands[command].ExecuteAsync(commandArgs, Console.Out);
         }
     }
 }

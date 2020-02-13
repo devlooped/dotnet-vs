@@ -19,7 +19,7 @@ namespace VisualStudio
         bool help = false;
         bool preview;
         bool dogfood;
-        string sku = "community";
+        Sku sku = Sku.Community;
 
         public InstallCommand()
         {
@@ -27,7 +27,7 @@ namespace VisualStudio
             {
                 { "pre|preview", "Install preview version", _ => preview = true },
                 { "int|internal", "Install internal (aka 'dogfood') version", _ => dogfood = true },
-                { "sku:", "Edition, one of [e|ent|enterprise], [p|pro|professional] or [c|com|community]. Defaults to 'community'.", s => sku = s },
+                { "sku:", "Edition, one of [e|ent|enterprise], [p|pro|professional] or [c|com|community]. Defaults to 'community'.", s => sku = SkuOption.Parse(s) },
             };
             workloads = new WorkloadOptions("--add")
             {
@@ -57,14 +57,20 @@ namespace VisualStudio
                     uri = uri.Append("release/");
 
                 uri = uri.Append("vs_");
-                if (sku.StartsWith('e'))
-                    uri = uri.Append("enterprise");
-                else if (sku.StartsWith("p"))
-                    uri = uri.Append("professional");
-                else if (sku.StartsWith("c"))
-                    uri = uri.Append("community");
-                else
-                    throw new OptionException("Invalid SKU", "sku");
+                switch (sku)
+                {
+                    case Sku.Community:
+                        uri = uri.Append("community");
+                        break;
+                    case Sku.Professional:
+                        uri = uri.Append("professional");
+                        break;
+                    case Sku.Enterprise:
+                        uri = uri.Append("enterprise");
+                        break;
+                    default:
+                        break;
+                }
 
                 uri = uri.Append(".exe");
                 var bootstrapper = await DownloadAsync(uri.ToString(), output);

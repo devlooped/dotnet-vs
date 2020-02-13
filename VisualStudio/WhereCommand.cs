@@ -4,7 +4,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Mono.Options;
+using vswhere;
 
 namespace VisualStudio
 {
@@ -19,10 +23,20 @@ namespace VisualStudio
 
         public override string Name => "where";
 
+        public bool Quiet { get; set; }
+
+        public VisualStudioInstance[] Instances { get; private set; }
+
         public override async Task<int> ExecuteAsync(IEnumerable<string> args, TextWriter output)
         {
             var workloads = new WorkloadOptions("-requires");
-            var extra = workloads.Parse(args);
+            Sku? sku = null;
+            var extra = workloads.Parse(new OptionSet
+            {
+                { "sku:", s => sku = SkuOption.Parse(s) }
+            }.Parse(args));
+
+            var formatJson = string.Join('=', args).Contains("-format=json", StringComparison.OrdinalIgnoreCase);
 
             foreach (var arg in workloads.Arguments)
             {
@@ -33,14 +47,24 @@ namespace VisualStudio
                 psi.ArgumentList.Add(arg);
             }
 
+            if (sku != null)
+            {
+                psi.ArgumentList.Add("-products");
+                psi.ArgumentList.Add("Microsoft.VisualStudio.Product." + sku);
+            }
+
             if (args.Any(x => x == "-?" || x == "-h" || x == "-help"))
             {
                 Console.Write($"Usage: {ThisAssembly.Metadata.AssemblyName} {Name} ");
                 ShowOptions(output);
                 return 0;
-            }                
+            }
 
-            return await ProcessOutput(psi, line => output.WriteLine(line));
+            return await ProcessOutput(psi, line =>
+            {
+                if (!Quiet)
+                    output.WriteLine(line);
+            }, formatJson);
         }
 
         public override void ShowOptions(TextWriter output)
@@ -58,13 +82,31 @@ namespace VisualStudio
             }
         }
 
-        private async Task<int> ProcessOutput(ProcessStartInfo psi, Action<string> lineAction)
+        private async Task<int> ProcessOutput(ProcessStartInfo psi, Action<string> lineAction, bool readJson)
         {
             var process = Process.Start(psi);
             string line;
-            while ((line = await process.StandardOutput.ReadLineAsync()) != null)
+
+            if (readJson)
             {
-                lineAction(line);
+                var builder = new StringBuilder();
+                while ((line = await process.StandardOutput.ReadLineAsync()) != null)
+                {
+                    lineAction(line);
+                    builder.Append(line);
+                }
+
+                Instances = JsonSerializer.Deserialize<VisualStudioInstance[]>(builder.ToString(), new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                });
+            }
+            else
+            {
+                while ((line = await process.StandardOutput.ReadLineAsync()) != null)
+                {
+                    lineAction(line);
+                }
             }
 
             return process.ExitCode;
