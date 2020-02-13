@@ -85,6 +85,8 @@ namespace VisualStudio
                     psi.ArgumentList.Add(arg);
                 }
 
+                output.WriteLine($"Running {bootstrapper} {string.Join(' ', psi.ArgumentList)}");
+
                 var process = Process.Start(psi);
                 process.WaitForExit();
 
