@@ -20,6 +20,17 @@ namespace VisualStudio
             RedirectStandardOutput = true,
             ArgumentList = { "-nologo" }
         };
+        readonly OptionSet options;
+        readonly WorkloadOptions workloads = new WorkloadOptions("-requires");
+        Sku? sku;
+
+        public WhereCommand()
+        {
+            options = new OptionSet
+            {
+                { "sku:", "Edition, one of [e|ent|enterprise], [p|pro|professional] or [c|com|community]. Defaults to 'community'.", s => sku = SkuOption.Parse(s) },
+            };
+        }
 
         public override string Name => "where";
 
@@ -29,12 +40,8 @@ namespace VisualStudio
 
         public override async Task<int> ExecuteAsync(IEnumerable<string> args, TextWriter output)
         {
-            var workloads = new WorkloadOptions("-requires");
             Sku? sku = null;
-            var extra = workloads.Parse(new OptionSet
-            {
-                { "sku:", s => sku = SkuOption.Parse(s) }
-            }.Parse(args));
+            var extra = workloads.Parse(options.Parse(args));
 
             var formatJson = string.Join('=', args).Contains("-format=json", StringComparison.OrdinalIgnoreCase);
 
@@ -55,7 +62,7 @@ namespace VisualStudio
 
             if (args.Any(x => x == "-?" || x == "-h" || x == "-help"))
             {
-                Console.Write($"Usage: {ThisAssembly.Metadata.AssemblyName} {Name} ");
+                Console.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} {Name} [options]");
                 ShowOptions(output);
                 return 0;
             }
@@ -69,6 +76,8 @@ namespace VisualStudio
 
         public override void ShowOptions(TextWriter output)
         {
+            options.WriteOptionDescriptions(output);
+            workloads.WriteOptionDescriptions(output);
             Console.WriteLine("[vswhere.exe options]");
             psi.ArgumentList.Add("-?");
             var process = Process.Start(psi);
