@@ -38,7 +38,7 @@
 
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/kzu/dotnet-visualstudio</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/kzu/dotnet-vs</PackageProjectUrl>
   </PropertyGroup>
 
   <PropertyGroup>

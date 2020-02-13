@@ -29,13 +29,14 @@
       <GitBranch>$(GitBranch.Replace('/', '-'))</GitBranch>
       <!-- We don't build stable versions from non-master branches. But when the version came from the branch, we leave it as-is. -->
       <GitSemVerDashLabel Condition="'$(GitBranch)' != 'master' and '$(GitSemVerDashLabel)' == '' and '$(GitSemVerSource)' != 'Branch'">-$(GitBranch)</GitSemVerDashLabel>
+      <IncludeBuildMetadata>$(PR)</IncludeBuildMetadata>
+      <!-- Build metadata always present for non-master branches, unless the existing label matches the branch.
+           For a versioned branch, it doesn't make sense either. -->
+      <IncludeBuildMetadata Condition="'$(GitBranch)' != 'master' and '$(GitSemVerSource)' != 'Branch' and '$(GitSemVerDashLabel)' != '-$(GitBranch)'"></IncludeBuildMetadata>
     </PropertyGroup>
 
-    <ItemGroup>
-      <!-- Branch metadata always present for non-master branches, unless the existing label matches the branch.
-           For a versioned branch, it doesn't make sense either. -->
-      <VersionMetadata Include="$(GitBranch)" Condition="'$(GitBranch)' != 'master' and '$(GitSemVerSource)' != 'Branch' and '$(GitSemVerDashLabel)' != '-$(GitBranch)'" />
-
+    <ItemGroup Condition="$(IncludeBuildMetadata)">
+      <VersionMetadata Include="$(GitBranch)" />
       <VersionMetadata Condition="'$(SYSTEM_PULLREQUEST_PULLREQUESTNUMBER)' != ''"
                        Include="pr.$(SYSTEM_PULLREQUEST_PULLREQUESTNUMBER)"/>
       <VersionMetadata Include="sha.$(GitCommit)" Condition="'$(GitCommit)' != ''"/>
@@ -63,6 +64,14 @@
         <_Parameter2>$(PackageVersion)</_Parameter2>
       </AssemblyAttribute>
     </ItemGroup>
+
+    <PropertyGroup Condition="$(CI)">
+      <!-- Update package description so it contains metadata too. -->
+      <Description>A global tool for managing Visual Studio installations
+
+Built by https://build.azdo.io/kzu/oss/$(BUILD_BUILDID)
+</Description>
+    </PropertyGroup>
 
   </Target>
 
