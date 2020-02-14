@@ -16,7 +16,7 @@
 
   <Target Name="Version" DependsOnTargets="SetVersions" AfterTargets="SetVersions">
     <Message Importance="high" Text="PackageVersion=$(PackageVersion)" />
-    <Message Condition="$(CI)" Importance="high" Text="##vso[build.updatebuildnumber]$(PackageVersion)"/>
+    <Message Condition="$(CI)" Importance="high" Text="##vso[build.updatebuildnumber]$(BuildVersion)"/>
   </Target>
 
   <Target Name="SetVersions"
@@ -35,7 +35,7 @@
       <IncludeBuildMetadata Condition="'$(GitBranch)' != 'master' and '$(GitSemVerSource)' != 'Branch' and '$(GitSemVerDashLabel)' != '-$(GitBranch)'"></IncludeBuildMetadata>
     </PropertyGroup>
 
-    <ItemGroup Condition="$(IncludeBuildMetadata)">
+    <ItemGroup>
       <VersionMetadata Include="$(GitBranch)" />
       <VersionMetadata Condition="'$(SYSTEM_PULLREQUEST_PULLREQUESTNUMBER)' != ''"
                        Include="pr.$(SYSTEM_PULLREQUEST_PULLREQUESTNUMBER)"/>
@@ -50,7 +50,8 @@
       <GitSemVerDashLabel Condition="'$(GitSemVerDashLabel)' != '' and '$(GitCommits)' != '0'">$(GitSemVerDashLabel).$(GitCommits)</GitSemVerDashLabel>
 
       <BuildVersion>$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)$(GitSemVerDashLabel)$(VersionMetadataPlusLabel)</BuildVersion>
-      <PackageVersion>$(BuildVersion)</PackageVersion>
+      <PackageVersion>$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)$(GitSemVerDashLabel)</PackageVersion>
+      <PackageVersion Condition="$(IncludeBuildMetadata)">$(BuildVersion)</PackageVersion>
       <Version>$(BuildVersion)</Version>
     </PropertyGroup>
 
@@ -62,6 +63,10 @@
       <AssemblyAttribute Include="System.Reflection.AssemblyMetadata">
         <_Parameter1>PackageVersion</_Parameter1>
         <_Parameter2>$(PackageVersion)</_Parameter2>
+      </AssemblyAttribute>
+      <AssemblyAttribute Include="System.Reflection.AssemblyMetadata">
+        <_Parameter1>BuildVersion</_Parameter1>
+        <_Parameter2>$(BuildVersion)</_Parameter2>
       </AssemblyAttribute>
     </ItemGroup>
 
