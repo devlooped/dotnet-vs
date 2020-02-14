@@ -13,6 +13,8 @@ namespace VisualStudio
 {
     public class RunCommand : Command
     {
+        static readonly ToolSettings settings = new ToolSettings(ThisAssembly.Metadata.AssemblyName);
+
         readonly OptionSet options;
         readonly WorkloadOptions workloads;
         bool help = false;
@@ -50,6 +52,21 @@ namespace VisualStudio
         {
             try
             {
+                var devenv = settings.Get("devenv");
+                if (!string.IsNullOrEmpty(devenv))
+                {
+                    if (File.Exists(devenv) && !args.Any())
+                    {
+                        Process.Start(devenv);
+                        return 0;
+                    }
+                    else if (!File.Exists(devenv))
+                    {
+                        // May have been uninstalled, remove the setting.
+                        settings.Set<string>("devenv", null);
+                    }
+                }
+
                 var extra = workloads.Parse(options.Parse(args));
                 if (help)
                 {
@@ -96,8 +113,6 @@ namespace VisualStudio
                         instances = instances.Where(i => i.Catalog.ProductSemanticVersion.StartsWith(version));
                 }
 
-                string devenv = null;
-
                 var matches = instances.ToArray();
                 if (matches.Length == 1 || (matches.Length > 0 && first))
                 {
@@ -133,6 +148,9 @@ namespace VisualStudio
                 var process = Process.Start(psi);
                 if (wait)
                     process.WaitForExit();
+
+                // Persist the last used devenv for quicker discovery by avoiding vswhere.
+                settings.Set("devenv", devenv);
 
                 return 0;
             }
