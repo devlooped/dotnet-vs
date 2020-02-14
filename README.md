@@ -16,7 +16,52 @@ To get the CI version:
 dotnet tool update -g dotnet-vs --no-cache --add-source https://pkg.kzu.io/index.json
 ```
 
+Command line parsing is done with [Mono.Options](https://www.nuget.org/packages/mono.options) so 
+all the following variants for arguments are supported: `-flag`, `--flag`, `/flag`, `-flag=value`, `--flag=value`, 
+`/flag=value`, `-flag:value`, `--flag:value`, `/flag:value`, `-flag value`, `--flag value`, `/flag value`.
+
 Supported commands:
+
+## run
+
+This is default command, so typically it does not need to be provided as an argument. 
+
+```
+vs [run] [options]
+```
+
+|   Option       | Description                |
+|----------------|----------------------------|
+| `pre\|preview`    |Install preview version     |
+| `int\|internal`   |Install internal (aka 'dogfood') version |
+| `sku`            |Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional` or `c\|com\|community`. Defaults to `community` |
+| `id`             |Run a specific instance by its ID|
+| `f\|first`        |If more than one instance matches the criteria, run the first one sorted by descending build version|
+| `v\|version`      |Run specific (semantic) version, such as 16.4 or 16.5.3.|
+| `w\|wait`         |Wait for the started Visual Studio to exit.|
+
+All [workload switches](#workload-id-switches) are available too to filter the instance to run.
+
+This command will remember the last VS that was located and run. So the next time you 
+can just run the same instance by simply using `vs` (since `run` is the default command 
+and can be omitted).
+
+Examples:
+
+```
+// Runs the first VS enterprise with the Xamarin/Mobile
+vs -sku:ent -first +mobile
+
+// Runs VS 16.4
+vs -v:16.4
+
+// Runs VS 16.5 preview
+vs -v:16.4 -pre
+
+// Runs the last VS that was run
+vs
+```
+
 
 ## install
 
@@ -28,11 +73,11 @@ vs install [options]
 
 |   Option       | Description                |
 |----------------|----------------------------|
-| pre,preview    |Install preview version     |
-| int,internal   |Install internal (aka 'dogfood') version |
-| sku            |Edition, one of [e|ent|enterprise], [p|pro|professional] or [c|com|community]. Defaults to `community`. |
+| `pre\|preview`    |Install preview version     |
+| `int\|internal`   |Install internal (aka 'dogfood') version |
+| `sku`            |Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional` or `c\|com\|community`. Defaults to `community` |
 
-You can add specific workload IDs by using the provided switches (see below).
+You can add specific workload IDs by using the supported [workload switches](#workload-id-switches).
 
 See the [documentation for the Visual Studio installer command line options](https://docs.microsoft.com/en-us/visualstudio/install/use-command-line-parameters-to-install-visual-studio?view=vs-2019#install-options) 
 for the full list of arguments that can be provided.
@@ -49,6 +94,7 @@ vs install -sku:enterprise +mobile
 // shows installation progress and waits for it to finish before returning
 vs install +core +web +azure
 ```
+
 
 ## where
 
@@ -113,26 +159,26 @@ See also [vswhere on GitHub](https://github.com/microsoft/vswhere).
 For commands that receive workload ID switches (i.e. `vs where -requires [WORKLOAD_ID]` or 
 `vs install --add [WORKLOAD_ID]`), the following aliases are available:
 
-|  Switch   | Workload ID |
-|-----------|----------------------------|
-| --mobile  | Microsoft.VisualStudio.Workload.NetCrossPlat |
-| --core    | Microsoft.VisualStudio.Workload.NetCoreTools |
-| --azure   | Microsoft.VisualStudio.Workload.Azure |
-| --data    | Microsoft.VisualStudio.Workload.Data |
-| --desktop | Microsoft.VisualStudio.Workload.ManagedDesktop |
-| --unity   | Microsoft.VisualStudio.Workload.ManagedGame |
-| --native  | Microsoft.VisualStudio.Workload.NativeDesktop |
-| --xamarin | Microsoft.VisualStudio.Workload.NetCrossPlat |
-| --web     | Microsoft.VisualStudio.Workload.NetWeb |
-| --node    | Microsoft.VisualStudio.Workload.Node |
-| --office  | Microsoft.VisualStudio.Workload.Office |
-| --py      | Microsoft.VisualStudio.Workload.Python |
-| --python  | Microsoft.VisualStudio.Workload.Python |
-| --uwp     | Microsoft.VisualStudio.Workload.Universal |
-| --vsx     | Microsoft.VisualStudio.Workload.VisualStudioExtension |
+|  Switch     | Workload ID |
+|-------------|----------------------------|
+| `--mobile`  | Microsoft.VisualStudio.Workload.NetCrossPlat |
+| `--core`    | Microsoft.VisualStudio.Workload.NetCoreTools |
+| `--azure`   | Microsoft.VisualStudio.Workload.Azure |
+| `--data`    | Microsoft.VisualStudio.Workload.Data |
+| `--desktop` | Microsoft.VisualStudio.Workload.ManagedDesktop |
+| `--unity`   | Microsoft.VisualStudio.Workload.ManagedGame |
+| `--native`  | Microsoft.VisualStudio.Workload.NativeDesktop |
+| `--xamarin` | Microsoft.VisualStudio.Workload.NetCrossPlat |
+| `--web`     | Microsoft.VisualStudio.Workload.NetWeb |
+| `--node`    | Microsoft.VisualStudio.Workload.Node |
+| `--office`  | Microsoft.VisualStudio.Workload.Office |
+| `--py`      | Microsoft.VisualStudio.Workload.Python |
+| `--python`  | Microsoft.VisualStudio.Workload.Python |
+| `--uwp`     | Microsoft.VisualStudio.Workload.Universal |
+| `--vsx`     | Microsoft.VisualStudio.Workload.VisualStudioExtension |
 
 The switches are converted to the appropriate argument automatically, such as into 
 `-requires [ID]` or `--add [ID]`. Additionally, the switches can also be specified 
-with a single `-` (like `-mobile`) or with a `+` (like `+mobile`), which might make 
-for a more intuitive command line, such as `vs install +mobile -sku:enterprise`.
-
+with a `+` (like `+mobile`), which might make for a more intuitive command line, 
+such as `vs install +mobile -sku:enterprise` or `vs +mobile` (runs the VS with the 
+mobile workload installed).
