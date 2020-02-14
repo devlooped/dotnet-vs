@@ -60,9 +60,3 @@ stages:
 
     - script: 'sleet push --config none $(Build.ArtifactStagingDirectory) -f --verbose -p "SLEET_FEED_CONNECTIONSTRING=$(SLEET_FEED_CONNECTIONSTRING)"'
       displayName: 'Push Package'
-
-    - task: PublishBuildArtifacts@1
-      displayName: Upload Package
-      inputs:
-        PathtoPublish: $(Build.ArtifactStagingDirectory)
-        ArtifactName: artifacts
