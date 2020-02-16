@@ -1,4 +1,5 @@
-# dotnet-vs
+<img src="https://simpleicons.org/icons/visualstudio.svg" alt="drawing" width="32"/> dotnet-vs
+============
 
 A global tool for managing and querying Visual Studio installations
 

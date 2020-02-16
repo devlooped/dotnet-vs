@@ -39,6 +39,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/kzu/dotnet-vs</PackageProjectUrl>
+    <PackageIcon>icon-128.png</PackageIcon>
   </PropertyGroup>
 
   <PropertyGroup>

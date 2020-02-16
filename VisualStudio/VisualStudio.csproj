@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Content Include="$(VSWhereDir)vswhere.exe" CopyToOutputDirectory="PreserveNewest" Pack="true" Visible="false" />
+    <Content Include="..\docs\img\icon-128.png" Link="icon-128.png" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
