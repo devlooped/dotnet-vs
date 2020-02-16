@@ -42,7 +42,7 @@ namespace VisualStudio
                     .Select(line => line.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries))
                     .Where(pair => pair.Length == 2))
                 {
-                    settings[pair[0].Trim()] = settings[pair[1].Trim()];
+                    settings[pair[0].Trim()] = pair[1].Trim();
                 }
             }
 
