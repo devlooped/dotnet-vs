@@ -110,10 +110,20 @@ namespace VisualStudio
                     builder.Append(line);
                 }
 
-                Instances = JsonSerializer.Deserialize<VisualStudioInstance[]>(builder.ToString(), new JsonSerializerOptions
+                try
                 {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                });
+                    Instances = JsonSerializer.Deserialize<VisualStudioInstance[]>(builder.ToString(), new JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    });
+                }
+                catch (JsonException e)
+                {
+                    if (!Quiet)
+                        lineAction("Failed to parse JSON from vswhere output.");
+
+                    Debug.WriteLine($"Failed to parse JSON from vswhere: {e.Message}");
+                }
             }
             else
             {
