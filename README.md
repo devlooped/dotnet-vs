@@ -50,7 +50,7 @@ and can be omitted).
 Examples:
 
 ```
-// Runs the first VS enterprise with the Xamarin/Mobile
+// Runs the first VS enterprise with the Xamarin/Mobile workload
 vs -sku:ent -first +mobile
 
 // Runs VS 16.4
