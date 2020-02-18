@@ -166,14 +166,14 @@ namespace VisualStudio
         public override void ShowOptions(TextWriter output)
         {
             options.WriteOptionDescriptions(output);
-            output.WriteLine("Workload ID aliases:");
+            output.WriteLine("      Workload ID aliases:");
             workloads.ShowOptions(output);
         }
 
         private void ShowUsage(TextWriter output)
         {
             ShowUsage(output, options);
-            output.WriteLine("Workload ID aliases:");
+            output.WriteLine("      Workload ID aliases:");
             workloads.ShowOptions(output);
         }
     }
