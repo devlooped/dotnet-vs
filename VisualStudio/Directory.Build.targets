@@ -72,9 +72,9 @@
 
     <PropertyGroup Condition="$(CI)">
       <!-- Update package description so it contains metadata too. -->
-      <Description>A global tool for managing Visual Studio installations
+      <Description>$(Description)
 
-Built by https://build.azdo.io/kzu/oss/$(BUILD_BUILDID)
+Built by https://build.azdo.io/kzu/oss/$(BUILD_BUILDID) from $(PackageProjectUrl)/tree/$(GitCommit)
 </Description>
     </PropertyGroup>
 
