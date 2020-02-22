@@ -1,7 +1,7 @@
 <img src="https://simpleicons.org/icons/visualstudio.svg" alt="drawing" width="32"/> dotnet-vs
 ============
 
-A global tool for managing and querying Visual Studio installations
+A global tool for running, managing and querying Visual Studio installations
 
 [![Build Status](https://dev.azure.com/kzu/oss/_apis/build/status/dotnet-vs?branchName=master)](https://dev.azure.com/kzu/oss/_build/latest?definitionId=32&branchName=master)
 
