@@ -85,6 +85,25 @@ namespace VisualStudio
                     psi.ArgumentList.Add(arg);
                 }
 
+                // TODO: for now, we assume we're always doing an install.
+                var installBase = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Microsoft Visual Studio", "2019");
+                var installPath = Path.Combine(installBase, sku.ToString());
+                var customPath = Directory.Exists(installPath);
+                if (customPath)
+                {
+                    installPath = Path.Combine(installBase, preview ? "Preview" : dogfood ? "IntPreview" : sku.ToString());
+                    if (Directory.Exists(installPath))
+                    {
+                        installPath = Path.Combine(installBase, preview ? "Pre" + sku.ToString() : dogfood ? "Int" + sku.ToString() : sku.ToString());
+                    }
+                }
+
+                if (customPath)
+                {
+                    psi.ArgumentList.Add("--installPath");
+                    psi.ArgumentList.Add(installPath);
+                }
+
                 output.WriteLine($"Running {bootstrapper} {string.Join(' ', psi.ArgumentList)}");
 
                 var process = Process.Start(psi);
@@ -95,7 +114,7 @@ namespace VisualStudio
             catch (OptionException e)
             {
                 output.WriteLine(e.Message);
-                ShowUsage(output);   
+                ShowUsage(output);
             }
 
             return 0;
