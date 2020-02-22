@@ -24,6 +24,7 @@ namespace VisualStudio
         string version;
         bool first;
         bool wait;
+        bool? setDefault;
         string id;
 
         ImmutableArray<string> parsed = ImmutableArray.Create<string>();
@@ -36,9 +37,10 @@ namespace VisualStudio
                 { "int|internal", "Run internal (aka 'dogfood') version", d => dogfood = d != null },
                 { "sku:", "Run specific edition. One of [e|ent|enterprise], [p|pro|professional] or [c|com|community].", s => sku = SkuOption.Parse(s) },
                 { "id:", "Run a specific instance by its ID", i => id = i },
-                { "f|first:", "If more than one instance matches the criteria, run the first one sorted by descending build version.", f => first = f != null },
+                { "f|first", "If more than one instance matches the criteria, run the first one sorted by descending build version.", f => first = f != null },
                 { "v|version:", "Run specific (semantic) version, such as 16.4 or 16.5.3.", v => version = v },
                 { "w|wait", "Wait for the started Visual Studio to exit.", w => wait = w != null },
+                { "default", "Set as the default version to run when no arguments are provided, or remove the current default (with --default-).", d => setDefault = d != null },
             };
             workloads = new WorkloadOptions("-requires")
             {
@@ -73,6 +75,10 @@ namespace VisualStudio
                     ShowUsage(output);
                     return 0;
                 }
+
+                // Explicitly specified to remove existing default.
+                if (setDefault == false)
+                    settings.Set<string>("devenv", null);
 
                 var whereArgs = workloads.Arguments.ToList();
                 if (sku != null)
@@ -149,8 +155,9 @@ namespace VisualStudio
                 if (wait)
                     process.WaitForExit();
 
-                // Persist the last used devenv for quicker discovery by avoiding vswhere.
-                settings.Set("devenv", devenv);
+                // Explicitly specified to set a new default.
+                if (setDefault == true)
+                    settings.Set<string>("devenv", devenv);
 
                 return 0;
             }
