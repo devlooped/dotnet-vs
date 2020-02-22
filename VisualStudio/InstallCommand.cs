@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Mono.Options;
@@ -87,6 +88,19 @@ namespace VisualStudio
 
                 // TODO: for now, we assume we're always doing an install.
                 var installBase = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Microsoft Visual Studio", "2019");
+
+                // There is at least one install already, so use nicknames for the new one.
+                if (Directory.Exists(installBase))
+                {
+                    psi.ArgumentList.Add("--nickname");
+                    if (preview)
+                        psi.ArgumentList.Add("Preview");
+                    else if (dogfood)
+                        psi.ArgumentList.Add("IntPreview");
+                    else
+                        psi.ArgumentList.Add(sku.ToString().Substring(0, 3));
+                }
+
                 var installPath = Path.Combine(installBase, sku.ToString());
                 var customPath = Directory.Exists(installPath);
                 if (customPath)
