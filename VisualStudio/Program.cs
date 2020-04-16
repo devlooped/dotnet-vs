@@ -32,13 +32,13 @@ namespace VisualStudio
 
             if (args.Length == 1 && help)
             {
-                Console.Write($"Usage: {ThisAssembly.Metadata.AssemblyName} [command] [options]");
-                foreach (var item in commands)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine($"::{item.Key}::");
-                    item.Value.ShowOptions(Console.Out);
-                }
+                Console.Write($"Usage: {ThisAssembly.Metadata.AssemblyName} [{string.Join('|', commands.Keys)}] [options|-?|-h|--help]");
+                //foreach (var item in commands)
+                //{
+                //    Console.WriteLine();
+                //    Console.WriteLine($"::{item.Key}::");
+                //    item.Value.ShowOptions(Console.Out);
+                //}
                 return 0;
             }
 
