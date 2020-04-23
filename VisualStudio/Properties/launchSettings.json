@@ -2,7 +2,8 @@
   "profiles": {
     "VisualStudio": {
       "commandName": "Project",
-      "commandLineArgs": "-w"
+      "commandLineArgs": "run --mobile-"
+      //"commandLineArgs": "install --nickname=Stable --mobile"
       //"commandLineArgs": "where +mobile"
       //"commandLineArgs": "install -sku:e"
       //"commandLineArgs": "where -all -pre -sort -p:instanceId -requires Microsoft.VisualStudio.Workload.NetCrossPlat"

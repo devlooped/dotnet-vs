@@ -68,9 +68,7 @@ namespace VisualStudio
             }
 
             if (!Quiet)
-            {
-                output.WriteLine($"Running {Path.GetFileName(psi.FileName)} {string.Join(' ', psi.ArgumentList)}");
-            }
+                psi.Log(output);
 
             return await ProcessOutput(psi, line =>
             {

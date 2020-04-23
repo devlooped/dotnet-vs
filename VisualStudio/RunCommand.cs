@@ -151,6 +151,7 @@ namespace VisualStudio
                     psi.ArgumentList.Add(arg);
                 }
 
+                psi.Log(output);
                 var process = Process.Start(psi);
                 if (wait)
                     process.WaitForExit();

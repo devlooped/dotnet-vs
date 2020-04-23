@@ -123,8 +123,7 @@ namespace VisualStudio
                     psi.ArgumentList.Add(installPath);
                 }
 
-                output.WriteLine($"Running {bootstrapper} {string.Join(' ', psi.ArgumentList)}");
-
+                psi.Log(output);
                 var process = Process.Start(psi);
                 process.WaitForExit();
 
