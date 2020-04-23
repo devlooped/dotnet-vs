@@ -19,6 +19,7 @@ namespace VisualStudio
         bool preview;
         bool dogfood;
         Sku sku = Sku.Community;
+        string nickname;
 
         public InstallCommand()
         {
@@ -27,6 +28,7 @@ namespace VisualStudio
                 { "pre|preview", "Install preview version", _ => preview = true },
                 { "int|internal", "Install internal (aka 'dogfood') version", _ => dogfood = true },
                 { "sku:", "Edition, one of [e|ent|enterprise], [p|pro|professional] or [c|com|community]. Defaults to 'community'.", s => sku = SkuOption.Parse(s) },
+                { "nick|nickname:", "Optional nickname to assign to the installation", n => nickname = n },
             };
             workloads = new WorkloadOptions("--add")
             {
@@ -79,6 +81,11 @@ namespace VisualStudio
                 {
                     psi.ArgumentList.Add(arg);
                 }
+                if (!string.IsNullOrEmpty(nickname))
+                {
+                    psi.ArgumentList.Add("--nickname");
+                    psi.ArgumentList.Add(nickname);
+                }
                 foreach (var arg in extra)
                 {
                     psi.ArgumentList.Add(arg);
@@ -88,7 +95,7 @@ namespace VisualStudio
                 var installBase = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Microsoft Visual Studio", "2019");
 
                 // There is at least one install already, so use nicknames for the new one.
-                if (Directory.Exists(installBase))
+                if (Directory.Exists(installBase) && !psi.ArgumentList.Contains("--nickname"))
                 {
                     psi.ArgumentList.Add("--nickname");
                     if (preview)
