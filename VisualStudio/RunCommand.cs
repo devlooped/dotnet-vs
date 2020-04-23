@@ -155,7 +155,7 @@ namespace VisualStudio
                 
                 if (exp)
                 {
-                    psi.ArgumentList.Add("/rootSufix");
+                    psi.ArgumentList.Add("/rootSuffix");
                     psi.ArgumentList.Add("Exp");
                 }
 
