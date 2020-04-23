@@ -18,6 +18,7 @@ namespace VisualStudio
         static async Task<int> Main(string[] args)
         {
 #if DEBUG
+            Console.WriteLine($"{ThisAssembly.Metadata.AssemblyName} {string.Join(" ", args)}");
             //System.Diagnostics.Debugger.Launch();
 #endif
 
