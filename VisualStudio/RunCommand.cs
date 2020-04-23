@@ -26,6 +26,7 @@ namespace VisualStudio
         bool wait;
         bool? setDefault;
         string id;
+        bool exp;
 
         ImmutableArray<string> parsed = ImmutableArray.Create<string>();
 
@@ -37,6 +38,7 @@ namespace VisualStudio
                 { "int|internal", "Run internal (aka 'dogfood') version", d => dogfood = d != null },
                 { "sku:", "Run specific edition. One of [e|ent|enterprise], [p|pro|professional] or [c|com|community].", s => sku = SkuOption.Parse(s) },
                 { "id:", "Run a specific instance by its ID", i => id = i },
+                { "exp", "Run with /rootSuffix Exp.", e => exp = e != null },
                 { "f|first", "If more than one instance matches the criteria, run the first one sorted by descending build version.", f => first = f != null },
                 { "v|version:", "Run specific (semantic) version, such as 16.4 or 16.5.3.", v => version = v },
                 { "w|wait", "Wait for the started Visual Studio to exit.", w => wait = w != null },
@@ -150,6 +152,12 @@ namespace VisualStudio
                 {
                     psi.ArgumentList.Add(arg);
                 }
+                
+                if (exp)
+                {
+                    psi.ArgumentList.Add("/rootSufix");
+                    psi.ArgumentList.Add("Exp");
+                }
 
                 psi.Log(output);
                 var process = Process.Start(psi);
@@ -158,7 +166,7 @@ namespace VisualStudio
 
                 // Explicitly specified to set a new default.
                 if (setDefault == true)
-                    settings.Set<string>("devenv", devenv);
+                    settings.Set("devenv", devenv);
 
                 return 0;
             }
