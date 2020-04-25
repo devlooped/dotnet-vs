@@ -1,158 +1,103 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Mono.Options;
 
 namespace VisualStudio
 {
-    public class InstallCommand : Command
+    class InstallCommand : Command
     {
-        readonly OptionSet options;
-        readonly WorkloadOptions workloads;
-        ImmutableArray<string> parsed = ImmutableArray.Create<string>();
-        bool help = false;
-        bool preview;
-        bool dogfood;
-        Sku sku = Sku.Community;
-        string nickname;
+        readonly InstallCommandDescriptor descriptor;
 
-        public InstallCommand()
+        public InstallCommand(InstallCommandDescriptor descriptor)
         {
-            options = new OptionSet
-            {
-                { "pre|preview", "Install preview version", _ => preview = true },
-                { "int|internal", "Install internal (aka 'dogfood') version", _ => dogfood = true },
-                { "sku:", "Edition, one of [e|ent|enterprise], [p|pro|professional] or [c|com|community]. Defaults to 'community'.", s => sku = SkuOption.Parse(s) },
-                { "nick|nickname:", "Optional nickname to assign to the installation", n => nickname = n },
-            };
-            workloads = new WorkloadOptions("--add")
-            {
-                { "?|h|help", "Display this help", h => help = h != null },
-            };
+            this.descriptor = descriptor;
         }
 
-        public override string Name => "install";
-
-        public override async Task<int> ExecuteAsync(IEnumerable<string> args, TextWriter output)
+        public override async Task ExecuteAsync(TextWriter output)
         {
-            try
-            {
-                var extra = workloads.Parse(options.Parse(args));
-                if (help)
-                {
-                    ShowUsage(output);
-                    return 0;
-                }
+            var uri = new StringBuilder("https://aka.ms/vs/16/");
+            if (descriptor.Preview)
+                uri = uri.Append("pre/");
+            else if (descriptor.Dogfood)
+                uri = uri.Append("intpreview/");
+            else
+                uri = uri.Append("release/");
 
-                var uri = new StringBuilder("https://aka.ms/vs/16/");
-                if (preview)
-                    uri = uri.Append("pre/");
-                else if (dogfood)
-                    uri = uri.Append("intpreview/");
+            uri = uri.Append("vs_");
+            switch (descriptor.Sku)
+            {
+                case Sku.Community:
+                    uri = uri.Append("community");
+                    break;
+                case Sku.Professional:
+                    uri = uri.Append("professional");
+                    break;
+                case Sku.Enterprise:
+                    uri = uri.Append("enterprise");
+                    break;
+                default:
+                    break;
+            }
+            uri = uri.Append(".exe");
+
+            var bootstrapper = await DownloadAsync(uri.ToString(), output);
+
+            var psi = new ProcessStartInfo(bootstrapper);
+            foreach (var arg in descriptor.WorkloadArgs)
+            {
+                psi.ArgumentList.Add(arg);
+            }
+            if (!string.IsNullOrEmpty(descriptor.Nickname))
+            {
+                psi.ArgumentList.Add("--nickname");
+                psi.ArgumentList.Add(descriptor.Nickname);
+            }
+            foreach (var arg in descriptor.ExtraArguments)
+            {
+                psi.ArgumentList.Add(arg);
+            }
+
+            // TODO: for now, we assume we're always doing an install.
+            var installBase = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Microsoft Visual Studio", "2019");
+
+            // There is at least one install already, so use nicknames for the new one.
+            if (Directory.Exists(installBase) && !psi.ArgumentList.Contains("--nickname"))
+            {
+                psi.ArgumentList.Add("--nickname");
+                if (descriptor.Preview)
+                    psi.ArgumentList.Add("Preview");
+                else if (descriptor.Dogfood)
+                    psi.ArgumentList.Add("IntPreview");
                 else
-                    uri = uri.Append("release/");
-
-                uri = uri.Append("vs_");
-                switch (sku)
-                {
-                    case Sku.Community:
-                        uri = uri.Append("community");
-                        break;
-                    case Sku.Professional:
-                        uri = uri.Append("professional");
-                        break;
-                    case Sku.Enterprise:
-                        uri = uri.Append("enterprise");
-                        break;
-                    default:
-                        break;
-                }
-
-                uri = uri.Append(".exe");
-                var bootstrapper = await DownloadAsync(uri.ToString(), output);
-
-                var psi = new ProcessStartInfo(bootstrapper);
-                foreach (var arg in workloads.Arguments)
-                {
-                    psi.ArgumentList.Add(arg);
-                }
-                if (!string.IsNullOrEmpty(nickname))
-                {
-                    psi.ArgumentList.Add("--nickname");
-                    psi.ArgumentList.Add(nickname);
-                }
-                foreach (var arg in extra)
-                {
-                    psi.ArgumentList.Add(arg);
-                }
-
-                // TODO: for now, we assume we're always doing an install.
-                var installBase = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Microsoft Visual Studio", "2019");
-
-                // There is at least one install already, so use nicknames for the new one.
-                if (Directory.Exists(installBase) && !psi.ArgumentList.Contains("--nickname"))
-                {
-                    psi.ArgumentList.Add("--nickname");
-                    if (preview)
-                        psi.ArgumentList.Add("Preview");
-                    else if (dogfood)
-                        psi.ArgumentList.Add("IntPreview");
-                    else
-                        psi.ArgumentList.Add(sku.ToString().Substring(0, 3));
-                }
-
-                var installPath = Path.Combine(installBase, sku.ToString());
-                var customPath = Directory.Exists(installPath);
-                if (customPath)
-                {
-                    installPath = Path.Combine(installBase, preview ? "Preview" : dogfood ? "IntPreview" : sku.ToString());
-                    if (Directory.Exists(installPath))
-                    {
-                        installPath = Path.Combine(installBase, preview ? "Pre" + sku.ToString() : dogfood ? "Int" + sku.ToString() : sku.ToString());
-                    }
-                }
-
-                if (customPath)
-                {
-                    psi.ArgumentList.Add("--installPath");
-                    psi.ArgumentList.Add(installPath);
-                }
-
-                psi.Log(output);
-                var process = Process.Start(psi);
-                process.WaitForExit();
-
-                return process.ExitCode;
+                    psi.ArgumentList.Add(descriptor.Sku.ToString().Substring(0, 3));
             }
-            catch (OptionException e)
+
+            var installPath = Path.Combine(installBase, descriptor.Sku.ToString());
+            var customPath = Directory.Exists(installPath);
+            if (customPath)
             {
-                output.WriteLine(e.Message);
-                ShowUsage(output);
+                installPath = Path.Combine(installBase, descriptor.Preview ? "Preview" : descriptor.Dogfood ? "IntPreview" : descriptor.Sku.ToString());
+                if (Directory.Exists(installPath))
+                {
+                    installPath = Path.Combine(installBase, descriptor.Preview ? "Pre" + descriptor.Sku.ToString() : descriptor.Dogfood ? "Int" + descriptor.Sku.ToString() : descriptor.Sku.ToString());
+                }
             }
 
-            return 0;
+            if (customPath)
+            {
+                psi.ArgumentList.Add("--installPath");
+                psi.ArgumentList.Add(installPath);
+            }
+
+            psi.Log(output);
+            var process = Process.Start(psi);
+            process.WaitForExit();
         }
 
-        public override void ShowOptions(TextWriter output)
-        {
-            options.WriteOptionDescriptions(output);
-            output.WriteLine("      Workload ID aliases:");
-            workloads.ShowOptions(output);
-        }
-
-        private void ShowUsage(TextWriter output)
-        {
-            ShowUsage(output, options);
-            output.WriteLine("      Workload ID aliases:");
-            workloads.ShowOptions(output);
-        }
-
-        private async Task<string> DownloadAsync(string bootstrapperUrl, TextWriter output)
+        async Task<string> DownloadAsync(string bootstrapperUrl, TextWriter output)
         {
             using (var client = new HttpClient())
             {
