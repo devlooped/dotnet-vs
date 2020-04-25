@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using Mono.Options;
@@ -15,47 +16,70 @@ namespace VisualStudio
     public class WorkloadOptions : OptionSet
     {
         readonly string argument;
+        private readonly string prefix;
+        private readonly string outputArgumentPrefix;
         ImmutableArray<string> arguments = ImmutableArray.Create<string>();
 
-        static class Aliases
+        Dictionary<string, string> aliases = new Dictionary<string, string>
         {
-            public const string mobile = "Microsoft.VisualStudio.Workload.NetCrossPlat";
-            public const string xamarin = "Microsoft.VisualStudio.Workload.NetCrossPlat";
-            public const string core = "Microsoft.VisualStudio.Workload.NetCoreTools";
-            public const string azure = "Microsoft.VisualStudio.Workload.Azure";
-            public const string data = "Microsoft.VisualStudio.Workload.Data";
-            public const string desktop = "Microsoft.VisualStudio.Workload.ManagedDesktop";
-            public const string unity = "Microsoft.VisualStudio.Workload.ManagedGame";
-            public const string native = "Microsoft.VisualStudio.Workload.NativeDesktop";
-            public const string web = "Microsoft.VisualStudio.Workload.NetWeb";
-            public const string node = "Microsoft.VisualStudio.Workload.Node";
-            public const string office = "Microsoft.VisualStudio.Workload.Office";
-            public const string python = "Microsoft.VisualStudio.Workload.Python";
-            public const string uwp = "Microsoft.VisualStudio.Workload.Universal";
-            public const string vsx = "Microsoft.VisualStudio.Workload.VisualStudioExtension";
-        }
+            { "mobile", "Microsoft.VisualStudio.Workload.NetCrossPlat" },
+            { "xamarin", "Microsoft.VisualStudio.Workload.NetCrossPlat" },
+            { "core", "Microsoft.VisualStudio.Workload.NetCoreTools" },
+            { "azure", "Microsoft.VisualStudio.Workload.Azure" },
+            { "data", "Microsoft.VisualStudio.Workload.Data" },
+            { "desktop", "Microsoft.VisualStudio.Workload.ManagedDesktop" },
+            { "unity", "Microsoft.VisualStudio.Workload.ManagedGame" },
+            { "native", "Microsoft.VisualStudio.Workload.NativeDesktop" },
+            { "web", "Microsoft.VisualStudio.Workload.NetWeb" },
+            { "node", "Microsoft.VisualStudio.Workload.Node" },
+            { "office", "Microsoft.VisualStudio.Workload.Office" },
+            { "python", "Microsoft.VisualStudio.Workload.Python" },
+            { "uwp", "Microsoft.VisualStudio.Workload.Universal" },
+            { "vsx", "Microsoft.VisualStudio.Workload.VisualStudioExtension" },
+        };
 
-        public WorkloadOptions(string argument)
+        public WorkloadOptions(string argument, string aliasPrefix = "--", string outputArgumentPrefix = "--")
         {
             this.argument = argument;
+            this.prefix = aliasPrefix;
+            this.outputArgumentPrefix = outputArgumentPrefix;
 
-            foreach (var field in typeof(Aliases).GetFields())
-            {
-                var id = (string)field.GetValue(null);
-                Add(field.Name, argument + " " + id, x =>
-                {
-                    if (x != null)
-                        arguments = arguments.Add(argument).Add(id);
-                });
-            }
+            Add("\n");
+            Add($"{argument}:", "A workload ID", id => arguments = arguments.Add(outputArgumentPrefix + argument).Add(id));
+
+            Add("\n\tWorkload ID aliases:");
+            foreach (var aliasPair in aliases)
+                Add($"\t{GetNormalizedString(aliasPrefix + aliasPair.Key)}{outputArgumentPrefix}{argument} {aliasPair.Value}");
         }
 
         protected override bool Parse(string argument, OptionContext c)
         {
-            if (argument[0] == '+')
-                argument = "--" + argument.Substring(1);
+            if (argument.StartsWith(prefix) && !argument.StartsWith(prefix + argument))
+                argument = "--" + this.argument + "=" + GetWorkloadId(argument.Substring(prefix.Length));
 
             return base.Parse(argument, c);
+        }
+
+        string GetWorkloadId(string value)
+        {
+            if (aliases.TryGetValue(value, out var workloadId))
+                return workloadId;
+
+            return value;
+        }
+
+        string GetNormalizedString(string value, int length = 20)
+        {
+            if (length == 0)
+                return string.Empty;
+            else if (string.IsNullOrEmpty(value))
+                return new string(' ', length);
+            else if (value.Length < length)
+                return string.Concat(value, new String(' ', length - value.Length));
+            else if (value.Length >= length)
+                return value.Substring(0, length - 4) + "... ";
+
+            return value;
         }
 
         public IEnumerable<string> Arguments => arguments;

@@ -1,55 +1,46 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
-using Mono.Options;
 using vswhere;
+using System.Text.Json;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace VisualStudio
 {
-    public class WhereCommand : Command
+    class WhereCommand : Command
     {
-        static readonly string vswhere = Path.Combine(Path.GetDirectoryName((Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly()).Location), "vswhere.exe");
-        readonly ProcessStartInfo psi = new ProcessStartInfo(vswhere)
-        {
-            RedirectStandardOutput = true,
-            ArgumentList = { "-nologo" }
-        };
-        readonly OptionSet options;
-        readonly WorkloadOptions workloads = new WorkloadOptions("-requires");
-        Sku? sku;
+        readonly WhereCommandDescriptor descriptor;
 
-        public WhereCommand()
+        public WhereCommand(WhereCommandDescriptor descriptor)
         {
-            options = new OptionSet
-            {
-                { "sku:", "Edition, one of [e|ent|enterprise], [p|pro|professional] or [c|com|community]. Defaults to 'community'.", s => sku = SkuOption.Parse(s) },
-            };
+            this.descriptor = descriptor;
         }
-
-        public override string Name => "where";
 
         public bool Quiet { get; set; }
 
-        public VisualStudioInstance[] Instances { get; private set; }
+        public IEnumerable<VisualStudioInstance> Instances { get; private set; } = Enumerable.Empty<VisualStudioInstance>();
 
-        public override async Task<int> ExecuteAsync(IEnumerable<string> args, TextWriter output)
+        public override async Task ExecuteAsync(TextWriter output)
         {
             Sku? sku = null;
-            var extra = workloads.Parse(options.Parse(args));
 
-            var formatJson = string.Join('=', args).Contains("-format=json", StringComparison.OrdinalIgnoreCase);
+            var formatJson = string.Join('=', descriptor.Arguments).Contains("-format=json", StringComparison.OrdinalIgnoreCase);
 
-            foreach (var arg in workloads.Arguments)
+            var psi = new ProcessStartInfo(descriptor.VsWherePath)
+            {
+                RedirectStandardOutput = true,
+                ArgumentList = { "-nologo" }
+            };
+
+            foreach (var arg in descriptor.WorkloadsArguments)
             {
                 psi.ArgumentList.Add(arg);
             }
-            foreach (var arg in extra)
+
+            foreach (var arg in descriptor.ExtraArguments)
             {
                 psi.ArgumentList.Add(arg);
             }
@@ -60,38 +51,14 @@ namespace VisualStudio
                 psi.ArgumentList.Add("Microsoft.VisualStudio.Product." + sku);
             }
 
-            if (args.Any(x => x == "-?" || x == "-h" || x == "-help"))
-            {
-                Console.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} {Name} [options]");
-                ShowOptions(output);
-                return 0;
-            }
-
             if (!Quiet)
                 psi.Log(output);
 
-            return await ProcessOutput(psi, line =>
+            await ProcessOutput(psi, line =>
             {
                 if (!Quiet)
                     output.WriteLine(line);
             }, formatJson);
-        }
-
-        public override void ShowOptions(TextWriter output)
-        {
-            options.WriteOptionDescriptions(output);
-            workloads.WriteOptionDescriptions(output);
-            Console.WriteLine("[vswhere.exe options]");
-            psi.ArgumentList.Add("-?");
-            var process = Process.Start(psi);
-            string line;
-            while ((line = process.StandardOutput.ReadLine()) != null)
-            {
-                if (line.StartsWith("Usage:") || line.StartsWith("Options:"))
-                    continue;
-
-                Console.WriteLine(line);
-            }
         }
 
         private async Task<int> ProcessOutput(ProcessStartInfo psi, Action<string> lineAction, bool readJson)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Mono.Options;
@@ -8,11 +9,12 @@ namespace VisualStudio
 {
     class Program
     {
-        static Dictionary<string, Command> commands = new Command[]
+        static Dictionary<string, CommandDescriptor> descriptors = new CommandDescriptor[]
         {
-            new InstallCommand(),
-            new RunCommand(),
-            new WhereCommand(),
+            new InstallCommandDescriptor(),
+            new RunCommandDescriptor(),
+            new WhereCommandDescriptor(),
+            new ModifyCommandDescriptor()
         }.ToDictionary(c => c.Name, StringComparer.OrdinalIgnoreCase);
 
         static async Task<int> Main(string[] args)
@@ -23,7 +25,6 @@ namespace VisualStudio
 #endif
 
             var help = false;
-            var command = "run";
             var options = new OptionSet
             {
                 { "?|h|help", "Display this help", h => help = h != null },
@@ -33,7 +34,7 @@ namespace VisualStudio
 
             if (args.Length == 1 && help)
             {
-                Console.Write($"Usage: {ThisAssembly.Metadata.AssemblyName} [{string.Join('|', commands.Keys)}] [options|-?|-h|--help]");
+                Console.Write($"Usage: {ThisAssembly.Metadata.AssemblyName} [{string.Join('|', descriptors.Keys)}] [options|-?|-h|--help]");
                 //foreach (var item in commands)
                 //{
                 //    Console.WriteLine();
@@ -43,15 +44,35 @@ namespace VisualStudio
                 return 0;
             }
 
-            var commandArgs = args.ToList();
-
-            if (args.Length > 0 && commands.ContainsKey(args[0]))
+            if (args.Any() && descriptors.TryGetValue(args[0], out var commandDescriptor))
             {
-                command = args[0];
-                commandArgs.RemoveAt(0);
+                try
+                {
+                    var commandFactory = new CommandFactory();
+                    var command = commandFactory.CreateCommand(commandDescriptor, args.Skip(1));
+
+                    await command.ExecuteAsync(Console.Out);
+                }
+                catch (ShowUsageException)
+                {
+                    ShowUsage(commandDescriptor, commandDescriptor.Options, Console.Out);
+                }
+                catch (OptionException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    ShowUsage(commandDescriptor, commandDescriptor.Options, Console.Out);
+                }
             }
 
-            return await commands[command].ExecuteAsync(commandArgs, Console.Out);
+            return 0;
+        }
+
+        static void ShowUsage(CommandDescriptor commandDescriptor, IOptionSet options, TextWriter output)
+        {
+            output.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} {commandDescriptor.Name} [options]");
+            options.WriteOptionDescriptions(output);
+
+            commandDescriptor.ShowUsage(output);
         }
     }
 }
