@@ -6,7 +6,7 @@ namespace VisualStudio
     {
         readonly VisualStudioOptions options = new VisualStudioOptions(showNickname: false);
 
-        public UpdateCommandDescriptor() => optionSet = new CompositeOptionsSet(options);
+        public UpdateCommandDescriptor() => OptionSet = new CompositeOptionSet(options);
 
         public Channel? Channel => options.Channel;
 

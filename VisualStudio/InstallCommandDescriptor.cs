@@ -8,7 +8,7 @@ namespace VisualStudio
         readonly VisualStudioOptions options = new VisualStudioOptions();
         readonly WorkloadOptions workloads = new WorkloadOptions("add", "+");
 
-        public InstallCommandDescriptor() => optionSet = new CompositeOptionsSet(options, workloads);
+        public InstallCommandDescriptor() => OptionSet = new CompositeOptionSet(options, workloads);
 
         public Channel? Channel => options.Channel;
 

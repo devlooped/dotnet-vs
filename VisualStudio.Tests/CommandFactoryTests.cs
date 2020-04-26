@@ -50,7 +50,7 @@ namespace VisualStudio.Tests
         {
             public TestCommandDescriptor()
             {
-                optionSet = new CompositeOptionsSet();
+                OptionSet = new CompositeOptionSet();
             }
         }
 

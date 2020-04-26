@@ -2,18 +2,17 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Mono.Options;
 using System.Collections.Immutable;
 
 namespace VisualStudio
 {
-    class CompositeOptionsSet : IOptionSet
+    class CompositeOptionSet : IOptionSet
     {
         readonly OptionSet defaultOptionSet;
         readonly ImmutableArray<OptionSet> optionSets;
 
-        public CompositeOptionsSet(params OptionSet[] optionSets)
+        public CompositeOptionSet(params OptionSet[] optionSets)
         {
             defaultOptionSet = new OptionSet();
 
@@ -22,11 +21,8 @@ namespace VisualStudio
                 .Add(defaultOptionSet);
         }
 
-        public OptionSet Add(string header) =>
-            defaultOptionSet.Add(header);
-
-        public OptionSet Add(string prototype, string description, Action<string> action) =>
-            defaultOptionSet.Add(prototype, description, action);
+        public IOptionSet With(OptionSet optionSet) =>
+            new CompositeOptionSet(optionSets.Add(optionSet).ToArray());
 
         public List<string> Parse(IEnumerable<string> arguments)
         {
@@ -41,8 +37,5 @@ namespace VisualStudio
             foreach (var optionSet in optionSets)
                 optionSet.WriteOptionDescriptions(writer);
         }
-
-        public IOptionSet With(OptionSet optionSet) =>
-            new CompositeOptionsSet(optionSets.Add(optionSet).ToArray());
     }
 }

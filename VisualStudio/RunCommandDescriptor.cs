@@ -11,7 +11,7 @@ namespace VisualStudio
 
         public RunCommandDescriptor()
         {
-            optionSet = new CompositeOptionsSet(
+            OptionSet = new CompositeOptionSet(
                 options,
                 new OptionSet
                 {

@@ -6,8 +6,8 @@ namespace VisualStudio
 {
     sealed class CommandFactory
     {
-        Dictionary<string, (Func<CommandDescriptor> Descriptor, Func<CommandDescriptor, Command> Command)> factories =
-            new Dictionary<string, (Func<CommandDescriptor> Descriptor, Func<CommandDescriptor, Command> Command)>();
+        Dictionary<string, (Func<CommandDescriptor> CreateDescriptor, Func<CommandDescriptor, Command> CreateCommand)> factories =
+            new Dictionary<string, (Func<CommandDescriptor> CreateDescriptor, Func<CommandDescriptor, Command> CreateCommand)>();
 
         public CommandFactory()
         {
@@ -35,11 +35,11 @@ namespace VisualStudio
             if (!factories.TryGetValue(command, out var factory))
                 throw new InvalidOperationException($"The command '{command}' is not registered");
 
-            var commandDescriptor = factory.Descriptor();
+            var commandDescriptor = factory.CreateDescriptor();
 
             commandDescriptor.Parse(args);
 
-            return factory.Command(commandDescriptor);
+            return factory.CreateCommand(commandDescriptor);
         }
     }
 }

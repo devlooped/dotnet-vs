@@ -9,7 +9,7 @@ namespace VisualStudio
         readonly WorkloadOptions addWorkloads = new WorkloadOptions("add", "+");
         readonly WorkloadOptions removeWorkloads = new WorkloadOptions("remove", "-");
 
-        public ModifyCommandDescriptor() => optionSet = new CompositeOptionsSet(options, addWorkloads, removeWorkloads);
+        public ModifyCommandDescriptor() => OptionSet = new CompositeOptionSet(options, addWorkloads, removeWorkloads);
 
         public Channel? Channel => options.Channel;
 

@@ -13,7 +13,7 @@ namespace VisualStudio
 
         public WhereCommandDescriptor(WhereService whereService)
         {
-            optionSet = new CompositeOptionsSet(options, workloads);
+            OptionSet = new CompositeOptionSet(options, workloads);
             this.whereService = whereService;
         }
 
