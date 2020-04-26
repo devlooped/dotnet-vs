@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -59,11 +60,12 @@ namespace VisualStudio
         {
             using (var client = new HttpClient())
             {
-                output.WriteLine($"Downloading {bootstrapperUrl}");
+                output.WriteLine($"Downloading {bootstrapperUrl}...");
                 var request = new HttpRequestMessage(HttpMethod.Get, bootstrapperUrl);
                 var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
                 response.EnsureSuccessStatusCode();
-                var filePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(request.RequestUri.AbsolutePath));
+                var filePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString(), new Uri(bootstrapperUrl).Segments.Last());
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
                 using (var httpStream = await response.Content.ReadAsStreamAsync())
                 {
                     using (var fileStream = File.Create(filePath))
