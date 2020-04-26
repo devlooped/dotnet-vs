@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Moq;
 using Xunit;
 
 namespace VisualStudio.Tests
@@ -10,46 +9,49 @@ namespace VisualStudio.Tests
     public class CommandFactoryTests
     {
         [Fact]
-        public void when_creating_command_with_empty_arguments_and_show_usage_is_enabled_then_show_usage()
+        public void when_creating_command_with_empty_arguments_then_command_is_created()
         {
             var commandFactory = new CommandFactory();
+            commandFactory.RegisterCommand<TestCommandDescriptor>("test", x => new TestCommand(x));
 
-            var commandDescriptor = new TestCommandDescriptor(showUsageWithEmtpyArguments: true);
-
-            Assert.Throws<ShowUsageException>(() => commandFactory.CreateCommand(commandDescriptor, Enumerable.Empty<string>()));
-        }
-
-        [Fact]
-        public void when_creating_command_with_empty_arguments_and_show_usage_is_not_enabled_then_command_is_created()
-        {
-            var commandFactory = new CommandFactory();
-
-            var commandDescriptor = new TestCommandDescriptor(showUsageWithEmtpyArguments: false);
-            var command = commandFactory.CreateCommand(commandDescriptor, Enumerable.Empty<string>());
+            var command = commandFactory.CreateCommand("test", Enumerable.Empty<string>());
 
             Assert.NotNull(command);
+            Assert.True(command is TestCommand);
         }
 
         [Fact]
         public void when_creating_command_with_help_argument_then_throws_show_usage()
         {
             var commandFactory = new CommandFactory();
+            commandFactory.RegisterCommand<TestCommandDescriptor>("test", x => new TestCommand(x));
 
-            var commandDescriptor = new TestCommandDescriptor();
-
-            Assert.Throws<ShowUsageException>(() => commandFactory.CreateCommand(commandDescriptor, new[] { "/h" }));
+            Assert.Throws<ShowUsageException>(() => commandFactory.CreateCommand("test", new[] { "/h" }));
         }
 
-        class TestCommandDescriptor : CommandDescriptor<TestCommand>
+        [Theory]
+        [InlineData("install", typeof(InstallCommand))]
+        [InlineData("run", typeof(RunCommand))]
+        [InlineData("where", typeof(WhereCommand))]
+        [InlineData("modify", typeof(ModifyCommand))]
+        [InlineData("update", typeof(UpdateCommand))]
+
+        public void when_creating_builtin_command_then_then_command_is_created(string commandName, Type expectedCommandType)
         {
-            public TestCommandDescriptor(bool showUsageWithEmtpyArguments = true)
+            var commandFactory = new CommandFactory();
+
+            var command = commandFactory.CreateCommand(commandName, Enumerable.Empty<string>());
+
+            Assert.NotNull(command);
+            Assert.Equal(expectedCommandType, command.GetType());
+        }
+
+        class TestCommandDescriptor : CommandDescriptor
+        {
+            public TestCommandDescriptor()
             {
-                ShowUsageWithEmptyArguments = showUsageWithEmtpyArguments;
-
-                Options = new CompositeOptionsSet();
+                optionSet = new CompositeOptionsSet();
             }
-
-            public override string Name => "test";
         }
 
         class TestCommand : Command<TestCommandDescriptor>

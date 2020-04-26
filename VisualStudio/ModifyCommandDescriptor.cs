@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using Mono.Options;
 
 namespace VisualStudio
 {
-    class ModifyCommandDescriptor : CommandDescriptor<ModifyCommand>
+    class ModifyCommandDescriptor : CommandDescriptor
     {
         readonly VisualStudioOptions options = new VisualStudioOptions(showNickname: false);
         readonly WorkloadOptions addWorkloads = new WorkloadOptions("add", "+");
         readonly WorkloadOptions removeWorkloads = new WorkloadOptions("remove", "-");
 
-        public ModifyCommandDescriptor() =>
-            Options = new CompositeOptionsSet(options, addWorkloads, removeWorkloads);
-
-        public override string Name => "modify";
+        public ModifyCommandDescriptor() => optionSet = new CompositeOptionsSet(options, addWorkloads, removeWorkloads);
 
         public Channel? Channel => options.Channel;
 

@@ -7,11 +7,16 @@ namespace VisualStudio
 {
     class UpdateCommand : Command<UpdateCommandDescriptor>
     {
-        public UpdateCommand(UpdateCommandDescriptor descriptor) : base(descriptor) { }
+        readonly WhereService whereService;
+
+        public UpdateCommand(UpdateCommandDescriptor descriptor, WhereService whereService) : base(descriptor)
+        {
+            this.whereService = whereService;
+        }
 
         public override async Task ExecuteAsync(TextWriter output)
         {
-            var instances = await WhereService.Instance.GetAllInstancesAsync(Descriptor.Sku, Descriptor.Channel);
+            var instances = await whereService.GetAllInstancesAsync(Descriptor.Sku, Descriptor.Channel);
 
             foreach (var instance in instances)
                 output.WriteLine("Updating " + instance.InstallationPath + "...");

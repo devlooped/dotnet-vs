@@ -1,23 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Reflection;
-using Mono.Options;
 
 namespace VisualStudio
 {
-    class WhereCommandDescriptor : CommandDescriptor<WhereCommand>
+    class WhereCommandDescriptor : CommandDescriptor
     {
         readonly VisualStudioOptions options = new VisualStudioOptions(showChannel: false, showNickname: false);
         readonly WorkloadOptions workloads = new WorkloadOptions("requires", "--", "-");
 
-        public WhereCommandDescriptor() => Options = new CompositeOptionsSet(options, workloads);
+        readonly WhereService whereService;
 
-        public override string Name => "where";
+        public WhereCommandDescriptor(WhereService whereService)
+        {
+            optionSet = new CompositeOptionsSet(options, workloads);
+            this.whereService = whereService;
+        }
 
         public Sku? Sku => options.Sku;
 
         public IEnumerable<string> WorkloadsArguments => workloads.Arguments;
+
+        public override void ShowUsage(TextWriter output)
+        {
+            base.ShowUsage(output);
+
+            whereService.ShowUsage(output);
+        }
     }
 }

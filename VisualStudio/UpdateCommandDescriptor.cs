@@ -2,14 +2,11 @@
 
 namespace VisualStudio
 {
-    class UpdateCommandDescriptor : CommandDescriptor<UpdateCommand>
+    class UpdateCommandDescriptor : CommandDescriptor
     {
         readonly VisualStudioOptions options = new VisualStudioOptions(showNickname: false);
 
-        public UpdateCommandDescriptor() =>
-            Options = new CompositeOptionsSet(options);
-
-        public override string Name => "update";
+        public UpdateCommandDescriptor() => optionSet = new CompositeOptionsSet(options);
 
         public Channel? Channel => options.Channel;
 

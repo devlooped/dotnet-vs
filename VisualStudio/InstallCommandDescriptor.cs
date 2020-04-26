@@ -3,15 +3,12 @@ using System.Collections.Generic;
 
 namespace VisualStudio
 {
-    class InstallCommandDescriptor : CommandDescriptor<InstallCommand>
+    class InstallCommandDescriptor : CommandDescriptor
     {
         readonly VisualStudioOptions options = new VisualStudioOptions();
         readonly WorkloadOptions workloads = new WorkloadOptions("add", "+");
 
-        public InstallCommandDescriptor() =>
-            Options = new CompositeOptionsSet(options, workloads);
-
-        public override string Name => "install";
+        public InstallCommandDescriptor() => optionSet = new CompositeOptionsSet(options, workloads);
 
         public Channel? Channel => options.Channel;
 

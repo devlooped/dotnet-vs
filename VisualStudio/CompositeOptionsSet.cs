@@ -41,5 +41,8 @@ namespace VisualStudio
             foreach (var optionSet in optionSets)
                 optionSet.WriteOptionDescriptions(writer);
         }
+
+        public IOptionSet With(OptionSet optionSet) =>
+            new CompositeOptionsSet(optionSets.Add(optionSet).ToArray());
     }
 }

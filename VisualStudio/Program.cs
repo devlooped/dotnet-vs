@@ -1,26 +1,18 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Mono.Options;
+using System.Collections.Generic;
 
 namespace VisualStudio
 {
     class Program
     {
-        static Dictionary<string, CommandDescriptor> descriptors = new CommandDescriptor[]
-        {
-            new InstallCommandDescriptor(),
-            new RunCommandDescriptor(),
-            new WhereCommandDescriptor(),
-            new ModifyCommandDescriptor(),
-            new UpdateCommandDescriptor()
-        }.ToDictionary(c => c.Name, StringComparer.OrdinalIgnoreCase);
-
         static async Task<int> Main(string[] args)
         {
+            var commandFactory = new CommandFactory();
+
 #if DEBUG
             Console.WriteLine($"{ThisAssembly.Metadata.AssemblyName} {string.Join(" ", args)}");
             //System.Diagnostics.Debugger.Launch();
@@ -28,43 +20,49 @@ namespace VisualStudio
 
             if (args.Length == 0 || new[] { "?", "/?", "/h", "--help", "help" }.Contains(args[0]))
             {
-                Console.WriteLine();
-                Console.Write($"Usage: {ThisAssembly.Metadata.AssemblyName} [{string.Join('|', descriptors.Keys)}] [options|-?|-h|--help]");
-                Console.WriteLine();
+                ShowUsage(commandFactory.RegisteredCommands);
 
                 return 0;
             }
 
-            if (args.Any() && descriptors.TryGetValue(args[0], out var commandDescriptor))
+            var commandName = args[0];
+
+            if (args.Any() && commandFactory.IsCommandRegistered(commandName))
             {
                 try
                 {
-                    var commandFactory = new CommandFactory();
-                    var command = commandFactory.CreateCommand(commandDescriptor, args.Skip(1));
+                    var command = commandFactory.CreateCommand(commandName, args.Skip(1));
 
                     await command.ExecuteAsync(Console.Out);
                 }
-                catch (ShowUsageException)
+                catch (ShowUsageException ex)
                 {
-                    ShowUsage(commandDescriptor, commandDescriptor.Options, Console.Out);
+                    ShowUsage(commandName, ex.CommandDescriptor, Console.Out);
                 }
                 catch (OptionException ex)
                 {
                     Console.WriteLine(ex.Message);
-                    ShowUsage(commandDescriptor, commandDescriptor.Options, Console.Out);
                 }
+            }
+            else
+            {
+                ShowUsage(commandFactory.RegisteredCommands);
             }
 
             return 0;
         }
 
-        static void ShowUsage(CommandDescriptor commandDescriptor, IOptionSet options, TextWriter output)
+        static void ShowUsage(IEnumerable<string> registeredCommands)
         {
-            output.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} {commandDescriptor.Name} [options]");
-            options.WriteOptionDescriptions(output);
+            Console.WriteLine();
+            Console.Write($"Usage: {ThisAssembly.Metadata.AssemblyName} [{string.Join('|', registeredCommands)}] [options|-?|-h|--help]");
+            Console.WriteLine();
+        }
 
-            if (commandDescriptor is WhereCommandDescriptor)
-                WhereService.Instance.ShowUsage(output);
+        static void ShowUsage(string commandName, CommandDescriptor commandDescriptor, TextWriter output)
+        {
+            output.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} {commandName} [options]");
+            commandDescriptor.ShowUsage(output);
         }
     }
 }

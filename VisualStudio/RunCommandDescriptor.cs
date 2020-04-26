@@ -4,15 +4,14 @@ using Mono.Options;
 
 namespace VisualStudio
 {
-    class RunCommandDescriptor : CommandDescriptor<RunCommand>
+    class RunCommandDescriptor : CommandDescriptor
     {
         readonly VisualStudioOptions options = new VisualStudioOptions(showNickname: false);
         readonly WorkloadOptions workloads = new WorkloadOptions("requires", "--", "-");
 
         public RunCommandDescriptor()
         {
-            ShowUsageWithEmptyArguments = false;
-            Options = new CompositeOptionsSet(
+            optionSet = new CompositeOptionsSet(
                 options,
                 new OptionSet
                 {
@@ -25,8 +24,6 @@ namespace VisualStudio
                 },
                 workloads);
         }
-
-        public override string Name => "run";
 
         public Channel? Channel => options.Channel;
 
