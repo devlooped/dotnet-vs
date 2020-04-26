@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,23 +26,12 @@ namespace VisualStudio
             //System.Diagnostics.Debugger.Launch();
 #endif
 
-            var help = false;
-            var options = new OptionSet
+            if (args.Length == 0 || new[] { "?", "/?", "/h", "--help", "help" }.Contains(args[0]))
             {
-                { "?|h|help", "Display this help", h => help = h != null },
-            };
-
-            options.Parse(args);
-
-            if (args.Length == 1 && help)
-            {
+                Console.WriteLine();
                 Console.Write($"Usage: {ThisAssembly.Metadata.AssemblyName} [{string.Join('|', descriptors.Keys)}] [options|-?|-h|--help]");
-                //foreach (var item in commands)
-                //{
-                //    Console.WriteLine();
-                //    Console.WriteLine($"::{item.Key}::");
-                //    item.Value.ShowOptions(Console.Out);
-                //}
+                Console.WriteLine();
+
                 return 0;
             }
 
