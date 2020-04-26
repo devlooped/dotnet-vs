@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace VisualStudio
@@ -7,6 +8,9 @@ namespace VisualStudio
     {
         public Command CreateCommand(CommandDescriptor commandDescriptor, IEnumerable<string> args, bool addHelpOption = true)
         {
+            if (commandDescriptor.ShowUsageWithEmptyArguments && !args.Any())
+                throw new ShowUsageException();
+
             bool help = false;
 
             if (addHelpOption)

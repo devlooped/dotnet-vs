@@ -17,6 +17,8 @@ namespace VisualStudio
 
         public abstract Type CommandType { get; }
 
+        public bool ShowUsageWithEmptyArguments { get; protected set; } = true;
+
         public virtual void ShowUsage(TextWriter output)
         { }
     }
