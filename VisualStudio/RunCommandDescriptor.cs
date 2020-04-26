@@ -10,6 +10,7 @@ namespace VisualStudio
 
         public RunCommandDescriptor()
         {
+            ShowUsageWithEmptyArguments = false;
             Options = new CompositeOptionsSet(
                 new OptionSet
                 {
