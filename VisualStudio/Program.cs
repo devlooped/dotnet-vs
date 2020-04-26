@@ -14,7 +14,8 @@ namespace VisualStudio
             new InstallCommandDescriptor(),
             new RunCommandDescriptor(),
             new WhereCommandDescriptor(),
-            new ModifyCommandDescriptor()
+            new ModifyCommandDescriptor(),
+            new UpdateCommandDescriptor()
         }.ToDictionary(c => c.Name, StringComparer.OrdinalIgnoreCase);
 
         static async Task<int> Main(string[] args)
