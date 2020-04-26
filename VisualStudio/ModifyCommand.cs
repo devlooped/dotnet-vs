@@ -28,7 +28,9 @@ namespace VisualStudio
             {
                 var args = new List<string>();
 
-                args.Add("--passive");
+                if (Descriptor.WorkloadsAdded.Any() || Descriptor.WorkloadsRemoved.Any())
+                    args.Add("--passive"); // otherwise let the user to select the workload in the UI
+
                 args.AddRange(Descriptor.WorkloadsAdded);
                 args.AddRange(Descriptor.WorkloadsRemoved);
 
