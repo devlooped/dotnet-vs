@@ -7,11 +7,16 @@ namespace VisualStudio
 {
     class ModifyCommand : Command<ModifyCommandDescriptor>
     {
-        public ModifyCommand(ModifyCommandDescriptor descriptor) : base(descriptor) { }
+        readonly WhereService whereService;
+
+        public ModifyCommand(ModifyCommandDescriptor descriptor, WhereService whereService) : base(descriptor)
+        {
+            this.whereService = whereService;
+        }
 
         public override async Task ExecuteAsync(TextWriter output)
         {
-            var instances = await WhereService.Instance.GetAllInstancesAsync(Descriptor.Sku, Descriptor.Channel);
+            var instances = await whereService.GetAllInstancesAsync(Descriptor.Sku, Descriptor.Channel);
 
             foreach (var instance in instances)
                 output.WriteLine(instance.InstallationPath);

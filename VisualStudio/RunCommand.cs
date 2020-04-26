@@ -3,7 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using vswhere;
 
@@ -12,8 +11,13 @@ namespace VisualStudio
     class RunCommand : Command<RunCommandDescriptor>
     {
         static readonly ToolSettings settings = new ToolSettings(ThisAssembly.Metadata.AssemblyName);
+        
+        readonly WhereService whereService;
 
-        public RunCommand(RunCommandDescriptor descriptor) : base(descriptor) { }
+        public RunCommand(RunCommandDescriptor descriptor, WhereService whereService) : base(descriptor)
+        {
+            this.whereService = whereService;
+        }
 
         public override async Task ExecuteAsync(TextWriter output)
         {
@@ -37,7 +41,7 @@ namespace VisualStudio
 
             var whereArgs = Descriptor.WorkloadsArguments.ToList();
 
-            IEnumerable<VisualStudioInstance> instances = (await WhereService.Instance
+            IEnumerable<VisualStudioInstance> instances = (await whereService
                 .GetAllInstancesAsync(Descriptor.Sku, Descriptor.Channel, extraArguments: Descriptor.WorkloadsArguments))
                 .OrderByDescending(i => i.Catalog.BuildVersion);
 

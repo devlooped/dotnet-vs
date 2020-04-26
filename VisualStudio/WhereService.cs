@@ -15,23 +15,6 @@ namespace VisualStudio
     {
         readonly string vswherePath = Path.Combine(Path.GetDirectoryName((Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly()).Location), "vswhere.exe");
 
-        static readonly object singletonLock = new object();
-        static WhereService instance;
-
-        public static WhereService Instance
-        {
-            get
-            {
-                lock (singletonLock)
-                {
-                    if (instance == null)
-                        instance = new WhereService();
-                }
-
-                return instance;
-            }
-        }
-
         public Task RunAsync(Sku? sku, IEnumerable<string> extraArguments, TextWriter output) =>
             RunCore(sku, extraArguments, output: output);
 

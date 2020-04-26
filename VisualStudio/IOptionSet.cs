@@ -8,6 +8,8 @@ namespace VisualStudio
 {
     interface IOptionSet
     {
+        public IOptionSet With(OptionSet optionSet);
+
         public OptionSet Add(string header);
 
         public OptionSet Add(string prototype, string description, Action<string> action);

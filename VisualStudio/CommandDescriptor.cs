@@ -1,27 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using Mono.Options;
 
 namespace VisualStudio
 {
     abstract class CommandDescriptor
     {
-        public abstract string Name { get; }
+        protected IOptionSet optionSet;
 
-        public IOptionSet Options { get; protected set; }
+        protected CommandDescriptor() { }
 
-        public IEnumerable<string> Arguments { get; set; } = Enumerable.Empty<string>();
+        protected CommandDescriptor(IOptionSet optionSet) => this.optionSet = optionSet;
 
-        public IEnumerable<string> ExtraArguments { get; set; } = Enumerable.Empty<string>();
+        public ImmutableArray<string> Arguments { get; set; } = ImmutableArray.Create<string>();
 
-        public abstract Type CommandType { get; }
+        public ImmutableArray<string> ExtraArguments { get; set; } = ImmutableArray.Create<string>();
 
-        public bool ShowUsageWithEmptyArguments { get; protected set; } = true;
-    }
+        public virtual void ShowUsage(TextWriter output) =>
+            optionSet.WriteOptionDescriptions(output);
 
-    abstract class CommandDescriptor<T> : CommandDescriptor where T : Command
-    {
-        public override Type CommandType => typeof(T);
+        public void Parse(IEnumerable<string> args)
+        {
+            var showHelp = false;
+            var helpOption = new OptionSet();
+            helpOption.Add(Environment.NewLine);
+            helpOption.Add("?|h|help", "Display this help", h => showHelp = h != null);
+
+            var extraArgs = optionSet.With(helpOption).Parse(args);
+
+            if (showHelp)
+                throw new ShowUsageException(this);
+
+            Arguments = ImmutableArray.Create(args.ToArray());
+            ExtraArguments = ImmutableArray.Create(extraArgs.ToArray());
+        }
     }
 }
