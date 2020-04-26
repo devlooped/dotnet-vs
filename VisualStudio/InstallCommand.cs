@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
@@ -9,65 +10,42 @@ namespace VisualStudio
 {
     class InstallCommand : Command<InstallCommandDescriptor>
     {
-        public InstallCommand(InstallCommandDescriptor descriptor) : base(descriptor) { }
+        readonly InstallerService installerService;
+
+        public InstallCommand(InstallCommandDescriptor descriptor, InstallerService installerService) : base(descriptor)
+        {
+            this.installerService = installerService;
+        }
 
         public override async Task ExecuteAsync(TextWriter output)
         {
-            var uri = new StringBuilder("https://aka.ms/vs/16/");
-            if (Descriptor.Channel == Channel.Preview)
-                uri = uri.Append("pre/");
-            else if (Descriptor.Channel == Channel.IntPreview)
-                uri = uri.Append("intpreview/");
-            else
-                uri = uri.Append("release/");
+            var args = new List<string>();
 
-            uri = uri.Append("vs_");
-            switch (Descriptor.Sku)
-            {
-                case Sku.Community:
-                    uri = uri.Append("community");
-                    break;
-                case Sku.Professional:
-                    uri = uri.Append("professional");
-                    break;
-                case Sku.Enterprise:
-                    uri = uri.Append("enterprise");
-                    break;
-                default:
-                    break;
-            }
-            uri = uri.Append(".exe");
+            args.AddRange(Descriptor.WorkloadArgs);
 
-            var bootstrapper = await DownloadAsync(uri.ToString(), output);
-
-            var psi = new ProcessStartInfo(bootstrapper);
-            foreach (var arg in Descriptor.WorkloadArgs)
-            {
-                psi.ArgumentList.Add(arg);
-            }
             if (!string.IsNullOrEmpty(Descriptor.Nickname))
             {
-                psi.ArgumentList.Add("--nickname");
-                psi.ArgumentList.Add(Descriptor.Nickname);
+                args.Add("--nickname");
+                args.Add(Descriptor.Nickname);
             }
-            foreach (var arg in Descriptor.ExtraArguments)
-            {
-                psi.ArgumentList.Add(arg);
-            }
+
+            args.AddRange(Descriptor.ExtraArguments);
 
             // TODO: for now, we assume we're always doing an install.
             var installBase = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Microsoft Visual Studio", "2019");
 
             // There is at least one install already, so use nicknames for the new one.
-            if (Directory.Exists(installBase) && !psi.ArgumentList.Contains("--nickname"))
+            if (Directory.Exists(installBase) && !args.Contains("--nickname"))
             {
-                psi.ArgumentList.Add("--nickname");
+                args.Add("--nickname");
                 if (Descriptor.Channel == Channel.Preview)
-                    psi.ArgumentList.Add("Preview");
+                    args.Add("Preview");
                 else if (Descriptor.Channel == Channel.IntPreview)
-                    psi.ArgumentList.Add("IntPreview");
+                    args.Add("IntPreview");
+                else if (Descriptor.Channel == Channel.Master)
+                    args.Add("master");
                 else
-                    psi.ArgumentList.Add(Descriptor.Sku.ToString().Substring(0, 3));
+                    args.Add(Descriptor.Sku.ToString().Substring(0, 3));
             }
 
             var installPath = Path.Combine(installBase, Descriptor.Sku.ToString());
@@ -83,34 +61,11 @@ namespace VisualStudio
 
             if (customPath)
             {
-                psi.ArgumentList.Add("--installPath");
-                psi.ArgumentList.Add(installPath);
+                args.Add("--installPath");
+                args.Add(installPath);
             }
 
-            psi.Log(output);
-            var process = Process.Start(psi);
-            process.WaitForExit();
-        }
-
-        async Task<string> DownloadAsync(string bootstrapperUrl, TextWriter output)
-        {
-            using (var client = new HttpClient())
-            {
-                output.WriteLine($"Downloading {bootstrapperUrl}");
-                var request = new HttpRequestMessage(HttpMethod.Get, bootstrapperUrl);
-                var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-                response.EnsureSuccessStatusCode();
-                var filePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(request.RequestUri.AbsolutePath));
-                using (var httpStream = await response.Content.ReadAsStreamAsync())
-                {
-                    using (var fileStream = File.Create(filePath))
-                    {
-                        await httpStream.CopyToAsync(fileStream, 8 * 1024);
-                    }
-                }
-
-                return filePath;
-            }
+            await installerService.RunAsync("install", Descriptor.Channel, Descriptor.Sku, args, output);
         }
     }
 }
