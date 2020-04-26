@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
@@ -54,7 +55,7 @@ namespace VisualStudio
 
         protected override bool Parse(string argument, OptionContext c)
         {
-            if (argument.StartsWith(prefix) && !argument.StartsWith(prefix + argument))
+            if (aliases.Keys.Any(alias => argument.StartsWith(prefix + alias)))
                 argument = "--" + this.argument + "=" + GetWorkloadId(argument.Substring(prefix.Length));
 
             return base.Parse(argument, c);
