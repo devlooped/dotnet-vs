@@ -6,17 +6,16 @@ namespace VisualStudio
 {
     class RunCommandDescriptor : CommandDescriptor<RunCommand>
     {
+        readonly VisualStudioOptions options = new VisualStudioOptions(showNickname: false);
         readonly WorkloadOptions workloads = new WorkloadOptions("requires", "--", "-");
 
         public RunCommandDescriptor()
         {
             ShowUsageWithEmptyArguments = false;
             Options = new CompositeOptionsSet(
+                options,
                 new OptionSet
                 {
-                    { "pre|preview", "Run preview version", p => Preview = p != null },
-                    { "int|internal", "Run internal (aka 'dogfood') version", d => Dogfood = d != null },
-                    { "sku:", "Run specific edition. One of [e|ent|enterprise], [p|pro|professional] or [c|com|community].", s => Sku = SkuOption.Parse(s) },
                     { "id:", "Run a specific instance by its ID", i => Id = i },
                     { "exp", "Run with /rootSuffix Exp.", e => Exp = e != null },
                     { "f|first", "If more than one instance matches the criteria, run the first one sorted by descending build version.", f => First = f != null },
@@ -29,11 +28,9 @@ namespace VisualStudio
 
         public override string Name => "run";
 
-        public bool Preview { get; private set; }
+        public Channel? Channel => options.Channel;
 
-        public bool Dogfood { get; private set; }
-
-        public Sku? Sku { get; private set; }
+        public Sku? Sku => options.Sku;
 
         public string Version { get; private set; }
 

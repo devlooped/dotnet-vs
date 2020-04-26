@@ -13,9 +13,9 @@ namespace VisualStudio
 
         public override string Name => "install";
 
-        public Channel Channel => options.Channel;
+        public Channel? Channel => options.Channel;
 
-        public Sku Sku => options.Sku;
+        public Sku? Sku => options.Sku;
 
         public string Nickname => options.Nickname;
 
