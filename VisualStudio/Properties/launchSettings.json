@@ -2,7 +2,7 @@
   "profiles": {
     "VisualStudio": {
       "commandName": "Project",
-      "commandLineArgs": "/h"
+      "commandLineArgs": "where --nick=master -format json"
     }
   }
 }

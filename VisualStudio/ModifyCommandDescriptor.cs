@@ -6,23 +6,18 @@ namespace VisualStudio
 {
     class ModifyCommandDescriptor : CommandDescriptor<ModifyCommand>
     {
+        readonly VisualStudioOptions options = new VisualStudioOptions();
         readonly WorkloadOptions addWorkloads = new WorkloadOptions("add", "+");
         readonly WorkloadOptions removeWorkloads = new WorkloadOptions("remove", "-");
 
-        public ModifyCommandDescriptor()
-        {
-            Options = new CompositeOptionsSet(
-                new OptionSet
-                {
-                    { "nick|nickname:", "The nickname of the VS instance to modify", n => Nickname = n },
-                },
-                addWorkloads,
-                removeWorkloads);
-        }
+        public ModifyCommandDescriptor() =>
+            Options = new CompositeOptionsSet(options, addWorkloads, removeWorkloads);
 
         public override string Name => "modify";
 
-        public string Nickname { get; private set; }
+        public Channel Channel => options.Channel;
+
+        public Sku Sku => options.Sku;
 
         public IEnumerable<string> WorkloadsAdded => addWorkloads.Arguments;
 
