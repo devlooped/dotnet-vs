@@ -9,23 +9,18 @@ using vswhere;
 
 namespace VisualStudio
 {
-    class RunCommand : Command
+    class RunCommand : Command<RunCommandDescriptor>
     {
         static readonly ToolSettings settings = new ToolSettings(ThisAssembly.Metadata.AssemblyName);
 
-        readonly RunCommandDescriptor descriptor;
-
-        public RunCommand(RunCommandDescriptor descriptor)
-        {
-            this.descriptor = descriptor;
-        }
+        public RunCommand(RunCommandDescriptor descriptor) : base(descriptor) { }
 
         public override async Task ExecuteAsync(TextWriter output)
         {
             var devenv = settings.Get("devenv");
             if (!string.IsNullOrEmpty(devenv))
             {
-                if (File.Exists(devenv) && !descriptor.Arguments.Any())
+                if (File.Exists(devenv) && !Descriptor.Arguments.Any())
                 {
                     Process.Start(devenv);
                 }
@@ -37,18 +32,18 @@ namespace VisualStudio
             }
 
             // Explicitly specified to remove existing default.
-            if (descriptor.SetDefault == false)
+            if (Descriptor.SetDefault == false)
                 settings.Set<string>("devenv", null);
 
-            var whereArgs = descriptor.WorkloadsArguments.ToList();
-            if (descriptor.Sku != null)
+            var whereArgs = Descriptor.WorkloadsArguments.ToList();
+            if (Descriptor.Sku != null)
             {
                 whereArgs.Add("-products");
-                whereArgs.Add("Microsoft.VisualStudio.Product." + descriptor.Sku);
+                whereArgs.Add("Microsoft.VisualStudio.Product." + Descriptor.Sku);
             }
 
             // We must include prerelease also when a specific ID was provided.
-            if (descriptor.Preview || descriptor.Dogfood || !string.IsNullOrEmpty(descriptor.Id))
+            if (Descriptor.Preview || Descriptor.Dogfood || !string.IsNullOrEmpty(Descriptor.Id))
                 whereArgs.Add("-prerelease");
 
             whereArgs.Add("-format");
@@ -59,26 +54,26 @@ namespace VisualStudio
 
             IEnumerable<VisualStudioInstance> instances = where.Instances.OrderByDescending(i => i.Catalog.BuildVersion);
 
-            if (!string.IsNullOrEmpty(descriptor.Id))
+            if (!string.IsNullOrEmpty(Descriptor.Id))
             {
                 // Providing an ID overrides all other filters
-                instances = instances.Where(i => i.InstanceId.Equals(descriptor.Id, StringComparison.OrdinalIgnoreCase));
+                instances = instances.Where(i => i.InstanceId.Equals(Descriptor.Id, StringComparison.OrdinalIgnoreCase));
             }
             else
             {
-                if (descriptor.Preview && descriptor.Dogfood)
+                if (Descriptor.Preview && Descriptor.Dogfood)
                     instances = instances.Where(i => i.ChannelId.EndsWith("Preview", StringComparison.OrdinalIgnoreCase));
-                else if (descriptor.Preview)
+                else if (Descriptor.Preview)
                     instances = instances.Where(i => i.ChannelId.EndsWith(".Preview", StringComparison.OrdinalIgnoreCase));
-                else if (descriptor.Dogfood)
+                else if (Descriptor.Dogfood)
                     instances = instances.Where(i => i.ChannelId.EndsWith(".IntPreview", StringComparison.OrdinalIgnoreCase));
 
-                if (descriptor.Version != null)
-                    instances = instances.Where(i => i.Catalog.ProductSemanticVersion.StartsWith(descriptor.Version));
+                if (Descriptor.Version != null)
+                    instances = instances.Where(i => i.Catalog.ProductSemanticVersion.StartsWith(Descriptor.Version));
             }
 
             var matches = instances.ToArray();
-            if (matches.Length == 1 || (matches.Length > 0 && descriptor.First))
+            if (matches.Length == 1 || (matches.Length > 0 && Descriptor.First))
             {
                 devenv = matches[0].ProductPath;
             }
@@ -104,12 +99,12 @@ namespace VisualStudio
             }
 
             var psi = new ProcessStartInfo(devenv);
-            foreach (var arg in descriptor.ExtraArguments)
+            foreach (var arg in Descriptor.ExtraArguments)
             {
                 psi.ArgumentList.Add(arg);
             }
 
-            if (descriptor.Exp)
+            if (Descriptor.Exp)
             {
                 psi.ArgumentList.Add("/rootSuffix");
                 psi.ArgumentList.Add("Exp");
@@ -117,11 +112,11 @@ namespace VisualStudio
 
             psi.Log(output);
             var process = Process.Start(psi);
-            if (descriptor.Wait)
+            if (Descriptor.Wait)
                 process.WaitForExit();
 
             // Explicitly specified to set a new default.
-            if (descriptor.SetDefault == true)
+            if (Descriptor.SetDefault == true)
                 settings.Set("devenv", devenv);
         }
     }

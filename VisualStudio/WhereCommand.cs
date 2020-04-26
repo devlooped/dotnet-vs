@@ -10,14 +10,9 @@ using System.Linq;
 
 namespace VisualStudio
 {
-    class WhereCommand : Command
+    class WhereCommand : Command<WhereCommandDescriptor>
     {
-        readonly WhereCommandDescriptor descriptor;
-
-        public WhereCommand(WhereCommandDescriptor descriptor)
-        {
-            this.descriptor = descriptor;
-        }
+        public WhereCommand(WhereCommandDescriptor descriptor) : base(descriptor) { }
 
         public bool Quiet { get; set; }
 
@@ -27,20 +22,20 @@ namespace VisualStudio
         {
             Sku? sku = null;
 
-            var formatJson = string.Join('=', descriptor.Arguments).Contains("-format=json", StringComparison.OrdinalIgnoreCase);
+            var formatJson = string.Join('=', Descriptor.Arguments).Contains("-format=json", StringComparison.OrdinalIgnoreCase);
 
-            var psi = new ProcessStartInfo(descriptor.VsWherePath)
+            var psi = new ProcessStartInfo(Descriptor.VsWherePath)
             {
                 RedirectStandardOutput = true,
                 ArgumentList = { "-nologo" }
             };
 
-            foreach (var arg in descriptor.WorkloadsArguments)
+            foreach (var arg in Descriptor.WorkloadsArguments)
             {
                 psi.ArgumentList.Add(arg);
             }
 
-            foreach (var arg in descriptor.ExtraArguments)
+            foreach (var arg in Descriptor.ExtraArguments)
             {
                 psi.ArgumentList.Add(arg);
             }

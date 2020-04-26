@@ -7,27 +7,22 @@ using System.Threading.Tasks;
 
 namespace VisualStudio
 {
-    class InstallCommand : Command
+    class InstallCommand : Command<InstallCommandDescriptor>
     {
-        readonly InstallCommandDescriptor descriptor;
-
-        public InstallCommand(InstallCommandDescriptor descriptor)
-        {
-            this.descriptor = descriptor;
-        }
+        public InstallCommand(InstallCommandDescriptor descriptor) : base(descriptor) { }
 
         public override async Task ExecuteAsync(TextWriter output)
         {
             var uri = new StringBuilder("https://aka.ms/vs/16/");
-            if (descriptor.Channel == Channel.Preview)
+            if (Descriptor.Channel == Channel.Preview)
                 uri = uri.Append("pre/");
-            else if (descriptor.Channel == Channel.IntPreview)
+            else if (Descriptor.Channel == Channel.IntPreview)
                 uri = uri.Append("intpreview/");
             else
                 uri = uri.Append("release/");
 
             uri = uri.Append("vs_");
-            switch (descriptor.Sku)
+            switch (Descriptor.Sku)
             {
                 case Sku.Community:
                     uri = uri.Append("community");
@@ -46,16 +41,16 @@ namespace VisualStudio
             var bootstrapper = await DownloadAsync(uri.ToString(), output);
 
             var psi = new ProcessStartInfo(bootstrapper);
-            foreach (var arg in descriptor.WorkloadArgs)
+            foreach (var arg in Descriptor.WorkloadArgs)
             {
                 psi.ArgumentList.Add(arg);
             }
-            if (!string.IsNullOrEmpty(descriptor.Nickname))
+            if (!string.IsNullOrEmpty(Descriptor.Nickname))
             {
                 psi.ArgumentList.Add("--nickname");
-                psi.ArgumentList.Add(descriptor.Nickname);
+                psi.ArgumentList.Add(Descriptor.Nickname);
             }
-            foreach (var arg in descriptor.ExtraArguments)
+            foreach (var arg in Descriptor.ExtraArguments)
             {
                 psi.ArgumentList.Add(arg);
             }
@@ -67,22 +62,22 @@ namespace VisualStudio
             if (Directory.Exists(installBase) && !psi.ArgumentList.Contains("--nickname"))
             {
                 psi.ArgumentList.Add("--nickname");
-                if (descriptor.Channel == Channel.Preview)
+                if (Descriptor.Channel == Channel.Preview)
                     psi.ArgumentList.Add("Preview");
-                else if (descriptor.Channel == Channel.IntPreview)
+                else if (Descriptor.Channel == Channel.IntPreview)
                     psi.ArgumentList.Add("IntPreview");
                 else
-                    psi.ArgumentList.Add(descriptor.Sku.ToString().Substring(0, 3));
+                    psi.ArgumentList.Add(Descriptor.Sku.ToString().Substring(0, 3));
             }
 
-            var installPath = Path.Combine(installBase, descriptor.Sku.ToString());
+            var installPath = Path.Combine(installBase, Descriptor.Sku.ToString());
             var customPath = Directory.Exists(installPath);
             if (customPath)
             {
-                installPath = Path.Combine(installBase, descriptor.Channel == Channel.Preview ? "Preview" : descriptor.Channel == Channel.IntPreview ? "IntPreview" : descriptor.Sku.ToString());
+                installPath = Path.Combine(installBase, Descriptor.Channel == Channel.Preview ? "Preview" : Descriptor.Channel == Channel.IntPreview ? "IntPreview" : Descriptor.Sku.ToString());
                 if (Directory.Exists(installPath))
                 {
-                    installPath = Path.Combine(installBase, descriptor.Channel == Channel.Preview ? "Pre" + descriptor.Sku.ToString() : descriptor.Channel == Channel.IntPreview ? "Int" + descriptor.Sku.ToString() : descriptor.Sku.ToString());
+                    installPath = Path.Combine(installBase, Descriptor.Channel == Channel.Preview ? "Pre" + Descriptor.Sku.ToString() : Descriptor.Channel == Channel.IntPreview ? "Int" + Descriptor.Sku.ToString() : Descriptor.Sku.ToString());
                 }
             }
 
