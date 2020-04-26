@@ -26,7 +26,7 @@ namespace VisualStudio
             if (showSku)
             {
                 // Sku
-                Add("sku:", "Edition, one of [e|ent|enterprise], [p|pro|professional] or [c|com|community]", s => Sku = SkuOption.Parse(s));
+                Add("sku:", "Edition, one of [e|ent|enterprise], [p|pro|professional] or [c|com|community]", s => Sku = ParseSku(s));
             }
 
             if (showNickname)
@@ -34,6 +34,18 @@ namespace VisualStudio
                 // Nickname
                 Add("nick|nickname:", "Optional nickname to assign to the installation", n => Nickname = n);
             }
+        }
+
+        Sku ParseSku(string sku)
+        {
+            if (sku.StartsWith('e'))
+                return VisualStudio.Sku.Enterprise;
+            else if (sku.StartsWith("p"))
+                return VisualStudio.Sku.Professional;
+            else if (sku.StartsWith("c"))
+                return VisualStudio.Sku.Community;
+            else
+                throw new OptionException($"Invalid SKU {sku}. Must be one of {string.Join(", ", Enum.GetNames(typeof(Sku)).Select(x => x.ToLowerInvariant()))}.", "sku");
         }
 
         protected override bool Parse(string argument, OptionContext c)

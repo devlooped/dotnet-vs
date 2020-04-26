@@ -1,25 +1,42 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using vswhere;
 
 namespace VisualStudio
 {
     class ModifyCommand : Command<ModifyCommandDescriptor>
     {
         readonly WhereService whereService;
+        readonly InstallerService installerService;
 
-        public ModifyCommand(ModifyCommandDescriptor descriptor, WhereService whereService) : base(descriptor)
+        public ModifyCommand(ModifyCommandDescriptor descriptor, WhereService whereService, InstallerService installerService) : base(descriptor)
         {
             this.whereService = whereService;
+            this.installerService = installerService;
         }
 
         public override async Task ExecuteAsync(TextWriter output)
         {
             var instances = await whereService.GetAllInstancesAsync(Descriptor.Sku, Descriptor.Channel);
 
-            foreach (var instance in instances)
-                output.WriteLine(instance.InstallationPath);
+            var instance = new VisualStudioInstanceChooser().Choose(instances, output);
+
+            if (instance != null)
+            {
+                var args = new List<string>();
+
+                args.Add("--passive");
+                args.AddRange(Descriptor.WorkloadsAdded);
+                args.AddRange(Descriptor.WorkloadsRemoved);
+
+                args.Add("--installPath");
+                args.Add(instance.InstallationPath);
+
+                await installerService.RunAsync("modify", instance.GetChannel(), instance.GetSku(), args, output);
+            }
         }
     }
 }
