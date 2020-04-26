@@ -36,40 +36,19 @@ namespace VisualStudio
                 settings.Set<string>("devenv", null);
 
             var whereArgs = Descriptor.WorkloadsArguments.ToList();
-            if (Descriptor.Sku != null)
-            {
-                whereArgs.Add("-products");
-                whereArgs.Add("Microsoft.VisualStudio.Product." + Descriptor.Sku);
-            }
 
-            // We must include prerelease also when a specific ID was provided.
-            if (Descriptor.Preview || Descriptor.Dogfood || !string.IsNullOrEmpty(Descriptor.Id))
-                whereArgs.Add("-prerelease");
-
-            whereArgs.Add("-format");
-            whereArgs.Add("json");
-
-            var where = new WhereCommand(new WhereCommandDescriptor() { Arguments = whereArgs, ExtraArguments = whereArgs }) { Quiet = true };
-            await where.ExecuteAsync(output);
-
-            IEnumerable<VisualStudioInstance> instances = where.Instances.OrderByDescending(i => i.Catalog.BuildVersion);
+            IEnumerable<VisualStudioInstance> instances = (await WhereService.Instance
+                .GetAllInstancesAsync(Descriptor.Sku, Descriptor.Channel, extraArguments: Descriptor.WorkloadsArguments))
+                .OrderByDescending(i => i.Catalog.BuildVersion);
 
             if (!string.IsNullOrEmpty(Descriptor.Id))
             {
                 // Providing an ID overrides all other filters
                 instances = instances.Where(i => i.InstanceId.Equals(Descriptor.Id, StringComparison.OrdinalIgnoreCase));
             }
-            else
+            else if (Descriptor.Version != null)
             {
-                if (Descriptor.Preview && Descriptor.Dogfood)
-                    instances = instances.Where(i => i.ChannelId.EndsWith("Preview", StringComparison.OrdinalIgnoreCase));
-                else if (Descriptor.Preview)
-                    instances = instances.Where(i => i.ChannelId.EndsWith(".Preview", StringComparison.OrdinalIgnoreCase));
-                else if (Descriptor.Dogfood)
-                    instances = instances.Where(i => i.ChannelId.EndsWith(".IntPreview", StringComparison.OrdinalIgnoreCase));
-
-                if (Descriptor.Version != null)
-                    instances = instances.Where(i => i.Catalog.ProductSemanticVersion.StartsWith(Descriptor.Version));
+                instances = instances.Where(i => i.Catalog.ProductSemanticVersion.StartsWith(Descriptor.Version));
             }
 
             var matches = instances.ToArray();

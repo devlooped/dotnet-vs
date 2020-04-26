@@ -72,7 +72,8 @@ namespace VisualStudio
             output.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} {commandDescriptor.Name} [options]");
             options.WriteOptionDescriptions(output);
 
-            commandDescriptor.ShowUsage(output);
+            if (commandDescriptor is WhereCommandDescriptor)
+                WhereService.Instance.ShowUsage(output);
         }
     }
 }

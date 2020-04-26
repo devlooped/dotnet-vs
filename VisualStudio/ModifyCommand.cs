@@ -11,6 +11,10 @@ namespace VisualStudio
 
         public override async Task ExecuteAsync(TextWriter output)
         {
+            var instances = await WhereService.Instance.GetAllInstancesAsync(Descriptor.Sku, Descriptor.Channel);
+
+            foreach (var instance in instances)
+                output.WriteLine(instance.InstallationPath);
         }
     }
 }
