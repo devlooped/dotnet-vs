@@ -18,7 +18,7 @@ namespace VisualStudio
             // Channel
             Add("pre|preview", "Install preview version", _ => Channel = Channel.Preview);
             Add("int|internal", "Install internal (aka 'dogfood') version", _ => Channel = Channel.IntPreview);
-            Add("master", "Install master version", _ => Channel = Channel.Master);
+            Add("master", "Install master version", _ => Channel = Channel.Master, hidden: true);
 
             // Sku
             Add("sku:", "Edition, one of [e|ent|enterprise], [p|pro|professional] or [c|com|community]. Defaults to 'community'.", s => Sku = SkuOption.Parse(s));
