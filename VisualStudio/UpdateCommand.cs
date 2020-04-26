@@ -2,24 +2,38 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using vswhere;
 
 namespace VisualStudio
 {
     class UpdateCommand : Command<UpdateCommandDescriptor>
     {
         readonly WhereService whereService;
+        readonly InstallerService installerService;
 
-        public UpdateCommand(UpdateCommandDescriptor descriptor, WhereService whereService) : base(descriptor)
+        public UpdateCommand(UpdateCommandDescriptor descriptor, WhereService whereService, InstallerService installerService) : base(descriptor)
         {
             this.whereService = whereService;
+            this.installerService = installerService;
         }
 
         public override async Task ExecuteAsync(TextWriter output)
         {
             var instances = await whereService.GetAllInstancesAsync(Descriptor.Sku, Descriptor.Channel);
 
-            foreach (var instance in instances)
-                output.WriteLine("Updating " + instance.InstallationPath + "...");
+            var instance = new VisualStudioInstanceChooser().Choose(instances, output);
+
+            if (instance != null)
+            {
+                var args = new List<string>();
+
+                args.Add("--passive");
+
+                args.Add("--installPath");
+                args.Add(instance.InstallationPath);
+
+                await installerService.RunAsync("update", instance.GetChannel(), instance.GetSku(), args, output);
+            }
         }
     }
 }
