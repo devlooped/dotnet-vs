@@ -19,9 +19,9 @@ namespace VisualStudio
         public override async Task ExecuteAsync(TextWriter output)
         {
             var uri = new StringBuilder("https://aka.ms/vs/16/");
-            if (descriptor.Preview)
+            if (descriptor.Channel == Channel.Preview)
                 uri = uri.Append("pre/");
-            else if (descriptor.Dogfood)
+            else if (descriptor.Channel == Channel.IntPreview)
                 uri = uri.Append("intpreview/");
             else
                 uri = uri.Append("release/");
@@ -67,9 +67,9 @@ namespace VisualStudio
             if (Directory.Exists(installBase) && !psi.ArgumentList.Contains("--nickname"))
             {
                 psi.ArgumentList.Add("--nickname");
-                if (descriptor.Preview)
+                if (descriptor.Channel == Channel.Preview)
                     psi.ArgumentList.Add("Preview");
-                else if (descriptor.Dogfood)
+                else if (descriptor.Channel == Channel.IntPreview)
                     psi.ArgumentList.Add("IntPreview");
                 else
                     psi.ArgumentList.Add(descriptor.Sku.ToString().Substring(0, 3));
@@ -79,10 +79,10 @@ namespace VisualStudio
             var customPath = Directory.Exists(installPath);
             if (customPath)
             {
-                installPath = Path.Combine(installBase, descriptor.Preview ? "Preview" : descriptor.Dogfood ? "IntPreview" : descriptor.Sku.ToString());
+                installPath = Path.Combine(installBase, descriptor.Channel == Channel.Preview ? "Preview" : descriptor.Channel == Channel.IntPreview ? "IntPreview" : descriptor.Sku.ToString());
                 if (Directory.Exists(installPath))
                 {
-                    installPath = Path.Combine(installBase, descriptor.Preview ? "Pre" + descriptor.Sku.ToString() : descriptor.Dogfood ? "Int" + descriptor.Sku.ToString() : descriptor.Sku.ToString());
+                    installPath = Path.Combine(installBase, descriptor.Channel == Channel.Preview ? "Pre" + descriptor.Sku.ToString() : descriptor.Channel == Channel.IntPreview ? "Int" + descriptor.Sku.ToString() : descriptor.Sku.ToString());
                 }
             }
 
