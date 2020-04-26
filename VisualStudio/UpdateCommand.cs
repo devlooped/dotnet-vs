@@ -32,6 +32,8 @@ namespace VisualStudio
                 args.Add("--installPath");
                 args.Add(instance.InstallationPath);
 
+                args.AddRange(Descriptor.ExtraArguments);
+
                 await installerService.RunAsync("update", instance.GetChannel(), instance.GetSku(), args, output);
             }
         }
