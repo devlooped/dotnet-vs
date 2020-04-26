@@ -11,7 +11,16 @@ namespace VisualStudio
 {
     class InstallerService
     {
-        public async Task RunAsync(string command, Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
+        public Task InstallAsync(Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output) =>
+            RunAsync(string.Empty, channel, sku, args, output);
+
+        public Task UpdateAsync(Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output) =>
+            RunAsync("update", channel, sku, args, output);
+
+        public Task ModifyAsync(Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output) =>
+            RunAsync("modify", channel, sku, args, output);
+
+        async Task RunAsync(string command, Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
         {
             var uri = new StringBuilder("https://aka.ms/vs/16/");
             if (channel == Channel.Preview)
@@ -45,7 +54,7 @@ namespace VisualStudio
             var psi = new ProcessStartInfo(bootstrapper);
 
             // install command should be empty
-            if (command != "install")
+            if (!string.IsNullOrEmpty(command))
                 psi.ArgumentList.Add(command);
 
             foreach (var arg in args)

@@ -65,7 +65,7 @@ namespace VisualStudio
                 args.Add(installPath);
             }
 
-            await installerService.RunAsync("install", Descriptor.Channel, Descriptor.Sku, args, output);
+            await installerService.InstallAsync(Descriptor.Channel, Descriptor.Sku, args, output);
         }
     }
 }
