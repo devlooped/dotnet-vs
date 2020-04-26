@@ -17,7 +17,7 @@ namespace VisualStudio
             RegisterCommand<InstallCommandDescriptor>("install", x => new InstallCommand(x, installerService));
             RegisterCommand<RunCommandDescriptor>("run", x => new RunCommand(x, whereService));
             RegisterCommand<WhereCommandDescriptor>("where", () => new WhereCommandDescriptor(whereService), x => new WhereCommand(x, whereService));
-            RegisterCommand<UpdateCommandDescriptor>("update", x => new UpdateCommand(x, whereService));
+            RegisterCommand<UpdateCommandDescriptor>("update", x => new UpdateCommand(x, whereService, installerService));
             RegisterCommand<ModifyCommandDescriptor>("modify", x => new ModifyCommand(x, whereService, installerService));
         }
 

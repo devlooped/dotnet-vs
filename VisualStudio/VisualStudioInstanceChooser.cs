@@ -22,6 +22,8 @@ namespace VisualStudio
 
                 if (int.TryParse(Console.ReadLine(), out var index) && index > 0 && index <= instancesAsList.Count)
                     return instancesAsList[index - 1];
+
+                return null;
             }
 
             return instances.FirstOrDefault();
