@@ -34,7 +34,7 @@ namespace VisualStudio
 
                 args.AddRange(Descriptor.ExtraArguments);
 
-                await installerService.RunAsync("update", instance.GetChannel(), instance.GetSku(), args, output);
+                await installerService.UpdateAsync(instance.GetChannel(), instance.GetSku(), args, output);
             }
         }
     }
