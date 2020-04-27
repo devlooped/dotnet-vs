@@ -2,7 +2,7 @@
   "profiles": {
     "VisualStudio": {
       "commandName": "Project",
-      "commandLineArgs": "run"
+      "commandLineArgs": "config -pre -exp"
     }
   }
 }
