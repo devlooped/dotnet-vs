@@ -17,7 +17,7 @@ namespace VisualStudio
         public override async Task ExecuteAsync(TextWriter output)
         {
             var instances = await whereService.GetAllInstancesAsync(Descriptor.Sku, Descriptor.Channel);
-            var instance = new VisualStudioInstanceChooser().Choose(instances, output);
+            var instance = new Chooser().Choose(instances, output);
 
             if (instance != null)
             {

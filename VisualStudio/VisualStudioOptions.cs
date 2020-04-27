@@ -12,8 +12,14 @@ namespace VisualStudio
     {
         string[] channelShortcuts = new[] { "pre", "preview", "int", "internal", "master" };
         string[] skuShortcuts = new[] { "e", "ent", "enterprise", "p", "pro", "professional", "c", "com", "community" };
+        string[] experimentalShortcuts = new[] { "exp", "experimental" };
 
-        public VisualStudioOptions(string channelVerb = "Install", bool showChannel = true, bool showSku = true, bool showNickname = true)
+        public VisualStudioOptions(
+            string channelVerb = "Install",
+            bool showChannel = true,
+            bool showSku = true,
+            bool showNickname = true,
+            bool showExp = false)
         {
             if (showChannel)
             {
@@ -33,6 +39,11 @@ namespace VisualStudio
             {
                 // Nickname
                 Add("nick|nickname:", "Optional nickname to use", n => Nickname = n);
+            }
+
+            if (showExp)
+            {
+                Add("exp|experimental", $"{channelVerb} experimental instance instead of regular.", e => IsExperimental = e != null);
             }
         }
 
@@ -56,6 +67,9 @@ namespace VisualStudio
             if (skuShortcuts.Contains(argument.ToLowerInvariant()))
                 argument = "--sku=" + argument;
 
+            if (experimentalShortcuts.Contains(argument.ToLowerInvariant()))
+                argument = "--" + argument;
+
             return base.Parse(argument, c);
         }
 
@@ -64,5 +78,7 @@ namespace VisualStudio
         public Sku? Sku { get; private set; }
 
         public string Nickname { get; private set; }
+
+        public bool IsExperimental { get; private set; }
     }
 }

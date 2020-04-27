@@ -2,7 +2,7 @@
   "profiles": {
     "VisualStudio": {
       "commandName": "Project",
-      "commandLineArgs": "config -pre -exp"
+      "commandLineArgs": "kill all exp"
     }
   }
 }

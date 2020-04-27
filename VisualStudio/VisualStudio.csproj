@@ -21,6 +21,7 @@
     <PackageReference Include="vswhere" Version="2.8.4" PrivateAssets="all"  />
     <PackageReference Include="Mono.Options" Version="6.6.0.161" />
     <PackageReference Include="MSBuilder.ThisAssembly.Metadata" Version="0.1.4" PrivateAssets="all" />
+    <PackageReference Include="System.Management" Version="5.0.0-preview.3.20214.6" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,18 +5,14 @@ namespace VisualStudio
 {
     class LogCommandDescriptor : CommandDescriptor
     {
-        readonly VisualStudioOptions options = new VisualStudioOptions(channelVerb: "Open", showNickname: false);
-        bool exp;
+        readonly VisualStudioOptions options = new VisualStudioOptions(channelVerb: "Open", showNickname: false, showExp: true);
 
-        public LogCommandDescriptor() => OptionSet = new CompositeOptionSet(options, new OptionSet
-            {
-                { "exp", "Use experimental instance instead of regular.", e => exp = e != null },
-            });
+        public LogCommandDescriptor() => OptionSet = new CompositeOptionSet(options);
 
         public Channel? Channel => options.Channel;
 
         public Sku? Sku => options.Sku;
 
-        public bool Experimental => exp;
+        public bool IsExperimental => options.IsExperimental;
     }
 }
