@@ -21,6 +21,7 @@ namespace VisualStudio
             RegisterCommand<ModifyCommandDescriptor>("modify", x => new ModifyCommand(x, whereService, installerService));
             RegisterCommand<ConfigCommandDescriptor>("config", x => new ConfigCommand(x, whereService));
             RegisterCommand<LogCommandDescriptor>("log", x => new LogCommand(x, whereService));
+            RegisterCommand<KillCommandDescriptor>("kill", x => new KillCommand(x, whereService));
         }
 
         public IEnumerable<string> RegisteredCommands => factories.Keys;

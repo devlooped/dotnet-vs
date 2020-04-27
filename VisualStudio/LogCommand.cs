@@ -17,12 +17,12 @@ namespace VisualStudio
         public override async Task ExecuteAsync(TextWriter output)
         {
             var instances = await whereService.GetAllInstancesAsync(Descriptor.Sku, Descriptor.Channel);
-            var instance = new VisualStudioInstanceChooser().Choose(instances, output);
+            var instance = new Chooser().Choose(instances, output);
 
             if (instance != null)
             {
                 var instanceDir = instance.InstallationVersion.Major + ".0_" + instance.InstanceId;
-                if (Descriptor.Experimental)
+                if (Descriptor.IsExperimental)
                     instanceDir += "Exp";
 
                 var path = Path.Combine(
