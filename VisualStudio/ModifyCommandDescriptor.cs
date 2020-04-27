@@ -5,7 +5,7 @@ namespace VisualStudio
 {
     class ModifyCommandDescriptor : CommandDescriptor
     {
-        readonly VisualStudioOptions options = new VisualStudioOptions(showNickname: false);
+        readonly VisualStudioOptions options = new VisualStudioOptions(channelVerb: "Modify", showNickname: false);
         readonly WorkloadOptions addWorkloads = new WorkloadOptions("add", "+");
         readonly WorkloadOptions removeWorkloads = new WorkloadOptions("remove", "-");
 

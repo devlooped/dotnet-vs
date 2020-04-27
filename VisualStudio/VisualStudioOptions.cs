@@ -13,14 +13,14 @@ namespace VisualStudio
         string[] channelShortcuts = new[] { "pre", "preview", "int", "internal", "master" };
         string[] skuShortcuts = new[] { "e", "ent", "enterprise", "p", "pro", "professional", "c", "com", "community" };
 
-        public VisualStudioOptions(bool showChannel = true, bool showSku = true, bool showNickname = true)
+        public VisualStudioOptions(string channelVerb = "Install", bool showChannel = true, bool showSku = true, bool showNickname = true)
         {
             if (showChannel)
             {
                 // Channel
-                Add("pre|preview", "Install preview version", _ => Channel = VisualStudio.Channel.Preview);
-                Add("int|internal", "Install internal (aka 'dogfood') version", _ => Channel = VisualStudio.Channel.IntPreview);
-                Add("master", "Install master version", _ => Channel = VisualStudio.Channel.Master, hidden: true);
+                Add("pre|preview", channelVerb + " preview version", _ => Channel = VisualStudio.Channel.Preview);
+                Add("int|internal", channelVerb + " internal (aka 'dogfood') version", _ => Channel = VisualStudio.Channel.IntPreview);
+                Add("master", channelVerb + " master version", _ => Channel = VisualStudio.Channel.Master, hidden: true);
             }
 
             if (showSku)
@@ -32,7 +32,7 @@ namespace VisualStudio
             if (showNickname)
             {
                 // Nickname
-                Add("nick|nickname:", "Optional nickname to assign to the installation", n => Nickname = n);
+                Add("nick|nickname:", "Optional nickname to use", n => Nickname = n);
             }
         }
 
