@@ -29,6 +29,16 @@ stages:
         configuration: $(Configuration)
         msbuildArguments: -r
 
+    - task: VSTest@2
+      displayName: Test
+      inputs:
+        testAssemblyVer2: '**/bin/**/*Tests.dll'
+        runInParallel: true
+        codeCoverageEnabled: false
+        publishRunAttachments: true
+        diagnosticsEnabled: false
+        rerunFailedTests: true
+        
     - task: PublishBuildArtifacts@1
       displayName: Upload
       condition: succeeded()
