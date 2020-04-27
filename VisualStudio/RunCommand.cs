@@ -24,7 +24,8 @@ namespace VisualStudio
             var devenv = settings.Get("devenv");
             if (!string.IsNullOrEmpty(devenv))
             {
-                if (File.Exists(devenv) && !Descriptor.Arguments.Any())
+
+                if (File.Exists(devenv) && Descriptor.EmptyArguments)
                 {
                     Process.Start(devenv);
                 }

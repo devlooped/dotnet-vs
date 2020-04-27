@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Mono.Options;
 
@@ -42,5 +43,14 @@ namespace VisualStudio
         public bool Exp { get; private set; }
 
         public IEnumerable<string> WorkloadsArguments => workloads.Arguments;
+
+        public bool EmptyArguments { get; set; }
+
+        public override void Parse(IEnumerable<string> args)
+        {
+            base.Parse(args);
+
+            EmptyArguments = !args.Any();
+        }
     }
 }
