@@ -5,18 +5,14 @@ namespace VisualStudio
 {
     class ConfigCommandDescriptor : CommandDescriptor
     {
-        readonly VisualStudioOptions options = new VisualStudioOptions(channelVerb: "Open", showNickname: false);
-        bool exp;
+        readonly VisualStudioOptions options = new VisualStudioOptions(channelVerb: "Open", showExp: true, showNickname: false);
 
-        public ConfigCommandDescriptor() => OptionSet = new CompositeOptionSet(options, new OptionSet
-            {
-                { "exp", "Use experimental folder instead of regular.", e => exp = e != null },
-            });
+        public ConfigCommandDescriptor() => OptionSet = new CompositeOptionSet(options);
 
         public Channel? Channel => options.Channel;
 
         public Sku? Sku => options.Sku;
 
-        public bool Experimental => exp;
+        public bool Experimental => options.IsExperimental;
     }
 }
