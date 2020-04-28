@@ -24,13 +24,7 @@ namespace VisualStudio
                  select devenvProcess).Distinct().ToList();
 
             if (!Descriptor.KillAll)
-            {
-                var process = new Chooser("kill").Choose(targetProcesses, output);
-
-                targetProcesses.Clear();
-                if (process != null)
-                    targetProcesses.Add(process);
-            }
+                targetProcesses = new Chooser("kill").ChooseMany(targetProcesses, output).ToList();
 
             foreach (var process in targetProcesses)
             {
