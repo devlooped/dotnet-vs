@@ -7,7 +7,7 @@ namespace VisualStudio
 {
     class RunCommandDescriptor : CommandDescriptor
     {
-        readonly VisualStudioOptions options = new VisualStudioOptions(showNickname: false);
+        readonly VisualStudioOptions options = new VisualStudioOptions(showChannel: true, showExp: true, showNickname: false);
         readonly WorkloadOptions workloads = new WorkloadOptions("requires", "--", "-");
 
         public RunCommandDescriptor()
@@ -17,7 +17,6 @@ namespace VisualStudio
                 new OptionSet
                 {
                     { "id:", "Run a specific instance by its ID", i => Id = i },
-                    { "exp", "Run with /rootSuffix Exp.", e => Exp = e != null },
                     { "f|first", "If more than one instance matches the criteria, run the first one sorted by descending build version.", f => First = f != null },
                     { "v|version:", "Run specific (semantic) version, such as 16.4 or 16.5.3.", v => Version = v },
                     { "w|wait", "Wait for the started Visual Studio to exit.", w => Wait = w != null },
@@ -40,7 +39,7 @@ namespace VisualStudio
 
         public string Id { get; private set; }
 
-        public bool Exp { get; private set; }
+        public bool IsExperimental => options.IsExperimental;
 
         public IEnumerable<string> WorkloadsArguments => workloads.Arguments;
 

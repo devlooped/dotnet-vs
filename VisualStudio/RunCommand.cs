@@ -69,17 +69,11 @@ namespace VisualStudio
             else
             {
                 // More than one match but no --first, we need to ask which one to run
-                output.WriteLine("Multiple instances found. Select the one to run:");
-                for (var i = 0; i < matches.Length; i++)
-                {
-                    output.WriteLine($"{i}: {matches[i].DisplayName} - Version {matches[i].Catalog.ProductDisplayVersion}");
-                }
+                var instance = new Chooser().Choose(instances, output);
+                if (instance == null)
+                    return;
 
-                if (int.TryParse(Console.ReadLine(), out var index) &&
-                    index < matches.Length)
-                {
-                    devenv = matches[index].ProductPath;
-                }
+                devenv = instance.ProductPath;
             }
 
             var psi = new ProcessStartInfo(devenv);
@@ -88,7 +82,7 @@ namespace VisualStudio
                 psi.ArgumentList.Add(arg);
             }
 
-            if (Descriptor.Exp)
+            if (Descriptor.IsExperimental)
             {
                 psi.ArgumentList.Add("/rootSuffix");
                 psi.ArgumentList.Add("Exp");
@@ -96,12 +90,13 @@ namespace VisualStudio
 
             psi.Log(output);
             var process = Process.Start(psi);
-            if (Descriptor.Wait)
-                process.WaitForExit();
 
             // Explicitly specified to set a new default.
             if (Descriptor.SetDefault == true)
                 settings.Set("devenv", devenv);
+
+            if (Descriptor.Wait)
+                process.WaitForExit();
         }
     }
 }
