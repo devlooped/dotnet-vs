@@ -9,27 +9,58 @@ namespace VisualStudio
 {
     class Chooser
     {
-        readonly string title;
+        readonly string verb;
+        private readonly Func<string> inputProvider;
 
-        public Chooser(string verb = "run") => title = $"Multiple instances found. Select the one to {verb}:";
+        public Chooser(string verb = "run") : this(verb, () => Console.ReadLine()) { }
 
-        public T Choose<T>(IEnumerable<T> instances, TextWriter output)
+        protected Chooser(string verb, Func<string> inputProvider)
+        {
+            this.verb = verb;
+            this.inputProvider = inputProvider;
+        }
+
+        public T Choose<T>(IEnumerable<T> instances, TextWriter output) =>
+            ChooseCore(instances, output, false).FirstOrDefault();
+
+        public IEnumerable<T> ChooseMany<T>(IEnumerable<T> instances, TextWriter output) =>
+            ChooseCore(instances, output);
+
+        IEnumerable<T> ChooseCore<T>(IEnumerable<T> instances, TextWriter output, bool chooseMany = true)
         {
             var instancesAsList = instances.ToList();
 
             if (instancesAsList.Count > 1)
             {
-                output.WriteLine(title);
+                output.WriteLine($"Multiple instances found. Select the one to {verb}:");
                 for (int i = 0; i < instancesAsList.Count; i++)
                     output.WriteLine($"{i + 1}: {GetItemDescription(instancesAsList[i])}");
 
-                if (int.TryParse(Console.ReadLine(), out var index) && index > 0 && index <= instancesAsList.Count)
-                    return instancesAsList[index - 1];
+                if (chooseMany)
+                    output.WriteLine($"You can also {verb} [a|all] or skip !N");
 
-                return default;
+                if (inputProvider() is string input)
+                {
+                    var inverseSelection = false;
+
+                    if ("a".Equals(input, StringComparison.OrdinalIgnoreCase) || "all".Equals(input, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return instancesAsList;
+                    }
+                    else if (input.StartsWith("!"))
+                    {
+                        input = input.Substring(1);
+                        inverseSelection = true;
+                    }
+
+                    if (int.TryParse(input, out var index) && --index >= 0 && index < instancesAsList.Count)
+                        return inverseSelection ? instancesAsList.Where((x, i) => i != index) : new[] { instancesAsList[index] };
+                }
+
+                instancesAsList.Clear();
             }
 
-            return instances.FirstOrDefault();
+            return instancesAsList;
         }
 
         string GetItemDescription(object value)
