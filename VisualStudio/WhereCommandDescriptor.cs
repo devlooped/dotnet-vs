@@ -6,16 +6,21 @@ namespace VisualStudio
 {
     class WhereCommandDescriptor : CommandDescriptor
     {
-        readonly VisualStudioOptions options = new VisualStudioOptions(showChannel: false, showNickname: false);
+        readonly VisualStudioOptions options = new VisualStudioOptions(showNickname: false);
+        readonly AllOption allOption = new AllOption("show");
         readonly WorkloadOptions workloads = new WorkloadOptions("requires", "--", "-");
 
         readonly WhereService whereService;
 
         public WhereCommandDescriptor(WhereService whereService)
         {
-            OptionSet = new CompositeOptionSet(options, workloads);
+            OptionSet = new CompositeOptionSet(options, workloads, allOption);
             this.whereService = whereService;
         }
+
+        public bool ShowAll => allOption.All;
+
+        public Channel? Channel => options.Channel;
 
         public Sku? Sku => options.Sku;
 
