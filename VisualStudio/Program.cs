@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Mono.Options;
@@ -7,34 +8,52 @@ namespace VisualStudio
 {
     class Program
     {
+        static readonly CommandFactory commandFactory = new CommandFactory();
+        
+        TextWriter output;
+        bool execute;
+        string[] args;
+
         static async Task<int> Main(string[] args)
         {
-            var commandFactory = new CommandFactory();
-
             if (args.Length == 0 || new[] { "?", "-?", "/?", "-h", "/h", "--help", "/help" }.Contains(args[0]))
                 return ShowUsage(commandFactory);
 
+            return await new Program(Console.Out, true, args).RunAsync();
+        }
+
+        public Program(TextWriter output, bool execute, params string[] args)
+        {
+            this.output = output;
+            this.execute = execute;
+            this.args = args;
+
             // Run is the default command if another one is not specified.
             if (!commandFactory.IsCommandRegistered(args[0]))
-                args = args.Prepend("run").ToArray();
+                this.args = args.Prepend("run").ToArray();
+        }
 
+        public Command Command { get; private set; }
+
+        public async Task<int> RunAsync()
+        {
             var commandName = args[0];
             try
             {
-                var command = commandFactory.CreateCommand(commandName, args.Skip(1));
+                Command = commandFactory.CreateCommand(commandName, args.Skip(1));
 
-                await command.ExecuteAsync(Console.Out);
-                // TODO: other exceptions might provide an exit code?
+                if (execute)
+                    await Command.ExecuteAsync(output);
             }
             catch (ShowUsageException ex)
             {
-                Console.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} {commandName} [options]");
-                ex.CommandDescriptor.ShowUsage(Console.Out);
+                output.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} {commandName} [options]");
+                ex.CommandDescriptor.ShowUsage(output);
                 return -1;
             }
             catch (OptionException ex)
             {
-                Console.WriteLine(ex.Message);
+                output.WriteLine(ex.Message);
                 return -1;
             }
 
