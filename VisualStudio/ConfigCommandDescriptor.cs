@@ -1,5 +1,4 @@
 ﻿using System;
-using Mono.Options;
 
 namespace VisualStudio
 {
@@ -9,9 +8,7 @@ namespace VisualStudio
 
         public ConfigCommandDescriptor() => OptionSet = new CompositeOptionSet(options);
 
-        public Channel? Channel => options.Channel;
-
-        public Sku? Sku => options.Sku;
+        protected override VisualStudioOptions VisualStudioOptions => options;
 
         public bool Experimental => options.IsExperimental;
     }

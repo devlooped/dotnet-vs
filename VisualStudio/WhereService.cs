@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using vswhere;
@@ -15,10 +14,13 @@ namespace VisualStudio
     {
         readonly string vswherePath = Path.Combine(Path.GetDirectoryName((Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly()).Location), "vswhere.exe");
 
-        public Task<IEnumerable<VisualStudioInstance>> GetAllInstancesAsync(Sku? sku, Channel? channel) =>
-            GetAllInstancesAsync(sku, channel, Enumerable.Empty<string>());
+        public Task<IEnumerable<VisualStudioInstance>> GetAllInstancesAsync() =>
+            GetAllInstancesAsync(default);
 
-        public async Task<IEnumerable<VisualStudioInstance>> GetAllInstancesAsync(Sku? sku, Channel? channel, IEnumerable<string> extraArguments)
+        public Task<IEnumerable<VisualStudioInstance>> GetAllInstancesAsync(Func<VisualStudioInstance, bool> predicate) =>
+            GetAllInstancesAsync(predicate, Enumerable.Empty<string>());
+
+        public async Task<IEnumerable<VisualStudioInstance>> GetAllInstancesAsync(Func<VisualStudioInstance, bool> predicate, IEnumerable<string> extraArguments)
         {
             var psi = new ProcessStartInfo(vswherePath)
             {
@@ -35,12 +37,6 @@ namespace VisualStudio
             foreach (var arg in extraArguments)
                 psi.ArgumentList.Add(arg);
 
-            if (sku != null)
-            {
-                psi.ArgumentList.Add("-products");
-                psi.ArgumentList.Add("Microsoft.VisualStudio.Product." + sku);
-            }
-
             var process = Process.Start(psi);
 
             var instances = JsonSerializer.Deserialize<VisualStudioInstance[]>(
@@ -50,8 +46,7 @@ namespace VisualStudio
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 });
 
-            var channelId = GetChannelId(channel);
-            return instances.Where(x => string.IsNullOrEmpty(channelId) || x.ChannelId == channelId);
+            return predicate != null ? instances.Where(predicate) : instances;
         }
 
         public void ShowUsage(TextWriter output)
@@ -73,23 +68,6 @@ namespace VisualStudio
                     continue;
 
                 Console.WriteLine(line);
-            }
-        }
-
-        string GetChannelId(Channel? channel)
-        {
-            switch (channel)
-            {
-                case Channel.Release:
-                    return "VisualStudio.16.Release";
-                case Channel.Preview:
-                    return "VisualStudio.16.Preview";
-                case Channel.IntPreview:
-                    return "VisualStudio.16.IntPreview";
-                case Channel.Master:
-                    return "VisualStudio.16.int.master";
-                default:
-                    return default;
             }
         }
     }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
+using vswhere;
 
 namespace VisualStudio
 {
@@ -18,11 +20,9 @@ namespace VisualStudio
             this.whereService = whereService;
         }
 
+        protected override VisualStudioOptions VisualStudioOptions => options;
+
         public bool ShowAll => allOption.All;
-
-        public Channel? Channel => options.Channel;
-
-        public Sku? Sku => options.Sku;
 
         public IEnumerable<string> WorkloadsArguments => workloads.Arguments;
 

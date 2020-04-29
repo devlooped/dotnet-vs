@@ -11,9 +11,7 @@ namespace VisualStudio
 
         public ModifyCommandDescriptor() => OptionSet = new CompositeOptionSet(options, addWorkloads, removeWorkloads);
 
-        public Channel? Channel => options.Channel;
-
-        public Sku? Sku => options.Sku;
+        protected override VisualStudioOptions VisualStudioOptions => options;
 
         public IEnumerable<string> WorkloadsAdded => addWorkloads.Arguments;
 

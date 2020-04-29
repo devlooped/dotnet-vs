@@ -10,9 +10,7 @@ namespace VisualStudio
 
         public KillCommandDescriptor() => OptionSet = new CompositeOptionSet(options, allOption);
 
-        public Channel? Channel => options.Channel;
-
-        public Sku? Sku => options.Sku;
+        protected override VisualStudioOptions VisualStudioOptions => options;
 
         public bool IsExperimental => options.IsExperimental;
 
