@@ -43,7 +43,7 @@ namespace VisualStudio
             var whereArgs = Descriptor.WorkloadsArguments.ToList();
 
             IEnumerable<VisualStudioInstance> instances = (await whereService
-                .GetAllInstancesAsync(Descriptor.Sku, Descriptor.Channel, extraArguments: Descriptor.WorkloadsArguments))
+                .GetAllInstancesAsync(await Descriptor.GetPredicateAsync(), extraArguments: Descriptor.WorkloadsArguments))
                 .OrderByDescending(i => i.Catalog.BuildVersion);
 
             if (!string.IsNullOrEmpty(Descriptor.Id))

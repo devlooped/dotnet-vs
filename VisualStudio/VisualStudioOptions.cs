@@ -45,6 +45,16 @@ namespace VisualStudio
             {
                 Add("exp|experimental", $"{channelVerb} experimental instance instead of regular.", e => IsExperimental = e != null);
             }
+
+            Add("expr|expression:", "Expression to filter VS instances. E.g. \"x => x.InstanceId = '123'\"", e => Expression = e.Replace("'", "\""));
+        }
+
+        // To be overriden by unit tests
+        protected VisualStudioOptions(Sku? sku, Channel? channel, string expression)
+        {
+            Sku = sku;
+            Channel = channel;
+            Expression = expression;
         }
 
         Sku ParseSku(string sku)
@@ -70,6 +80,9 @@ namespace VisualStudio
             if (experimentalShortcuts.Contains(argument.ToLowerInvariant()))
                 argument = "--" + argument;
 
+            if (argument.Contains("=>"))
+                argument = "--expr=" + argument;
+
             return base.Parse(argument, c);
         }
 
@@ -80,5 +93,7 @@ namespace VisualStudio
         public string Nickname { get; private set; }
 
         public bool IsExperimental { get; private set; }
+
+        public string Expression { get; private set; }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
 using vswhere;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace VisualStudio
 {
@@ -21,8 +21,7 @@ namespace VisualStudio
         public override async Task ExecuteAsync(TextWriter output)
         {
             var instances = await whereService.GetAllInstancesAsync(
-                Descriptor.Sku,
-                Descriptor.Channel,
+                await Descriptor.GetPredicateAsync(),
                 Descriptor.WorkloadsArguments.Concat(Descriptor.ExtraArguments));
 
             if (!Descriptor.ShowAll)
@@ -38,8 +37,8 @@ namespace VisualStudio
             output.WriteLine($"{ instance.DisplayName} - Version { instance.Catalog.ProductDisplayVersion}");
 
             var props = GetProperties(instance, "Catalog", "Properties").ToList();
-            props.AddRange(GetProperties(instance.Catalog));
-            props.AddRange(GetProperties(instance.Properties));
+            props.AddRange(GetProperties(instance.Catalog).Select(x => ($"Catalog.{x.PropertyName}", x.PropertyValue)));
+            props.AddRange(GetProperties(instance.Properties).Select(x => ($"Properties.{x.PropertyName}", x.PropertyValue)));
 
             foreach (var prop in props)
                 output.WriteLine($"{prop.PropertyName}: {prop.PropertyValue}");

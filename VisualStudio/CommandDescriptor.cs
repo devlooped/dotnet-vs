@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
+using System.Threading.Tasks;
 using Mono.Options;
+using vswhere;
 
 namespace VisualStudio
 {
@@ -29,5 +31,10 @@ namespace VisualStudio
 
             ExtraArguments = ImmutableArray.Create(extraArgs.ToArray());
         }
+
+        protected virtual VisualStudioOptions VisualStudioOptions { get; }
+
+        public virtual Task<Func<VisualStudioInstance, bool>> GetPredicateAsync() =>
+            new VisualStudioPredicateBuilder().BuildPredicateAsync(VisualStudioOptions);
     }
 }

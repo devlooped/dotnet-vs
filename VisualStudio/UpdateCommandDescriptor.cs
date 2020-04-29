@@ -8,8 +8,6 @@ namespace VisualStudio
 
         public UpdateCommandDescriptor() => OptionSet = new CompositeOptionSet(options);
 
-        public Channel? Channel => options.Channel;
-
-        public Sku? Sku => options.Sku;
+        protected override VisualStudioOptions VisualStudioOptions => options;
     }
 }

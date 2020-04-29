@@ -25,9 +25,7 @@ namespace VisualStudio
                 workloads);
         }
 
-        public Channel? Channel => options.Channel;
-
-        public Sku? Sku => options.Sku;
+        protected override VisualStudioOptions VisualStudioOptions => options;
 
         public string Version { get; private set; }
 

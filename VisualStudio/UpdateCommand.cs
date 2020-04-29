@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace VisualStudio
 
         public override async Task ExecuteAsync(TextWriter output)
         {
-            var instances = await whereService.GetAllInstancesAsync(Descriptor.Sku, Descriptor.Channel);
+            var instances = await whereService.GetAllInstancesAsync(await Descriptor.GetPredicateAsync());
 
             var instance = new Chooser().Choose(instances, output);
 
