@@ -16,8 +16,6 @@ namespace VisualStudio
             this.whereService = whereService;
         }
 
-        public IEnumerable<VisualStudioInstance> Instances { get; private set; } = Enumerable.Empty<VisualStudioInstance>();
-
         public override async Task ExecuteAsync(TextWriter output)
         {
             var instances = await whereService.GetAllInstancesAsync(
@@ -28,20 +26,27 @@ namespace VisualStudio
                 instances = new Chooser("show").ChooseMany(instances, output);
 
             foreach (var instance in instances)
-                ShowProperties(instance, output);
+            {
+                var properties = GetProperties(instance);
+
+                if (!string.IsNullOrEmpty(Descriptor.Property))
+                    properties = properties.Where(x => x.PropertyName == Descriptor.Property);
+
+                output.WriteLine();
+                output.WriteLine($"{ instance.DisplayName} - Version { instance.Catalog.ProductDisplayVersion}");
+
+                foreach (var prop in properties)
+                    output.WriteLine($"{prop.PropertyName}: {prop.PropertyValue}");
+            }
         }
 
-        void ShowProperties(VisualStudioInstance instance, TextWriter output)
+        IEnumerable<(string PropertyName, object PropertyValue)> GetProperties(VisualStudioInstance instance)
         {
-            output.WriteLine();
-            output.WriteLine($"{ instance.DisplayName} - Version { instance.Catalog.ProductDisplayVersion}");
-
             var props = GetProperties(instance, "Catalog", "Properties").ToList();
             props.AddRange(GetProperties(instance.Catalog).Select(x => ($"Catalog.{x.PropertyName}", x.PropertyValue)));
             props.AddRange(GetProperties(instance.Properties).Select(x => ($"Properties.{x.PropertyName}", x.PropertyValue)));
 
-            foreach (var prop in props)
-                output.WriteLine($"{prop.PropertyName}: {prop.PropertyValue}");
+            return props;
         }
 
         IEnumerable<(string PropertyName, object PropertyValue)> GetProperties<T>(T instance, params string[] skipProps) =>
