@@ -8,7 +8,11 @@ namespace VisualStudio
         readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("install");
         readonly WorkloadOptions workloads = new WorkloadOptions("add", "+");
 
-        public InstallCommandDescriptor() => Options = vsOptions.With(workloads);
+        public InstallCommandDescriptor()
+        {
+            Description = "Installs a specific edition of Visual Studio";
+            Options = vsOptions.With(workloads);
+        }
 
         public Channel? Channel => vsOptions.Channel;
 

@@ -4,6 +4,10 @@ namespace VisualStudio
 {
     class UpdateCommandDescriptor : CommandDescriptor
     {
-        public UpdateCommandDescriptor() => Options = VisualStudioOptions.Default("Update");
+        public UpdateCommandDescriptor()
+        {
+            Description = "Updates an installtion of Visual Studio";
+            Options = VisualStudioOptions.Default("Update");
+        }
     }
 }

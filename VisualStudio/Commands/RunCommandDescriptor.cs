@@ -10,7 +10,9 @@ namespace VisualStudio
         readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default().WithExperimental();
         readonly WorkloadOptions workloads = new WorkloadOptions("requires", "--", "-");
 
-        public RunCommandDescriptor() =>
+        public RunCommandDescriptor()
+        {
+            Description = "This is default command, so typically it does not need to be provided as an argument.";
             Options = vsOptions
                 .With(
                     new OptionSet
@@ -22,6 +24,7 @@ namespace VisualStudio
                         { "default", "Set as the default version to run when no arguments are provided, or remove the current default (with --default-).", d => SetDefault = d != null },
                     })
                 .With(workloads);
+        }
 
         public string Version { get; private set; }
 

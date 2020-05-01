@@ -9,7 +9,7 @@ namespace VisualStudio
     class Program
     {
         static readonly CommandFactory commandFactory = new CommandFactory();
-        
+
         TextWriter output;
         bool execute;
         string[] args;
@@ -47,14 +47,27 @@ namespace VisualStudio
             }
             catch (ShowUsageException ex)
             {
-                output.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} {commandName} [options]");
-                ex.CommandDescriptor.ShowUsage(output);
-                return -1;
+                var writer = new DefaultTextWriter(output);
+
+                if (!string.IsNullOrEmpty(ex.CommandDescriptor.Description))
+                {
+                    writer.WriteLine(ex.CommandDescriptor.Description);
+                    writer.WriteLine();
+                }
+
+                writer.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} {commandName} [options]");
+
+                ex.CommandDescriptor.ShowUsage(writer);
+
+                // TODO try to extract the examples from the .md command documentation
+
+                return ErrorCodes.ShowUsage;
             }
             catch (OptionException ex)
             {
                 output.WriteLine(ex.Message);
-                return -1;
+
+                return ErrorCodes.OptionError;
             }
 
             return 0;
@@ -63,7 +76,7 @@ namespace VisualStudio
         static int ShowUsage(CommandFactory commandFactory)
         {
             Console.WriteLine();
-            Console.Write($"Usage: {ThisAssembly.Metadata.AssemblyName} [{string.Join('|', commandFactory.RegisteredCommands)}] [options|-?|-h|--help]");
+            Console.Write($"Usage: {ThisAssembly.Metadata.AssemblyName} [{string.Join('|', commandFactory.GetRegisteredCommands())}] [options|-?|-h|--help]");
             Console.WriteLine();
 
             return 0;

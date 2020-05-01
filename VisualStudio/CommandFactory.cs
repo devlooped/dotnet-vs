@@ -6,8 +6,8 @@ namespace VisualStudio
 {
     sealed class CommandFactory
     {
-        Dictionary<string, (Func<CommandDescriptor> CreateDescriptor, Func<CommandDescriptor, Command> CreateCommand)> factories =
-            new Dictionary<string, (Func<CommandDescriptor> CreateDescriptor, Func<CommandDescriptor, Command> CreateCommand)>();
+        Dictionary<string, (bool IsSystem, Func<CommandDescriptor> CreateDescriptor, Func<CommandDescriptor, Command> CreateCommand)> factories =
+            new Dictionary<string, (bool IsSystem, Func<CommandDescriptor> CreateDescriptor, Func<CommandDescriptor, Command> CreateCommand)>();
 
         public CommandFactory()
         {
@@ -22,17 +22,25 @@ namespace VisualStudio
             RegisterCommand<ConfigCommandDescriptor>("config", x => new ConfigCommand(x, whereService));
             RegisterCommand<LogCommandDescriptor>("log", x => new LogCommand(x, whereService));
             RegisterCommand<KillCommandDescriptor>("kill", x => new KillCommand(x, whereService));
+
+            // System commands
+            RegisterCommand(
+                "generate-readme",
+                () => new GenerateReadmeCommandDescriptor(factories.Where(x => !x.Value.IsSystem).ToDictionary(x => x.Key, x => x.Value.CreateDescriptor())),
+                x => new GenerateReadmeCommand(x), 
+                isSystem: true);
         }
 
-        public IEnumerable<string> RegisteredCommands => factories.Keys;
+        public IEnumerable<string> GetRegisteredCommands(bool includeSystemCommands = false) =>
+            factories.Where(x => includeSystemCommands || !x.Value.IsSystem).Select(x => x.Key);
 
         public bool IsCommandRegistered(string command) => factories.ContainsKey(command);
 
-        public void RegisterCommand<TDescriptor>(string command, Func<TDescriptor, Command> commandFactory) where TDescriptor : CommandDescriptor, new() =>
-            RegisterCommand(command, () => new TDescriptor(), commandFactory);
+        public void RegisterCommand<TDescriptor>(string command, Func<TDescriptor, Command> commandFactory, bool isSystem = false) where TDescriptor : CommandDescriptor, new() =>
+            RegisterCommand(command, () => new TDescriptor(), commandFactory, isSystem);
 
-        public void RegisterCommand<TDescriptor>(string command, Func<TDescriptor> descriptorFactory, Func<TDescriptor, Command> commandFactory) where TDescriptor : CommandDescriptor =>
-            factories.Add(command, (descriptorFactory, x => commandFactory((TDescriptor)x)));
+        public void RegisterCommand<TDescriptor>(string command, Func<TDescriptor> descriptorFactory, Func<TDescriptor, Command> commandFactory, bool isSystem = false) where TDescriptor : CommandDescriptor =>
+            factories.Add(command, (isSystem, descriptorFactory, x => commandFactory((TDescriptor)x)));
 
         public Command CreateCommand(string command, IEnumerable<string> args)
         {

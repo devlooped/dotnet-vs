@@ -14,6 +14,8 @@ namespace VisualStudio
 
         public WhereCommandDescriptor(WhereService whereService)
         {
+            Description = "Locates the installed version(s) of Visual Studio that satisfy the requested requirements, optionally retrieving installation properties from it.";
+
             Options = vsOptions
                 .With(selectProperty)
                 .With(workloads);
@@ -27,7 +29,7 @@ namespace VisualStudio
 
         public IEnumerable<string> WorkloadsArguments => workloads.Value;
 
-        public override void ShowUsage(TextWriter output)
+        public override void ShowUsage(ITextWriter output)
         {
             base.ShowUsage(output);
 

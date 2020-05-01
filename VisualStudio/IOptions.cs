@@ -11,8 +11,8 @@ namespace VisualStudio
 
         List<string> Parse(IEnumerable<string> arguments);
 
-        void ShowUsage(TextWriter writer);
+        void ShowUsage(ITextWriter writer);
 
-        T GetParsedValue<TOption, T>() where TOption : OptionSet<T>;
+        T GetValue<TOption, T>() where TOption : OptionSet<T>;
     }
 }

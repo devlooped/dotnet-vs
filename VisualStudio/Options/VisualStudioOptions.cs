@@ -10,10 +10,12 @@ namespace VisualStudio
     /// </summary>
     class VisualStudioOptions : IOptions
     {
+        public const string DefaultVerb = "run";
+
         readonly IOptions options;
         readonly string verb;
 
-        private VisualStudioOptions(string verb = "run")
+        private VisualStudioOptions(string verb)
             : this(verb, Options.Empty)
         { }
 
@@ -23,10 +25,13 @@ namespace VisualStudio
             this.options = options;
         }
 
-        public static VisualStudioOptions Default(string verb = "run") =>
-            new VisualStudioOptions(verb).WithChannel().WithSku().WithExpression();
+        public static VisualStudioOptions Full(string verb = DefaultVerb) =>
+            Default(verb).WithExperimental().WithNickname().WithSelectAll();
 
-        public static VisualStudioOptions Empty(string verb = "run") => new VisualStudioOptions(verb);
+        public static VisualStudioOptions Default(string verb = DefaultVerb) =>
+            Empty(verb).WithChannel().WithSku().WithExpression();
+
+        public static VisualStudioOptions Empty(string verb = DefaultVerb) => new VisualStudioOptions(verb);
 
         public VisualStudioOptions WithChannel() => new VisualStudioOptions(verb, options.With(new ChannelOption(verb)));
 
@@ -40,24 +45,24 @@ namespace VisualStudio
 
         public VisualStudioOptions WithNickname() => new VisualStudioOptions(verb, options.With(new NicknameOption()));
 
-        public Channel? Channel => GetParsedValue<ChannelOption, Channel?>();
+        public Channel? Channel => GetValue<ChannelOption, Channel?>();
 
-        public Sku? Sku => GetParsedValue<SkuOption, Sku?>();
+        public Sku? Sku => GetValue<SkuOption, Sku?>();
 
-        public bool IsExperimental => GetParsedValue<ExperimentalOption, bool>();
+        public bool IsExperimental => GetValue<ExperimentalOption, bool>();
 
-        public string Expression => GetParsedValue<ExpressionOption, string>();
+        public string Expression => GetValue<ExpressionOption, string>();
 
-        public bool All => GetParsedValue<SelectAllOption, bool>();
+        public bool All => GetValue<SelectAllOption, bool>();
 
-        public string Nickname => GetParsedValue<NicknameOption, string>();
+        public string Nickname => GetValue<NicknameOption, string>();
 
         public IOptions With(OptionSet optionSet) => new VisualStudioOptions(verb, options.With(optionSet));
 
         public List<string> Parse(IEnumerable<string> arguments) => options.Parse(arguments);
 
-        public void ShowUsage(TextWriter writer) => options.ShowUsage(writer);
+        public void ShowUsage(ITextWriter writer) => options.ShowUsage(writer);
 
-        public T GetParsedValue<TOption, T>() where TOption : OptionSet<T> => options.GetParsedValue<TOption, T>();
+        public T GetValue<TOption, T>() where TOption : OptionSet<T> => options.GetValue<TOption, T>();
     }
 }

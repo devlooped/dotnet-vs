@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using Xunit;
 
 namespace VisualStudio.Tests
@@ -128,18 +130,30 @@ namespace VisualStudio.Tests
             Assert.Equal(expectedValue, options.All);
         }
 
+        static (string[] Arguments, Func<VisualStudioOptions, bool> VerifyResult)[] TestCases =>
+            new (string[] Arguments, Func<VisualStudioOptions, bool> VerifyResult)[]
+            {
+                (new [] { "enterprise" , "preview" }, x => x.Sku == Sku.Enterprise && x.Channel == Channel.Preview),
+                (new [] { "master" , "exp" }, x => x.Channel == Channel.Master && x.IsExperimental),
+                (new [] { "all", "exp" }, x => x.All && x.IsExperimental),
+                (new [] { "ent", "master" }, x => x.Sku == Sku.Enterprise && x.Channel == Channel.Master),
+                (new [] { "master", "x => x.InstanceId == '123'" }, x => x.Channel == Channel.Master && x.Expression == "x => x.InstanceId == \"123\""),
+                (new [] { "pro" , "release", "--nick=foo" }, x => x.Sku == Sku.Professional && x.Channel == Channel.Release && x.Nickname == "foo"),
+            };
+
+        // Hack to use typed func and avoid to make VisualStudioOptions type public
+        public static IEnumerable<object[]> TestCasesData =>
+            TestCases.Select(x => new object[] { x.Arguments, (Func<object, bool>)(options => x.VerifyResult((VisualStudioOptions)options)) });
+
         [Theory]
-        [InlineData(Sku.Enterprise, Channel.Preview, "x => x.InstanceId == \"123\"", "Enterprise", "Preview", "x => x.InstanceId == '123'")]
-        [InlineData(Sku.Enterprise, Channel.Preview, "x => x.InstanceId == \"123\"", "/sku:Enterprise", "--preview", "x => x.InstanceId == '123'")]
-        public void when_parsing_with_default_options_then_sku_and_channel_and_expression_are_set(Sku expectedSku, Channel expectedChannel, string expectedExpression, params string[] arguments)
+        [MemberData(nameof(TestCasesData))]
+        public void when_parsing_arguments_then_arguments_are_set(string[] args, Func<object, bool> verify)
         {
-            var options = VisualStudioOptions.Default();
+            var options = VisualStudioOptions.Full();
 
-            options.Parse(arguments);
+            options.Parse(args);
 
-            Assert.Equal(expectedSku, options.Sku);
-            Assert.Equal(expectedChannel, options.Channel);
-            Assert.Equal(expectedExpression, options.Expression);
+            Assert.True(verify(options));
         }
     }
 }
