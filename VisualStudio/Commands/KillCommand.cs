@@ -18,7 +18,7 @@ namespace VisualStudio
         {
             var devenvProcesses = Process.GetProcessesByName("devenv").ToList();
             var targetProcesses =
-                (from instance in await whereService.GetAllInstancesAsync(await Descriptor.GetPredicateAsync())
+                (from instance in await whereService.GetAllInstancesAsync(Descriptor.Options)
                  from devenvProcess in devenvProcesses
                  where Match(devenvProcess, instance)
                  select devenvProcess).Distinct().ToList();

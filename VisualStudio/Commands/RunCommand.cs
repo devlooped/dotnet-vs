@@ -11,13 +11,11 @@ namespace VisualStudio
     class RunCommand : Command<RunCommandDescriptor>
     {
         static readonly ToolSettings settings = new ToolSettings(ThisAssembly.Metadata.AssemblyName);
-        
+
         readonly WhereService whereService;
 
-        public RunCommand(RunCommandDescriptor descriptor, WhereService whereService) : base(descriptor)
-        {
+        public RunCommand(RunCommandDescriptor descriptor, WhereService whereService) : base(descriptor) =>
             this.whereService = whereService;
-        }
 
         public override async Task ExecuteAsync(TextWriter output)
         {
@@ -43,7 +41,7 @@ namespace VisualStudio
             var whereArgs = Descriptor.WorkloadsArguments.ToList();
 
             IEnumerable<VisualStudioInstance> instances = (await whereService
-                .GetAllInstancesAsync(await Descriptor.GetPredicateAsync(), extraArguments: Descriptor.WorkloadsArguments))
+                .GetAllInstancesAsync(Descriptor.Options, extraArguments: Descriptor.WorkloadsArguments))
                 .OrderByDescending(i => i.Catalog.BuildVersion);
 
             if (!string.IsNullOrEmpty(Descriptor.Id))

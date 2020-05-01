@@ -12,7 +12,8 @@ namespace VisualStudio
         readonly WhereService whereService;
         readonly InstallerService installerService;
 
-        public UpdateCommand(UpdateCommandDescriptor descriptor, WhereService whereService, InstallerService installerService) : base(descriptor)
+        public UpdateCommand(UpdateCommandDescriptor descriptor, WhereService whereService, InstallerService installerService)
+            : base(descriptor)
         {
             this.whereService = whereService;
             this.installerService = installerService;
@@ -20,7 +21,7 @@ namespace VisualStudio
 
         public override async Task ExecuteAsync(TextWriter output)
         {
-            var instances = await whereService.GetAllInstancesAsync(await Descriptor.GetPredicateAsync());
+            var instances = await whereService.GetAllInstancesAsync(Descriptor.Options);
 
             var instance = new Chooser().Choose(instances, output);
 

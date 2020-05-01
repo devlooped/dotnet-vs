@@ -11,15 +11,13 @@ namespace VisualStudio
     {
         readonly WhereService whereService;
 
-        public WhereCommand(WhereCommandDescriptor descriptor, WhereService whereService) : base(descriptor)
-        {
+        public WhereCommand(WhereCommandDescriptor descriptor, WhereService whereService) : base(descriptor) =>
             this.whereService = whereService;
-        }
 
         public override async Task ExecuteAsync(TextWriter output)
         {
             var instances = await whereService.GetAllInstancesAsync(
-                await Descriptor.GetPredicateAsync(),
+                Descriptor.Options,
                 Descriptor.WorkloadsArguments.Concat(Descriptor.ExtraArguments));
 
             if (!Descriptor.ShowAll)

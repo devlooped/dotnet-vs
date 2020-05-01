@@ -1,99 +1,63 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.Immutable;
 using Mono.Options;
+using System.Collections.Generic;
+using System.IO;
 
 namespace VisualStudio
 {
     /// <summary>
     /// Provides visual studio selection options
     /// </summary>
-    public class VisualStudioOptions : OptionSet
+    class VisualStudioOptions : IOptions
     {
-        string[] channelShortcuts = new[] { "pre", "preview", "int", "internal", "master" };
-        string[] skuShortcuts = new[] { "e", "ent", "enterprise", "p", "pro", "professional", "c", "com", "community" };
-        string[] experimentalShortcuts = new[] { "exp", "experimental" };
+        readonly IOptions options;
+        readonly string verb;
 
-        public VisualStudioOptions(
-            string channelVerb = "Install",
-            bool showChannel = true,
-            bool showSku = true,
-            bool showNickname = true,
-            bool showExp = false)
+        private VisualStudioOptions(string verb = "run")
+            : this(verb, Options.Empty)
+        { }
+
+        private VisualStudioOptions(string verb, IOptions options)
         {
-            if (showChannel)
-            {
-                // Channel
-                Add("pre|preview", channelVerb + " preview version", _ => Channel = VisualStudio.Channel.Preview);
-                Add("int|internal", channelVerb + " internal (aka 'dogfood') version", _ => Channel = VisualStudio.Channel.IntPreview);
-                Add("master", channelVerb + " master version", _ => Channel = VisualStudio.Channel.Master, hidden: true);
-            }
-
-            if (showSku)
-            {
-                // Sku
-                Add("sku:", "Edition, one of [e|ent|enterprise], [p|pro|professional] or [c|com|community]", s => Sku = ParseSku(s));
-            }
-
-            if (showNickname)
-            {
-                // Nickname
-                Add("nick|nickname:", "Optional nickname to use", n => Nickname = n);
-            }
-
-            if (showExp)
-            {
-                Add("exp|experimental", $"{channelVerb} experimental instance instead of regular.", e => IsExperimental = e != null);
-            }
-
-            Add("expr|expression:", "Expression to filter VS instances. E.g. \"x => x.InstanceId = '123'\"", e => Expression = e.Replace("'", "\""));
+            this.verb = verb;
+            this.options = options;
         }
 
-        // To be overriden by unit tests
-        protected VisualStudioOptions(Sku? sku, Channel? channel, string expression)
-        {
-            Sku = sku;
-            Channel = channel;
-            Expression = expression;
-        }
+        public static VisualStudioOptions Default(string verb = "run") =>
+            new VisualStudioOptions(verb).WithChannel().WithSku().WithExpression();
 
-        Sku ParseSku(string sku)
-        {
-            if (sku.StartsWith('e'))
-                return VisualStudio.Sku.Enterprise;
-            else if (sku.StartsWith("p"))
-                return VisualStudio.Sku.Professional;
-            else if (sku.StartsWith("c"))
-                return VisualStudio.Sku.Community;
-            else
-                throw new OptionException($"Invalid SKU {sku}. Must be one of {string.Join(", ", Enum.GetNames(typeof(Sku)).Select(x => x.ToLowerInvariant()))}.", "sku");
-        }
+        public static VisualStudioOptions Empty(string verb = "run") => new VisualStudioOptions(verb);
 
-        protected override bool Parse(string argument, OptionContext c)
-        {
-            if (channelShortcuts.Contains(argument.ToLowerInvariant()))
-                argument = "--" + argument;
+        public VisualStudioOptions WithChannel() => new VisualStudioOptions(verb, options.With(new ChannelOption(verb)));
 
-            if (skuShortcuts.Contains(argument.ToLowerInvariant()))
-                argument = "--sku=" + argument;
+        public VisualStudioOptions WithSku() => new VisualStudioOptions(verb, options.With(new SkuOption()));
 
-            if (experimentalShortcuts.Contains(argument.ToLowerInvariant()))
-                argument = "--" + argument;
+        public VisualStudioOptions WithExperimental() => new VisualStudioOptions(verb, options.With(new ExperimentalOption(verb)));
 
-            if (argument.Contains("=>"))
-                argument = "--expr=" + argument;
+        public VisualStudioOptions WithExpression() => new VisualStudioOptions(verb, options.With(new ExpressionOption()));
 
-            return base.Parse(argument, c);
-        }
+        public VisualStudioOptions WithSelectAll() => new VisualStudioOptions(verb, options.With(new SelectAllOption(verb)));
 
-        public Channel? Channel { get; private set; }
+        public VisualStudioOptions WithNickname() => new VisualStudioOptions(verb, options.With(new NicknameOption()));
 
-        public Sku? Sku { get; private set; }
+        public Channel? Channel => GetParsedValue<ChannelOption, Channel?>();
 
-        public string Nickname { get; private set; }
+        public Sku? Sku => GetParsedValue<SkuOption, Sku?>();
 
-        public bool IsExperimental { get; private set; }
+        public bool IsExperimental => GetParsedValue<ExperimentalOption, bool>();
 
-        public string Expression { get; private set; }
+        public string Expression => GetParsedValue<ExpressionOption, string>();
+
+        public bool All => GetParsedValue<SelectAllOption, bool>();
+
+        public string Nickname => GetParsedValue<NicknameOption, string>();
+
+        public IOptions With(OptionSet optionSet) => new VisualStudioOptions(verb, options.With(optionSet));
+
+        public List<string> Parse(IEnumerable<string> arguments) => options.Parse(arguments);
+
+        public void ShowUsage(TextWriter writer) => options.ShowUsage(writer);
+
+        public T GetParsedValue<TOption, T>() where TOption : OptionSet<T> => options.GetParsedValue<TOption, T>();
     }
 }

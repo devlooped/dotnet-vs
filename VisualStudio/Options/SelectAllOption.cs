@@ -3,11 +3,11 @@ using Mono.Options;
 
 namespace VisualStudio
 {
-    public class AllOption : OptionSet
+    class SelectAllOption : OptionSet<bool>
     {
-        public AllOption(string verb)
+        public SelectAllOption(string verb)
         {
-            Add("all", $"{verb} all instances.", e => All = e != null);
+            Add("all", $"{verb} all instances.", e => Value = e != null);
         }
 
         protected override bool Parse(string argument, OptionContext c)
@@ -17,7 +17,5 @@ namespace VisualStudio
 
             return base.Parse(argument, c);
         }
-
-        public bool All { get; private set; }
     }
 }

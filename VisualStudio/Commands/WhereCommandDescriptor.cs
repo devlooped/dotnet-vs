@@ -1,40 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
-using Mono.Options;
-using vswhere;
 
 namespace VisualStudio
 {
     class WhereCommandDescriptor : CommandDescriptor
     {
-        readonly VisualStudioOptions options = new VisualStudioOptions(showNickname: false);
-        readonly AllOption allOption = new AllOption("show");
+        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("show").WithSelectAll();
+        readonly SelectPropertyOption selectProperty = new SelectPropertyOption();
         readonly WorkloadOptions workloads = new WorkloadOptions("requires", "--", "-");
 
         readonly WhereService whereService;
 
         public WhereCommandDescriptor(WhereService whereService)
         {
-            OptionSet = new CompositeOptionSet(
-                options,
-                new OptionSet
-                {
-                    { "prop|property:", "The name of a property to return", x => Property = x }
-                },
-                workloads,
-                allOption);
+            Options = vsOptions
+                .With(selectProperty)
+                .With(workloads);
+
             this.whereService = whereService;
         }
 
-        protected override VisualStudioOptions VisualStudioOptions => options;
-
         public string Property { get; private set; }
 
-        public bool ShowAll => allOption.All;
+        public bool ShowAll => vsOptions.All;
 
-        public IEnumerable<string> WorkloadsArguments => workloads.Arguments;
+        public IEnumerable<string> WorkloadsArguments => workloads.Value;
 
         public override void ShowUsage(TextWriter output)
         {

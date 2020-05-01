@@ -52,10 +52,6 @@ namespace VisualStudio.Tests
 
         class TestCommandDescriptor : CommandDescriptor
         {
-            public TestCommandDescriptor()
-            {
-                OptionSet = new CompositeOptionSet();
-            }
         }
 
         class TestCommand : Command<TestCommandDescriptor>

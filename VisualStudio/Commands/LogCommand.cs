@@ -9,14 +9,12 @@ namespace VisualStudio
     {
         readonly WhereService whereService;
 
-        public LogCommand(LogCommandDescriptor descriptor, WhereService whereService) : base(descriptor)
-        {
+        public LogCommand(LogCommandDescriptor descriptor, WhereService whereService) : base(descriptor) =>
             this.whereService = whereService;
-        }
 
         public override async Task ExecuteAsync(TextWriter output)
         {
-            var instances = await whereService.GetAllInstancesAsync(await Descriptor.GetPredicateAsync());
+            var instances = await whereService.GetAllInstancesAsync(Descriptor.Options);
             var instance = new Chooser().Choose(instances, output);
 
             if (instance != null)

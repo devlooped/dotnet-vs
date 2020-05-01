@@ -5,17 +5,17 @@ namespace VisualStudio
 {
     class InstallCommandDescriptor : CommandDescriptor
     {
-        readonly VisualStudioOptions options = new VisualStudioOptions();
+        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("install");
         readonly WorkloadOptions workloads = new WorkloadOptions("add", "+");
 
-        public InstallCommandDescriptor() => OptionSet = new CompositeOptionSet(options, workloads);
+        public InstallCommandDescriptor() => Options = vsOptions.With(workloads);
 
-        public Channel? Channel => options.Channel;
+        public Channel? Channel => vsOptions.Channel;
 
-        public Sku? Sku => options.Sku;
+        public Sku? Sku => vsOptions.Sku;
 
-        public string Nickname => options.Nickname;
+        public string Nickname => vsOptions.Nickname;
 
-        public IEnumerable<string> WorkloadArgs => workloads.Arguments;
+        public IEnumerable<string> WorkloadArgs => workloads.Value;
     }
 }

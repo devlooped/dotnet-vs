@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace VisualStudio
 {
     class ModifyCommandDescriptor : CommandDescriptor
     {
-        readonly VisualStudioOptions options = new VisualStudioOptions(channelVerb: "Modify", showNickname: false);
         readonly WorkloadOptions addWorkloads = new WorkloadOptions("add", "+");
         readonly WorkloadOptions removeWorkloads = new WorkloadOptions("remove", "-");
 
-        public ModifyCommandDescriptor() => OptionSet = new CompositeOptionSet(options, addWorkloads, removeWorkloads);
+        public ModifyCommandDescriptor() =>
+            Options = VisualStudioOptions.Default("modify").With(addWorkloads).With(removeWorkloads);
 
-        protected override VisualStudioOptions VisualStudioOptions => options;
+        public ImmutableArray<string> WorkloadsAdded => addWorkloads.Value;
 
-        public IEnumerable<string> WorkloadsAdded => addWorkloads.Arguments;
-
-        public IEnumerable<string> WorkloadsRemoved => removeWorkloads.Arguments;
+        public ImmutableArray<string> WorkloadsRemoved => removeWorkloads.Value;
     }
 }
