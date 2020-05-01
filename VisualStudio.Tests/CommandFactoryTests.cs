@@ -38,6 +38,7 @@ namespace VisualStudio.Tests
         [InlineData("config", typeof(ConfigCommand))]
         [InlineData("log", typeof(LogCommand))]
         [InlineData("kill", typeof(KillCommand))]
+        [InlineData("generate-readme", typeof(GenerateReadmeCommand))]
         public void when_creating_builtin_command_then_then_command_is_created(string commandName, Type expectedCommandType)
         {
             var commandFactory = new CommandFactory();

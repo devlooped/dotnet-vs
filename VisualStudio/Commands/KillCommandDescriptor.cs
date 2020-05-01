@@ -6,7 +6,11 @@ namespace VisualStudio
     {
         readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("kill").WithExperimental().WithSelectAll();
 
-        public KillCommandDescriptor() => Options = vsOptions;
+        public KillCommandDescriptor()
+        {
+            Description = "Kills running devenv processes";
+            Options = vsOptions;
+        }
 
         public bool IsExperimental => vsOptions.IsExperimental;
 

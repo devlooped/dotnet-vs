@@ -27,13 +27,10 @@ namespace VisualStudio
             return arguments.ToList();
         }
 
-        public void ShowUsage(TextWriter writer)
-        {
-            foreach (var optionSet in optionSets)
-                optionSet.WriteOptionDescriptions(writer);
-        }
+        public void ShowUsage(ITextWriter writer) =>
+            writer.WriteOptions(optionSets);
 
-        public T GetParsedValue<TOption, T>() where TOption : OptionSet<T> =>
+        public T GetValue<TOption, T>() where TOption : OptionSet<T> =>
             optionSets.OfType<TOption>().Select(x => x.Value).FirstOrDefault();
     }
 }

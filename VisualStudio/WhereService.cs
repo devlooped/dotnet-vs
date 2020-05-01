@@ -49,7 +49,7 @@ namespace VisualStudio
             return instances.Where(await new VisualStudioPredicateBuilder().BuildPredicateAsync(options));
         }
 
-        public void ShowUsage(TextWriter output)
+        public void ShowUsage(ITextWriter output)
         {
             output.WriteLine();
             output.WriteLine("[vswhere.exe options]");
@@ -67,7 +67,7 @@ namespace VisualStudio
                 if (line.StartsWith("Usage:") || line.StartsWith("Options:"))
                     continue;
 
-                Console.WriteLine(line);
+                output.WriteLine(line);
             }
         }
     }

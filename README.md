@@ -25,23 +25,64 @@ all the following variants for arguments are supported: `-flag`, `--flag`, `/fla
 
 Supported commands:
 
+
+## install
+
+Installs a specific edition of Visual Studio
+
+```
+Usage: vs install [options]
+```
+
+|Option|Description|
+|-|-|
+| `pre\|preview` | install preview version |
+| `int\|internal` | install internal (aka 'dogfood') version |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional` or `c\|com\|community` |
+| `expr\|expression:` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `add:` | A workload ID |
+
+
+You can add specific workload IDs by using the supported [workload switches](#workload-id-switches).
+
+See the [documentation for the Visual Studio installer command line options](https://docs.microsoft.com/en-us/visualstudio/install/use-command-line-parameters-to-install-visual-studio?view=vs-2019#install-options) 
+for the full list of arguments that can be provided.
+
+Common options are `--passive`, `quiet` and `--wait`, for example.
+
+Examples:
+
+```
+// Installs VS enterprise with the Xamarin/Mobile workload
+vs install -sku:enterprise +mobile
+
+// Install VS community with the .NET Core, ASP.NET and Azure workloads, 
+// shows installation progress and waits for it to finish before returning
+vs install +core +web +azure
+```
+
 ## run
 
-This is default command, so typically it does not need to be provided as an argument. 
+This is default command, so typically it does not need to be provided as an argument.
 
 ```
-vs [run] [options]
+Usage: vs run [options]
 ```
 
-|   Option       | Description                |
-|----------------|----------------------------|
-| `pre\|preview`    |Install preview version     |
-| `int\|internal`   |Install internal (aka 'dogfood') version |
-| `sku`            |Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional` or `c\|com\|community`. Defaults to `community` |
-| `id`             |Run a specific instance by its ID|
-| `f\|first`        |If more than one instance matches the criteria, run the first one sorted by descending build version|
-| `v\|version`      |Run specific (semantic) version, such as 16.4 or 16.5.3.|
-| `w\|wait`         |Wait for the started Visual Studio to exit.|
+|Option|Description|
+|-|-|
+| `pre\|preview` | run preview version |
+| `int\|internal` | run internal (aka 'dogfood') version |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional` or `c\|com\|community` |
+| `expr\|expression:` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `exp\|experimental` | run experimental instance instead of regular. |
+| `id:` | Run a specific instance by its ID |
+| `f\|first` | If more than one instance matches the criteria, run the first one sorted by descending build version. |
+| `v\|version:` | Run specific (semantic) version, such as 16.4 or 16.5.3. |
+| `w\|wait` | Wait for the started Visual Studio to exit. |
+| `default` | Set as the default version to run when no arguments are provided, or remove the current default (with --default-). |
+| `requires:` | A workload ID |
+
 
 All [workload switches](#workload-id-switches) are available too to filter the instance to run.
 
@@ -65,48 +106,24 @@ vs -v:16.4 -pre
 vs
 ```
 
-
-## install
-
-Installs a specific edition of Visual Studio.
-
-```
-vs install [options]
-```
-
-|   Option       | Description                |
-|----------------|----------------------------|
-| `pre\|preview`    |Install preview version     |
-| `int\|internal`   |Install internal (aka 'dogfood') version |
-| `sku`            |Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional` or `c\|com\|community`. Defaults to `community` |
-
-You can add specific workload IDs by using the supported [workload switches](#workload-id-switches).
-
-See the [documentation for the Visual Studio installer command line options](https://docs.microsoft.com/en-us/visualstudio/install/use-command-line-parameters-to-install-visual-studio?view=vs-2019#install-options) 
-for the full list of arguments that can be provided.
-
-Common options are `--passive`, `quiet` and `--wait`, for example.
-
-Examples:
-
-```
-// Installs VS enterprise with the Xamarin/Mobile workload
-vs install -sku:enterprise +mobile
-
-// Install VS community with the .NET Core, ASP.NET and Azure workloads, 
-// shows installation progress and waits for it to finish before returning
-vs install +core +web +azure
-```
-
-
 ## where
 
-Locates the installed version(s) of Visual Studio that satisfy the requested 
-requirements, optionally retrieving installation properties from it.
+Locates the installed version(s) of Visual Studio that satisfy the requested requirements, optionally retrieving installation properties from it.
 
 ```
-vs where [options]
+Usage: vs where [options]
 ```
+
+|Option|Description|
+|-|-|
+| `pre\|preview` | show preview version |
+| `int\|internal` | show internal (aka 'dogfood') version |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional` or `c\|com\|community` |
+| `expr\|expression:` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `all` | show all instances. |
+| `prop\|property:` | The name of a property to return |
+| `requires:` | A workload ID |
+
 
 Supports same options as `vswhere.exe`:
 
@@ -157,6 +174,118 @@ workload ID switches (see below).
 
 See also [vswhere on GitHub](https://github.com/microsoft/vswhere).
 
+## update
+
+Updates an installtion of Visual Studio
+
+```
+Usage: vs update [options]
+```
+
+|Option|Description|
+|-|-|
+| `pre\|preview` | Update preview version |
+| `int\|internal` | Update internal (aka 'dogfood') version |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional` or `c\|com\|community` |
+| `expr\|expression:` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+
+
+Examples:
+
+```
+```
+
+## modify
+
+Modifies an installation of Visual Studio
+
+```
+Usage: vs modify [options]
+```
+
+|Option|Description|
+|-|-|
+| `pre\|preview` | modify preview version |
+| `int\|internal` | modify internal (aka 'dogfood') version |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional` or `c\|com\|community` |
+| `expr\|expression:` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `add:` | A workload ID |
+| `remove:` | A workload ID |
+
+
+Examples:
+
+```
+```
+
+## config
+
+Opens the config folder
+
+```
+Usage: vs config [options]
+```
+
+|Option|Description|
+|-|-|
+| `pre\|preview` | open preview version |
+| `int\|internal` | open internal (aka 'dogfood') version |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional` or `c\|com\|community` |
+| `expr\|expression:` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `exp\|experimental` | open experimental instance instead of regular. |
+
+
+Examples:
+
+```
+```
+
+## log
+
+Opens the folder containing the Activity.log file
+
+```
+Usage: vs log [options]
+```
+
+|Option|Description|
+|-|-|
+| `pre\|preview` | open preview version |
+| `int\|internal` | open internal (aka 'dogfood') version |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional` or `c\|com\|community` |
+| `expr\|expression:` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `exp\|experimental` | open experimental instance instead of regular. |
+
+
+Examples:
+
+```
+```
+
+## kill
+
+Kills running devenv processes
+
+```
+Usage: vs kill [options]
+```
+
+|Option|Description|
+|-|-|
+| `pre\|preview` | kill preview version |
+| `int\|internal` | kill internal (aka 'dogfood') version |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional` or `c\|com\|community` |
+| `expr\|expression:` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `exp\|experimental` | kill experimental instance instead of regular. |
+| `all` | kill all instances. |
+
+
+Examples:
+
+```
+```
+
+
 ## Workload ID switches
 
 For commands that receive workload ID switches (i.e. `vs where -requires [WORKLOAD_ID]` or 
@@ -185,3 +314,4 @@ The switches are converted to the appropriate argument automatically, such as in
 with a `+` (like `+mobile`), which might make for a more intuitive command line, 
 such as `vs install +mobile -sku:enterprise` or `vs +mobile` (runs the VS with the 
 mobile workload installed).
+

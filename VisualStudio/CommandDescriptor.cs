@@ -10,9 +10,11 @@ namespace VisualStudio
     {
         public IOptions Options { get; protected set; } = VisualStudio.Options.Empty;
 
+        public string Description { get; protected set; } = string.Empty;
+
         public ImmutableArray<string> ExtraArguments { get; private set; } = ImmutableArray.Create<string>();
 
-        public virtual void ShowUsage(TextWriter output) =>
+        public virtual void ShowUsage(ITextWriter output) =>
             Options?.ShowUsage(output);
 
         public virtual void Parse(IEnumerable<string> args)

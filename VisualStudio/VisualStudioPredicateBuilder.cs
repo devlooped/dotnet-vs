@@ -13,15 +13,15 @@ namespace VisualStudio
         public async Task<Func<VisualStudioInstance, bool>> BuildPredicateAsync(IOptions options)
         {
             Func<VisualStudioInstance, bool> skuPredicate = _ => true;
-            if (options.GetParsedValue<SkuOption, Sku?>() is Sku sku)
+            if (options.GetValue<SkuOption, Sku?>() is Sku sku)
                 skuPredicate = x => x.GetSku() == sku;
 
             Func<VisualStudioInstance, bool> channelPredicate = _ => true;
-            if (options.GetParsedValue<ChannelOption, Channel?>() is Channel channel)
+            if (options.GetValue<ChannelOption, Channel?>() is Channel channel)
                 channelPredicate = x => x.GetChannel() == channel;
 
             Func<VisualStudioInstance, bool> exprPredicate = _ => true;
-            if (options.GetParsedValue<ExpressionOption, string>() is string expression && !string.IsNullOrEmpty(expression))
+            if (options.GetValue<ExpressionOption, string>() is string expression && !string.IsNullOrEmpty(expression))
                 exprPredicate = await CSharpScript.EvaluateAsync<Func<VisualStudioInstance, bool>>(expression, scriptOptions);
 
             return x => skuPredicate(x) && channelPredicate(x) && exprPredicate(x);

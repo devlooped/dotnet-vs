@@ -8,7 +8,7 @@ namespace VisualStudio
     {
         public ExpressionOption(string defaultValue = default) : base(defaultValue)
         {
-            Add("expr|expression:", "Expression to filter VS instances. E.g. \"x => x.InstanceId = '123'\"", e => Value = e.Replace("'", "\"").Trim());
+            Add("expr|expression:", "Expression to filter VS instances. E.g. `x => x.InstanceId = '123'`", e => Value = e.Replace("'", "\"").Trim());
         }
 
         protected override bool Parse(string argument, OptionContext c)
