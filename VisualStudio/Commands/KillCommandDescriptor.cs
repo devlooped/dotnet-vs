@@ -1,19 +1,15 @@
 ﻿using System;
-using Mono.Options;
 
 namespace VisualStudio
 {
     class KillCommandDescriptor : CommandDescriptor
     {
-        readonly VisualStudioOptions options = new VisualStudioOptions(channelVerb: "Kill", showNickname: false, showExp: true);
-        readonly AllOption allOption = new AllOption("Kill");
+        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("kill").WithExperimental().WithSelectAll();
 
-        public KillCommandDescriptor() => OptionSet = new CompositeOptionSet(options, allOption);
+        public KillCommandDescriptor() => Options = vsOptions;
 
-        protected override VisualStudioOptions VisualStudioOptions => options;
+        public bool IsExperimental => vsOptions.IsExperimental;
 
-        public bool IsExperimental => options.IsExperimental;
-
-        public bool KillAll => allOption.All;
+        public bool KillAll => vsOptions.All;
     }
 }

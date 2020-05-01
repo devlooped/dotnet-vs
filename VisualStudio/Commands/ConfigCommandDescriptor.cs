@@ -4,12 +4,10 @@ namespace VisualStudio
 {
     class ConfigCommandDescriptor : CommandDescriptor
     {
-        readonly VisualStudioOptions options = new VisualStudioOptions(channelVerb: "Open", showExp: true, showNickname: false);
+        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("open").WithExperimental();
 
-        public ConfigCommandDescriptor() => OptionSet = new CompositeOptionSet(options);
+        public ConfigCommandDescriptor() => Options = vsOptions;
 
-        protected override VisualStudioOptions VisualStudioOptions => options;
-
-        public bool Experimental => options.IsExperimental;
+        public bool Experimental => vsOptions.IsExperimental;
     }
 }

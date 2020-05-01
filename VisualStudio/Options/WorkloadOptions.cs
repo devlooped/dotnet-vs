@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
 using Mono.Options;
 
 namespace VisualStudio
@@ -14,12 +13,14 @@ namespace VisualStudio
     /// We extend the options syntax so that a plus can also be used to specify 
     /// the switch, so that `+mobile` is equivalent to `--mobile` and `-mobile`.
     /// </remarks>
-    public class WorkloadOptions : OptionSet
+    class WorkloadOptions : OptionSet<ImmutableArray<string>>
     {
         readonly string argument;
         private readonly string prefix;
         private readonly string outputArgumentPrefix;
-        ImmutableArray<string> arguments = ImmutableArray.Create<string>();
+
+        public WorkloadOptions() : base(ImmutableArray.Create<string>())
+        { }
 
         Dictionary<string, string> aliases = new Dictionary<string, string>
         {
@@ -39,14 +40,14 @@ namespace VisualStudio
             { "vsx", "Microsoft.VisualStudio.Workload.VisualStudioExtension" },
         };
 
-        public WorkloadOptions(string argument, string aliasPrefix = "--", string outputArgumentPrefix = "--")
+        public WorkloadOptions(string argument, string aliasPrefix = "--", string outputArgumentPrefix = "--") : base(ImmutableArray.Create<string>())
         {
             this.argument = argument;
             this.prefix = aliasPrefix;
             this.outputArgumentPrefix = outputArgumentPrefix;
 
             Add("\n");
-            Add($"{argument}:", "A workload ID", id => arguments = arguments.Add(outputArgumentPrefix + argument).Add(id));
+            Add($"{argument}:", "A workload ID", id => Value = Value.Add(outputArgumentPrefix + argument).Add(id));
 
             Add("\n\tWorkload ID aliases:");
             foreach (var aliasPair in aliases)
@@ -82,9 +83,5 @@ namespace VisualStudio
 
             return value;
         }
-
-        public IEnumerable<string> Arguments => arguments;
-
-        public void ShowOptions(TextWriter output) => WriteOptionDescriptions(output);
     }
 }

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace VisualStudio
@@ -12,10 +9,8 @@ namespace VisualStudio
     {
         readonly InstallerService installerService;
 
-        public InstallCommand(InstallCommandDescriptor descriptor, InstallerService installerService) : base(descriptor)
-        {
+        public InstallCommand(InstallCommandDescriptor descriptor, InstallerService installerService) : base(descriptor) =>
             this.installerService = installerService;
-        }
 
         public override async Task ExecuteAsync(TextWriter output)
         {

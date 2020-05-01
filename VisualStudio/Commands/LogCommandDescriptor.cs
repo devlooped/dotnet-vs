@@ -1,18 +1,13 @@
 ﻿using System;
-using Mono.Options;
 
 namespace VisualStudio
 {
     class LogCommandDescriptor : CommandDescriptor
     {
-        readonly VisualStudioOptions options = new VisualStudioOptions(channelVerb: "Open", showNickname: false, showExp: true);
+        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("open").WithExperimental();
 
-        public LogCommandDescriptor() => OptionSet = new CompositeOptionSet(options);
+        public LogCommandDescriptor() => Options = vsOptions;
 
-        public Channel? Channel => options.Channel;
-
-        public Sku? Sku => options.Sku;
-
-        public bool IsExperimental => options.IsExperimental;
+        public bool IsExperimental => vsOptions.IsExperimental;
     }
 }

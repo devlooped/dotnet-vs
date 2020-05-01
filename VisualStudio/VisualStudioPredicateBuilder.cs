@@ -10,19 +10,19 @@ namespace VisualStudio
     {
         static readonly ScriptOptions scriptOptions = ScriptOptions.Default.AddReferences(typeof(VisualStudioInstance).Assembly);
 
-        public async Task<Func<VisualStudioInstance, bool>> BuildPredicateAsync(VisualStudioOptions options)
+        public async Task<Func<VisualStudioInstance, bool>> BuildPredicateAsync(IOptions options)
         {
             Func<VisualStudioInstance, bool> skuPredicate = _ => true;
-            if (options?.Sku != null)
-                skuPredicate = x => x.GetSku() == options.Sku;
+            if (options.GetParsedValue<SkuOption, Sku?>() is Sku sku)
+                skuPredicate = x => x.GetSku() == sku;
 
             Func<VisualStudioInstance, bool> channelPredicate = _ => true;
-            if (options?.Channel != null)
-                channelPredicate = x => x.GetChannel() == options.Channel;
+            if (options.GetParsedValue<ChannelOption, Channel?>() is Channel channel)
+                channelPredicate = x => x.GetChannel() == channel;
 
             Func<VisualStudioInstance, bool> exprPredicate = _ => true;
-            if (options?.Expression != null)
-                exprPredicate = await CSharpScript.EvaluateAsync<Func<VisualStudioInstance, bool>>(options.Expression, scriptOptions);
+            if (options.GetParsedValue<ExpressionOption, string>() is string expression && !string.IsNullOrEmpty(expression))
+                exprPredicate = await CSharpScript.EvaluateAsync<Func<VisualStudioInstance, bool>>(expression, scriptOptions);
 
             return x => skuPredicate(x) && channelPredicate(x) && exprPredicate(x);
         }

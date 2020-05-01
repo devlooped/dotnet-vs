@@ -7,22 +7,17 @@ using System.Collections.Immutable;
 
 namespace VisualStudio
 {
-    class CompositeOptionSet : IOptionSet
+    class Options : IOptions
     {
-        readonly OptionSet defaultOptionSet;
+        public static readonly Options Empty = new Options();
+
         readonly ImmutableArray<OptionSet> optionSets;
 
-        public CompositeOptionSet(params OptionSet[] optionSets)
-        {
-            defaultOptionSet = new OptionSet();
+        public Options(params OptionSet[] optionSets) =>
+            this.optionSets = ImmutableArray.Create(optionSets);
 
-            this.optionSets = ImmutableArray.Create<OptionSet>()
-                .AddRange(optionSets)
-                .Add(defaultOptionSet);
-        }
-
-        public IOptionSet With(OptionSet optionSet) =>
-            new CompositeOptionSet(optionSets.Add(optionSet).ToArray());
+        public IOptions With(OptionSet optionSet) =>
+            new Options(optionSets.Add(optionSet).ToArray());
 
         public List<string> Parse(IEnumerable<string> arguments)
         {
@@ -32,10 +27,13 @@ namespace VisualStudio
             return arguments.ToList();
         }
 
-        public void WriteOptionDescriptions(TextWriter writer)
+        public void ShowUsage(TextWriter writer)
         {
             foreach (var optionSet in optionSets)
                 optionSet.WriteOptionDescriptions(writer);
         }
+
+        public T GetParsedValue<TOption, T>() where TOption : OptionSet<T> =>
+            optionSets.OfType<TOption>().Select(x => x.Value).FirstOrDefault();
     }
 }

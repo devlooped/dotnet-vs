@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Linq;
-using System.IO;
 using System.Threading.Tasks;
 using Xunit;
-using Xunit.Abstractions;
 using vswhere;
 
 namespace VisualStudio.Tests
@@ -65,14 +62,10 @@ namespace VisualStudio.Tests
             Assert.False(predicate(new vswhere.VisualStudioInstance() { InstanceId = "123" }.WithSku(Sku.Professional).WithChannel(Channel.Release)));
         }
 
-        VisualStudioOptions GetOptions(Sku? sku = null, Channel? channel = null, string expression = null) =>
-            new VisualStudioOptionsTests(sku, channel, expression);
-
-        class VisualStudioOptionsTests : VisualStudioOptions
-        {
-            public VisualStudioOptionsTests(Sku? sku, Channel? channel, string expression)
-                : base(sku, channel, expression)
-            { }
-        }
+        IOptions GetOptions(Sku? sku = null, Channel? channel = null, string expression = null) =>
+            new Options(
+                new SkuOption(sku),
+                new ChannelOption("test", channel),
+                new ExpressionOption(expression));
     }
 }
