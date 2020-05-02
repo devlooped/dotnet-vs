@@ -16,7 +16,7 @@ namespace VisualStudio
 
         public Channel? Channel => vsOptions.Channel;
 
-        public Sku? Sku => vsOptions.Sku;
+        public Sku? Sku => vsOptions.Sku ?? VisualStudio.Sku.Community;
 
         public string Nickname => vsOptions.Nickname;
 
