@@ -11,7 +11,7 @@ namespace VisualStudio
 
         public ModifyCommandDescriptor()
         {
-            Description = "Modifies an installation of Visual Studio";
+            Description = "Modifies an installation of Visual Studio.";
             Options = VisualStudioOptions.Default("modify").With(addWorkloads).With(removeWorkloads);
         }
 

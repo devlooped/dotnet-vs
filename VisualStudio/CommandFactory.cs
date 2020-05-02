@@ -14,25 +14,25 @@ namespace VisualStudio
             var whereService = new WhereService();
             var installerService = new InstallerService();
 
-            RegisterCommand<InstallCommandDescriptor>("install", x => new InstallCommand(x, installerService));
             RegisterCommand<RunCommandDescriptor>("run", x => new RunCommand(x, whereService));
             RegisterCommand("where", () => new WhereCommandDescriptor(whereService), x => new WhereCommand(x, whereService));
+            RegisterCommand<InstallCommandDescriptor>("install", x => new InstallCommand(x, installerService));
             RegisterCommand<UpdateCommandDescriptor>("update", x => new UpdateCommand(x, whereService, installerService));
             RegisterCommand<ModifyCommandDescriptor>("modify", x => new ModifyCommand(x, whereService, installerService));
+            RegisterCommand<KillCommandDescriptor>("kill", x => new KillCommand(x, whereService));
             RegisterCommand<ConfigCommandDescriptor>("config", x => new ConfigCommand(x, whereService));
             RegisterCommand<LogCommandDescriptor>("log", x => new LogCommand(x, whereService));
-            RegisterCommand<KillCommandDescriptor>("kill", x => new KillCommand(x, whereService));
 
             // System commands
             RegisterCommand(
                 "generate-readme",
                 () => new GenerateReadmeCommandDescriptor(factories.Where(x => !x.Value.IsSystem).ToDictionary(x => x.Key, x => x.Value.CreateDescriptor())),
-                x => new GenerateReadmeCommand(x), 
+                x => new GenerateReadmeCommand(x),
                 isSystem: true);
         }
 
-        public IEnumerable<string> GetRegisteredCommands(bool includeSystemCommands = false) =>
-            factories.Where(x => includeSystemCommands || !x.Value.IsSystem).Select(x => x.Key);
+        public Dictionary<string, CommandDescriptor> GetRegisteredCommands(bool includeSystemCommands = false) =>
+            factories.Where(x => includeSystemCommands || !x.Value.IsSystem).ToDictionary(x => x.Key, x => x.Value.CreateDescriptor());
 
         public bool IsCommandRegistered(string command) => factories.ContainsKey(command);
 

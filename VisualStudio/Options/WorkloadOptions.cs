@@ -51,7 +51,7 @@ namespace VisualStudio
 
             Add("\n\tWorkload ID aliases:");
             foreach (var aliasPair in aliases)
-                Add($"\t{GetNormalizedString(aliasPrefix + aliasPair.Key)}{outputArgumentPrefix}{argument} {aliasPair.Value}");
+                Add($"\t{(aliasPrefix + aliasPair.Key).GetNormalizedString()}{outputArgumentPrefix}{argument} {aliasPair.Value}");
         }
 
         protected override bool Parse(string argument, OptionContext c)
@@ -66,20 +66,6 @@ namespace VisualStudio
         {
             if (aliases.TryGetValue(value, out var workloadId))
                 return workloadId;
-
-            return value;
-        }
-
-        string GetNormalizedString(string value, int length = 20)
-        {
-            if (length == 0)
-                return string.Empty;
-            else if (string.IsNullOrEmpty(value))
-                return new string(' ', length);
-            else if (value.Length < length)
-                return string.Concat(value, new String(' ', length - value.Length));
-            else if (value.Length >= length)
-                return value.Substring(0, length - 4) + "... ";
 
             return value;
         }

@@ -14,7 +14,7 @@ namespace VisualStudio
 
         public WhereCommandDescriptor(WhereService whereService)
         {
-            Description = "Locates the installed version(s) of Visual Studio that satisfy the requested requirements, optionally retrieving installation properties from it.";
+            Description = "Locates the installed version(s) of Visual Studio that satisfy the requested requirements.";
 
             Options = vsOptions
                 .With(selectProperty)

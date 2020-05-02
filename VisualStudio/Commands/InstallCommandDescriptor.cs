@@ -10,7 +10,7 @@ namespace VisualStudio
 
         public InstallCommandDescriptor()
         {
-            Description = "Installs a specific edition of Visual Studio";
+            Description = "Installs a specific edition of Visual Studio.";
             Options = vsOptions.With(workloads);
         }
 

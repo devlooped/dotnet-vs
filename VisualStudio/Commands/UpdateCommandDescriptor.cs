@@ -6,7 +6,7 @@ namespace VisualStudio
     {
         public UpdateCommandDescriptor()
         {
-            Description = "Updates an installtion of Visual Studio";
+            Description = "Updates an installtion of Visual Studio.";
             Options = VisualStudioOptions.Default("Update");
         }
     }

@@ -8,7 +8,7 @@ namespace VisualStudio
 
         public KillCommandDescriptor()
         {
-            Description = "Kills running devenv processes";
+            Description = "Kills running devenv processes.";
             Options = vsOptions;
         }
 

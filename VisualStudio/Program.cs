@@ -17,7 +17,7 @@ namespace VisualStudio
         static async Task<int> Main(string[] args)
         {
             if (args.Length == 0 || new[] { "?", "-?", "/?", "-h", "/h", "--help", "/help" }.Contains(args[0]))
-                return ShowUsage(commandFactory);
+                return ShowUsage();
 
             return await new Program(Console.Out, true, args).RunAsync();
         }
@@ -73,11 +73,16 @@ namespace VisualStudio
             return 0;
         }
 
-        static int ShowUsage(CommandFactory commandFactory)
+        static int ShowUsage()
         {
             Console.WriteLine();
-            Console.Write($"Usage: {ThisAssembly.Metadata.AssemblyName} [{string.Join('|', commandFactory.GetRegisteredCommands())}] [options|-?|-h|--help]");
+            Console.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} [command] [options|-?|-h|--help]");
             Console.WriteLine();
+            Console.WriteLine("Supported commands:");
+
+            var maxWidth = commandFactory.GetRegisteredCommands().Select(x => x.Key.Length).Max() + 2;
+            foreach (var command in commandFactory.GetRegisteredCommands())
+                Console.WriteLine($"\t- {command.Key.GetNormalizedString(maxWidth)}{command.Value.Description}");
 
             return 0;
         }

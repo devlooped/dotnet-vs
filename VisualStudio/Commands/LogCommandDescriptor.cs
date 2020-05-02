@@ -8,7 +8,7 @@ namespace VisualStudio
 
         public LogCommandDescriptor()
         {
-            Description = "Opens the folder containing the Activity.log file";
+            Description = "Opens the folder containing the Activity.log file.";
             Options = vsOptions;
         }
 

@@ -8,7 +8,7 @@ namespace VisualStudio
 
         public ConfigCommandDescriptor()
         {
-            Description = "Opens the config folder";
+            Description = "Opens the config folder.";
             Options = vsOptions;
         }
 
