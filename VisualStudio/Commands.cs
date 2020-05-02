@@ -17,6 +17,7 @@ namespace VisualStudio
         {
             public const string GenerateReadme = "generate-readme";
             public const string Save = "save";
+            public const string UpdateSelf = "update-self";
         }
     }
 }

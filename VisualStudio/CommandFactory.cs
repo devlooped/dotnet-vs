@@ -31,6 +31,7 @@ namespace VisualStudio
                 x => new GenerateReadmeCommand(x),
                 isSystem: true);
             RegisterCommand<SaveCommandDescriptor>(Commands.System.Save, x => new SaveCommand(x), isSystem: true);
+            RegisterCommand<UpdateSelfCommandDescriptor>(Commands.System.UpdateSelf, x => new UpdateSelfCommand(x), isSystem: true);
         }
 
         public Dictionary<string, CommandDescriptor> GetRegisteredCommands(bool includeSystemCommands = false) =>

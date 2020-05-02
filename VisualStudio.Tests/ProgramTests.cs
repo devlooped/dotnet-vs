@@ -35,5 +35,17 @@ namespace VisualStudio.Tests
 
             Assert.IsType<SaveCommand>(program.Command);
         }
+
+        [Fact]
+        public async Task when_update_command_and_self_option_is_specified_then_update_self_is_executed()
+        {
+            var program = new Program(output, false, "update", "self");
+
+            var exit = await program.RunAsync();
+
+            Assert.Equal(0, exit);
+
+            Assert.IsType<UpdateSelfCommand>(program.Command);
+        }
     }
 }
