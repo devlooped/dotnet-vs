@@ -16,25 +16,30 @@ namespace VisualStudio
 
         public override async Task ExecuteAsync(TextWriter output)
         {
-            var instances = await whereService.GetAllInstancesAsync(
+            var instances = (await whereService.GetAllInstancesAsync(
                 Descriptor.Options,
-                Descriptor.WorkloadsArguments.Concat(Descriptor.ExtraArguments));
-
-            if (!Descriptor.ShowAll)
-                instances = new Chooser("show").ChooseMany(instances, output);
+                Descriptor.WorkloadsArguments.Concat(Descriptor.ExtraArguments))).ToList();
 
             foreach (var instance in instances)
             {
                 var properties = GetProperties(instance);
 
-                if (!string.IsNullOrEmpty(Descriptor.Property))
-                    properties = properties.Where(x => x.PropertyName == Descriptor.Property);
+                if (string.IsNullOrEmpty(Descriptor.Property))
+                {
+                    output.WriteLine();
+                    output.WriteLine($"{ instance.DisplayName} - Version { instance.Catalog.ProductDisplayVersion}");
 
-                output.WriteLine();
-                output.WriteLine($"{ instance.DisplayName} - Version { instance.Catalog.ProductDisplayVersion}");
-
-                foreach (var prop in properties)
-                    output.WriteLine($"{prop.PropertyName}: {prop.PropertyValue}");
+                    foreach (var prop in properties)
+                        output.WriteLine($"{prop.PropertyName}: {prop.PropertyValue}");
+                }
+                else
+                {
+                    Console.WriteLine(
+                        properties
+                            .Where(x => x.PropertyName == Descriptor.Property)
+                            .Select(x => x.PropertyValue)
+                            .FirstOrDefault() ?? string.Empty);
+                }
             }
         }
 

@@ -76,6 +76,12 @@ namespace VisualStudio
 
                 return ErrorCodes.OptionError;
             }
+            catch (WhereException ex)
+            {
+                output.WriteLine(ex.Message);
+
+                return ErrorCodes.WhereError;
+            }
 
             return 0;
         }

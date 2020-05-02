@@ -6,8 +6,8 @@ namespace VisualStudio
 {
     class WhereCommandDescriptor : CommandDescriptor
     {
-        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("show").WithSelectAll();
-        readonly SelectPropertyOption selectProperty = new SelectPropertyOption();
+        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("show");
+        readonly SelectPropertyOption propOption = new SelectPropertyOption();
         readonly WorkloadOptions workloads = new WorkloadOptions("requires", "--", "-");
 
         readonly WhereService whereService;
@@ -17,15 +17,13 @@ namespace VisualStudio
             Description = "Locates the installed version(s) of Visual Studio that satisfy the requested requirements.";
 
             Options = vsOptions
-                .With(selectProperty)
+                .With(propOption)
                 .With(workloads);
 
             this.whereService = whereService;
         }
 
-        public string Property { get; private set; }
-
-        public bool ShowAll => vsOptions.All;
+        public string Property => propOption.Value;
 
         public IEnumerable<string> WorkloadsArguments => workloads.Value;
 
