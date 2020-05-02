@@ -35,16 +35,15 @@ namespace VisualStudio
             uri = uri.Append("vs_");
             switch (sku)
             {
-                case Sku.Community:
-                    uri = uri.Append("community");
-                    break;
                 case Sku.Professional:
                     uri = uri.Append("professional");
                     break;
                 case Sku.Enterprise:
                     uri = uri.Append("enterprise");
                     break;
+                case Sku.Community:
                 default:
+                    uri = uri.Append("community");
                     break;
             }
             uri = uri.Append(".exe");
