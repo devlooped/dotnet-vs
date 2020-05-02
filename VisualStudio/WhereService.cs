@@ -38,9 +38,13 @@ namespace VisualStudio
                 psi.ArgumentList.Add(arg);
 
             var process = Process.Start(psi);
+            var output = await process.StandardOutput.ReadToEndAsync();
+
+            if (process.ExitCode != 0)
+                throw new WhereException(output);
 
             var instances = JsonSerializer.Deserialize<VisualStudioInstance[]>(
-                await process.StandardOutput.ReadToEndAsync(),
+                output,
                 new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
