@@ -44,6 +44,8 @@ namespace VisualStudio
             {
                 if (SaveOption.IsDefined(args))
                     commandName = Commands.System.Save;
+                else if (commandName == Commands.Update && SelfOption.IsDefined(args))
+                    commandName = Commands.System.UpdateSelf;
                 else
                     commandArgs = ImmutableArray.Create(args.Skip(1).ToArray());
 
@@ -70,17 +72,11 @@ namespace VisualStudio
 
                 return ErrorCodes.ShowUsage;
             }
-            catch (OptionException ex)
+            catch (Exception ex) when (ex is OptionException || ex is WhereException || ex is InvalidOperationException)
             {
                 output.WriteLine(ex.Message);
 
-                return ErrorCodes.OptionError;
-            }
-            catch (WhereException ex)
-            {
-                output.WriteLine(ex.Message);
-
-                return ErrorCodes.WhereError;
+                return ErrorCodes.Unknown;
             }
 
             return 0;
