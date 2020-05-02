@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace VisualStudio
 {
@@ -14,21 +15,22 @@ namespace VisualStudio
             var whereService = new WhereService();
             var installerService = new InstallerService();
 
-            RegisterCommand<RunCommandDescriptor>("run", x => new RunCommand(x, whereService));
-            RegisterCommand("where", () => new WhereCommandDescriptor(whereService), x => new WhereCommand(x, whereService));
-            RegisterCommand<InstallCommandDescriptor>("install", x => new InstallCommand(x, installerService));
-            RegisterCommand<UpdateCommandDescriptor>("update", x => new UpdateCommand(x, whereService, installerService));
-            RegisterCommand<ModifyCommandDescriptor>("modify", x => new ModifyCommand(x, whereService, installerService));
-            RegisterCommand<KillCommandDescriptor>("kill", x => new KillCommand(x, whereService));
-            RegisterCommand<ConfigCommandDescriptor>("config", x => new ConfigCommand(x, whereService));
-            RegisterCommand<LogCommandDescriptor>("log", x => new LogCommand(x, whereService));
+            RegisterCommand<RunCommandDescriptor>(Commands.Run, x => new RunCommand(x, whereService));
+            RegisterCommand(Commands.Where, () => new WhereCommandDescriptor(whereService), x => new WhereCommand(x, whereService));
+            RegisterCommand<InstallCommandDescriptor>(Commands.Install, x => new InstallCommand(x, installerService));
+            RegisterCommand<UpdateCommandDescriptor>(Commands.Update, x => new UpdateCommand(x, whereService, installerService));
+            RegisterCommand<ModifyCommandDescriptor>(Commands.Modify, x => new ModifyCommand(x, whereService, installerService));
+            RegisterCommand<KillCommandDescriptor>(Commands.Kill, x => new KillCommand(x, whereService));
+            RegisterCommand<ConfigCommandDescriptor>(Commands.Config, x => new ConfigCommand(x, whereService));
+            RegisterCommand<LogCommandDescriptor>(Commands.Log, x => new LogCommand(x, whereService));
 
             // System commands
             RegisterCommand(
-                "generate-readme",
+                Commands.System.GenerateReadme,
                 () => new GenerateReadmeCommandDescriptor(factories.Where(x => !x.Value.IsSystem).ToDictionary(x => x.Key, x => x.Value.CreateDescriptor())),
                 x => new GenerateReadmeCommand(x),
                 isSystem: true);
+            RegisterCommand<SaveCommandDescriptor>(Commands.System.Save, x => new SaveCommand(x), isSystem: true);
         }
 
         public Dictionary<string, CommandDescriptor> GetRegisteredCommands(bool includeSystemCommands = false) =>
@@ -42,7 +44,7 @@ namespace VisualStudio
         public void RegisterCommand<TDescriptor>(string command, Func<TDescriptor> descriptorFactory, Func<TDescriptor, Command> commandFactory, bool isSystem = false) where TDescriptor : CommandDescriptor =>
             factories.Add(command, (isSystem, descriptorFactory, x => commandFactory((TDescriptor)x)));
 
-        public Command CreateCommand(string command, IEnumerable<string> args)
+        public Command CreateCommand(string command, ImmutableArray<string> args)
         {
             if (!factories.TryGetValue(command, out var factory))
                 throw new InvalidOperationException($"The command '{command}' is not registered");

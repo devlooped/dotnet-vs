@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace VisualStudio.Tests
             var commandFactory = new CommandFactory();
             commandFactory.RegisterCommand<TestCommandDescriptor>("test", x => new TestCommand(x));
 
-            var command = commandFactory.CreateCommand("test", Enumerable.Empty<string>());
+            var command = commandFactory.CreateCommand("test", ImmutableArray.Create<string>());
 
             Assert.NotNull(command);
             Assert.True(command is TestCommand);
@@ -26,26 +27,27 @@ namespace VisualStudio.Tests
             var commandFactory = new CommandFactory();
             commandFactory.RegisterCommand<TestCommandDescriptor>("test", x => new TestCommand(x));
 
-            Assert.Throws<ShowUsageException>(() => commandFactory.CreateCommand("test", new[] { "/h" }));
+            Assert.Throws<ShowUsageException>(() => commandFactory.CreateCommand("test", ImmutableArray.Create("/h")));
         }
 
         [Theory]
-        [InlineData("install", typeof(InstallCommand))]
-        [InlineData("run", typeof(RunCommand))]
-        [InlineData("where", typeof(WhereCommand))]
-        [InlineData("modify", typeof(ModifyCommand))]
-        [InlineData("update", typeof(UpdateCommand))]
-        [InlineData("config", typeof(ConfigCommand))]
-        [InlineData("log", typeof(LogCommand))]
-        [InlineData("kill", typeof(KillCommand))]
-        [InlineData("generate-readme", typeof(GenerateReadmeCommand))]
+        [InlineData(Commands.Install, typeof(InstallCommand))]
+        [InlineData(Commands.Run, typeof(RunCommand))]
+        [InlineData(Commands.Where, typeof(WhereCommand))]
+        [InlineData(Commands.Modify, typeof(ModifyCommand))]
+        [InlineData(Commands.Update, typeof(UpdateCommand))]
+        [InlineData(Commands.Config, typeof(ConfigCommand))]
+        [InlineData(Commands.Log, typeof(LogCommand))]
+        [InlineData(Commands.Kill, typeof(KillCommand))]
+        [InlineData(Commands.System.GenerateReadme, typeof(GenerateReadmeCommand))]
+        [InlineData(Commands.System.Save, typeof(SaveCommand))]
         public void when_creating_builtin_command_then_then_command_is_created(string commandName, Type expectedCommandType)
         {
             var commandFactory = new CommandFactory();
 
             Assert.True(commandFactory.IsCommandRegistered(commandName));
 
-            var command = commandFactory.CreateCommand(commandName, Enumerable.Empty<string>());
+            var command = commandFactory.CreateCommand(commandName, ImmutableArray.Create<string>());
 
             Assert.NotNull(command);
             Assert.Equal(expectedCommandType, command.GetType());

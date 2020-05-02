@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,7 +31,7 @@ namespace VisualStudio
 
             // Run is the default command if another one is not specified.
             if (!commandFactory.IsCommandRegistered(args[0]))
-                this.args = args.Prepend("run").ToArray();
+                this.args = args.Prepend(Commands.Run).ToArray();
         }
 
         public Command Command { get; private set; }
@@ -38,9 +39,15 @@ namespace VisualStudio
         public async Task<int> RunAsync()
         {
             var commandName = args[0];
+            var commandArgs = ImmutableArray.Create(args);
             try
             {
-                Command = commandFactory.CreateCommand(commandName, args.Skip(1));
+                if (SaveOption.IsDefined(args))
+                    commandName = Commands.System.Save;
+                else
+                    commandArgs = ImmutableArray.Create(args.Skip(1).ToArray());
+
+                Command = commandFactory.CreateCommand(commandName, commandArgs);
 
                 if (execute)
                     await Command.ExecuteAsync(output);
