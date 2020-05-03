@@ -9,15 +9,19 @@ namespace VisualStudio
     {
         public UpdateSelfCommand(UpdateSelfCommandDescriptor descriptor) : base(descriptor) { }
 
-        public override async Task ExecuteAsync(TextWriter output)
+        public override Task ExecuteAsync(TextWriter output)
         {
-            var psi = new ProcessStartInfo("dotnet")
-            {
-                RedirectStandardOutput = true,
-                ArgumentList = { "tool", "update", "-g", "dotnet-vs" }
-            };
+            // Fire and forget, otherwise we will get access denied
+            Process.Start(
+                new ProcessStartInfo("dotnet")
+                {
+                    ArgumentList = { "tool", "update", "-g", "dotnet-vs" }
+                });
 
-            output.WriteLine(await Process.Start(psi).StandardOutput.ReadToEndAsync());
+            output.WriteLine("Running \"dotnet tool update -g dotnet-vs\"...");
+            output.WriteLine("dotnet will continue running in background");
+
+            return Task.CompletedTask;
         }
     }
 }
