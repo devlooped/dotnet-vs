@@ -64,7 +64,7 @@ namespace VisualStudio
                     writer.WriteLine();
                 }
 
-                writer.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} {commandName} [options]");
+                writer.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} {commandName} [options] [--save=]");
 
                 ex.CommandDescriptor.ShowUsage(writer);
 
