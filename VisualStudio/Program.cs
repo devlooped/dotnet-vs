@@ -85,7 +85,7 @@ namespace VisualStudio
         static int ShowUsage()
         {
             Console.WriteLine();
-            Console.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} [command] [options|-?|-h|--help]");
+            Console.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} [command] [options|-?|-h|--help|--save=]");
             Console.WriteLine();
             Console.WriteLine("Supported commands:");
 
