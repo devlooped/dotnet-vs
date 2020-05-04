@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Immutable;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.DotNet;
+using Moq;
 using Xunit;
 
 namespace VisualStudio.Tests
@@ -10,24 +11,24 @@ namespace VisualStudio.Tests
     public class CommandFactoryTests
     {
         [Fact]
-        public void when_creating_command_with_empty_arguments_then_command_is_created()
+        public async Task when_creating_command_with_empty_arguments_then_command_is_created()
         {
             var commandFactory = new CommandFactory();
             commandFactory.RegisterCommand<TestCommandDescriptor>("test", x => new TestCommand(x));
 
-            var command = commandFactory.CreateCommand("test", ImmutableArray.Create<string>());
+            var command = await commandFactory.CreateCommandAsync("test", ImmutableArray.Create<string>());
 
             Assert.NotNull(command);
             Assert.True(command is TestCommand);
         }
 
         [Fact]
-        public void when_creating_command_with_help_argument_then_throws_show_usage()
+        public async Task when_creating_command_with_help_argument_then_throws_show_usage()
         {
             var commandFactory = new CommandFactory();
             commandFactory.RegisterCommand<TestCommandDescriptor>("test", x => new TestCommand(x));
 
-            Assert.Throws<ShowUsageException>(() => commandFactory.CreateCommand("test", ImmutableArray.Create("/h")));
+            await Assert.ThrowsAsync<ShowUsageException>(async () => await commandFactory.CreateCommandAsync("test", ImmutableArray.Create("/h")));
         }
 
         [Theory]
@@ -41,17 +42,65 @@ namespace VisualStudio.Tests
         [InlineData(Commands.Kill, typeof(KillCommand))]
         [InlineData(Commands.System.GenerateReadme, typeof(GenerateReadmeCommand))]
         [InlineData(Commands.System.Save, typeof(SaveCommand))]
-        public void when_creating_builtin_command_then_then_command_is_created(string commandName, Type expectedCommandType)
+        public async Task when_creating_builtin_command_then_then_command_is_created(string commandName, Type expectedCommandType)
         {
             var commandFactory = new CommandFactory();
 
-            Assert.True(commandFactory.IsCommandRegistered(commandName));
-
-            var command = commandFactory.CreateCommand(commandName, ImmutableArray.Create<string>());
+            var command = await commandFactory.CreateCommandAsync(commandName, ImmutableArray.Create<string>());
 
             Assert.NotNull(command);
             Assert.Equal(expectedCommandType, command.GetType());
         }
+
+        [Fact]
+        public async Task when_no_command_specified_run_is_default()
+        {
+            var commandFactory = new CommandFactory();
+
+            var command = await commandFactory.CreateCommandAsync("pre", ImmutableArray.Create<string>());
+
+            Assert.IsType<RunCommand>(command);
+        }
+
+        [Fact]
+        public async Task when_save_option_is_specified_then_save_command_is_created()
+        {
+            var commandFactory = new CommandFactory();
+
+            var command = await commandFactory.CreateCommandAsync(
+                "update",
+                ImmutableArray.Create(new[] { "master", "--save=foo" }));
+
+            Assert.IsType<SaveCommand>(command);
+        }
+
+        [Fact]
+        public async Task when_update_command_and_self_option_is_specified_then_update_self_is_created()
+        {
+            var commandFactory = new CommandFactory();
+
+            var command = await commandFactory.CreateCommandAsync(
+                "update",
+                ImmutableArray.Create(new[] { "self" }));
+
+            Assert.IsType<UpdateSelfCommand>(command);
+        }
+
+        [Fact]
+        public async Task when_saved_command_is_specified_then_saved_command_is_created()
+        {
+            var config = Config.FromFile(Path.GetTempFileName());
+            config.Set(Commands.DotNetConfig.Section, Commands.DotNetConfig.SubSection, "foo", "update|master");
+
+            var commandFactory = new CommandFactory(config);
+
+            var command = await commandFactory.CreateCommandAsync(
+                "foo",
+                ImmutableArray.Create<string>());
+
+            Assert.IsType<UpdateCommand>(command);
+        }
+
 
         class TestCommandDescriptor : CommandDescriptor
         {

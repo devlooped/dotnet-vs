@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.DotNet;
 
 namespace VisualStudio
 {
@@ -18,6 +19,15 @@ namespace VisualStudio
             public const string GenerateReadme = "generate-readme";
             public const string Save = "save";
             public const string UpdateSelf = "update-self";
+        }
+
+        public class DotNetConfig
+        {
+            public const string Section = ThisAssembly.Metadata.AssemblyName;
+            public const string SubSection = "aliases";
+
+            public static Config GetConfig(bool global = false) =>
+                global ? Microsoft.DotNet.Config.Read(ConfigLevel.Global) : Microsoft.DotNet.Config.Build();
         }
     }
 }

@@ -1,5 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
+using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -12,40 +15,100 @@ namespace VisualStudio.Tests
         public ProgramTests(ITestOutputHelper output) =>
             this.output = new OutputHelperTextWriter(output);
 
-        [Fact]
-        public async Task when_no_command_specified_run_is_default()
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("/help")]
+        [InlineData("/?")]
+        [InlineData("-?")]
+        [InlineData("/h")]
+        public async Task when_running_without_args_or_with_help_arg_then_usage_is_shown(params string[] args)
         {
-            var program = new Program(output, false, "pre");
+            var program = new ProgramTest(output, new CommandFactory(), args ?? new string[0]);
 
-            var exit = await program.RunAsync();
+            var exitCode = await program.RunAsync();
 
-            Assert.Equal(0, exit);
-
-            Assert.IsType<RunCommand>(program.Command);
+            Assert.Equal(0, exitCode);
+            Assert.True(program.UsageShown);
         }
 
         [Fact]
-        public async Task when_save_option_is_specified_then_save_command_is_executed()
+        public async Task when_running_command_then_command_is_executed()
         {
-            var program = new Program(output, false, "run", "Enteprise", "--save=foo");
+            var command = Mock.Of<Command>();
+            var commandFactory = new CommandFactory();
+            commandFactory.RegisterCommand("test", () => Mock.Of<CommandDescriptor>(), x => command);
 
-            var exit = await program.RunAsync();
+            var program = new Program(output, commandFactory, "test");
 
-            Assert.Equal(0, exit);
+            var exitCode = await program.RunAsync();
 
-            Assert.IsType<SaveCommand>(program.Command);
+            Assert.Equal(0, exitCode);
+            Mock.Get(command).Verify(x => x.ExecuteAsync(output));
         }
 
         [Fact]
-        public async Task when_update_command_and_self_option_is_specified_then_update_self_is_executed()
+        public async Task when_descriptor_throws_show_usage_exception_then_command_usage_is_shown()
         {
-            var program = new Program(output, false, "update", "self");
+            var commandDescriptor = new Mock<CommandDescriptor>();
+            commandDescriptor.Setup(x => x.Parse(It.IsAny<IEnumerable<string>>())).Throws(new ShowUsageException(commandDescriptor.Object));
 
-            var exit = await program.RunAsync();
+            var commandFactory = new CommandFactory();
+            commandFactory.RegisterCommand("test", () => commandDescriptor.Object, x => null);
 
-            Assert.Equal(0, exit);
+            var program = new Program(output, commandFactory, "test");
 
-            Assert.IsType<UpdateSelfCommand>(program.Command);
+            var exitCode = await program.RunAsync();
+
+            Assert.Equal(ErrorCodes.ShowUsage, exitCode);
+            commandDescriptor.Verify(x => x.ShowUsage(It.IsAny<ITextWriter>()));
+        }
+
+        [Fact]
+        public async Task when_command_throws_then_error_code_is_returned()
+        {
+            var command = new Mock<Command>();
+            command.Setup(x => x.ExecuteAsync(output)).Throws(new InvalidOperationException());
+
+            var commandFactory = new CommandFactory();
+            commandFactory.RegisterCommand("test", () => Mock.Of<CommandDescriptor>(), x => command.Object);
+
+            var program = new Program(output, commandFactory, "test");
+
+            var exitCode = await program.RunAsync();
+
+            Assert.Equal(ErrorCodes.Error, exitCode);
+        }
+
+        [Fact]
+        public async Task when_command_throws_and_debug_is_specified_then_throws()
+        {
+            var command = new Mock<Command>();
+            command.Setup(x => x.ExecuteAsync(output)).Throws(new InvalidOperationException());
+
+            var commandFactory = new CommandFactory();
+            commandFactory.RegisterCommand("test", () => Mock.Of<CommandDescriptor>(), x => command.Object);
+
+            var program = new Program(output, commandFactory, "test", "--debug");
+
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await program.RunAsync());
+        }
+
+        class ProgramTest : Program
+        {
+            public ProgramTest(TextWriter output, CommandFactory commandFactory, params string[] args)
+                : base(output, commandFactory, args)
+            {
+            }
+
+            public bool UsageShown { get; set; }
+
+            protected override void ShowUsage()
+            {
+                base.ShowUsage();
+
+                UsageShown = true;
+            }
         }
     }
 }
