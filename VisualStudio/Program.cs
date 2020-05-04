@@ -28,6 +28,11 @@ namespace VisualStudio
                 ShowUsage();
                 return 0;
             }
+            else if (VersionOption.IsDefined(args))
+            {
+                ShowVersion();
+                return 0;
+            }
 
             var commandName = args[0];
             var commandArgs = ImmutableArray.Create(args.Skip(1).ToArray());
@@ -63,6 +68,12 @@ namespace VisualStudio
             }
 
             return 0;
+        }
+
+        protected virtual void ShowVersion()
+        {
+            Console.WriteLine($"{ThisAssembly.Metadata.AssemblyName} {ThisAssembly.Metadata.Version}");
+            Console.WriteLine();
         }
 
         protected virtual void ShowUsage()

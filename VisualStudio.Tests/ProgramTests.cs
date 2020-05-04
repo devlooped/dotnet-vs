@@ -33,6 +33,17 @@ namespace VisualStudio.Tests
         }
 
         [Fact]
+        public async Task when_running_with_version_arg_then_version_is_shown()
+        {
+            var program = new ProgramTest(output, new CommandFactory(), "--version");
+
+            var exitCode = await program.RunAsync();
+
+            Assert.Equal(0, exitCode);
+            Assert.True(program.VersionShown);
+        }
+
+        [Fact]
         public async Task when_running_command_then_command_is_executed()
         {
             var command = Mock.Of<Command>();
@@ -103,11 +114,20 @@ namespace VisualStudio.Tests
 
             public bool UsageShown { get; set; }
 
+            public bool VersionShown { get; set; }
+
             protected override void ShowUsage()
             {
                 base.ShowUsage();
 
                 UsageShown = true;
+            }
+
+            protected override void ShowVersion()
+            {
+                base.ShowVersion();
+
+                VersionShown = true;
             }
         }
     }
