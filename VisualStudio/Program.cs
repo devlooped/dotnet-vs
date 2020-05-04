@@ -3,56 +3,39 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Mono.Options;
 
 namespace VisualStudio
 {
     class Program
     {
-        static readonly CommandFactory commandFactory = new CommandFactory();
-
+        CommandFactory commandFactory;
         TextWriter output;
-        bool execute;
         string[] args;
 
-        static async Task<int> Main(string[] args)
-        {
-            if (args.Length == 0 || new[] { "?", "-?", "/?", "-h", "/h", "--help", "/help" }.Contains(args[0]))
-                return ShowUsage();
+        static Task<int> Main(string[] args) => new Program(Console.Out, new CommandFactory(), args).RunAsync();
 
-            return await new Program(Console.Out, true, args).RunAsync();
-        }
-
-        public Program(TextWriter output, bool execute, params string[] args)
+        public Program(TextWriter output, CommandFactory commandFactory, params string[] args)
         {
             this.output = output;
-            this.execute = execute;
             this.args = args;
-
-            // Run is the default command if another one is not specified.
-            if (!commandFactory.IsCommandRegistered(args[0]))
-                this.args = args.Prepend(Commands.Run).ToArray();
+            this.commandFactory = commandFactory;
         }
-
-        public Command Command { get; private set; }
 
         public async Task<int> RunAsync()
         {
+            if (args.Length == 0 || new[] { "?", "-?", "/?", "-h", "/h", "--help", "/help" }.Contains(args[0]))
+            {
+                ShowUsage();
+                return 0;
+            }
+
             var commandName = args[0];
-            var commandArgs = ImmutableArray.Create(args);
+            var commandArgs = ImmutableArray.Create(args.Skip(1).ToArray());
             try
             {
-                if (SaveOption.IsDefined(args))
-                    commandName = Commands.System.Save;
-                else if (commandName == Commands.Update && SelfOption.IsDefined(args))
-                    commandName = Commands.System.UpdateSelf;
-                else
-                    commandArgs = ImmutableArray.Create(args.Skip(1).ToArray());
+                var command = await commandFactory.CreateCommandAsync(commandName, commandArgs);
 
-                Command = commandFactory.CreateCommand(commandName, commandArgs);
-
-                if (execute)
-                    await Command.ExecuteAsync(output);
+                await command.ExecuteAsync(output);
             }
             catch (ShowUsageException ex)
             {
@@ -72,28 +55,26 @@ namespace VisualStudio
 
                 return ErrorCodes.ShowUsage;
             }
-            catch (Exception ex) when (ex is OptionException || ex is WhereException || ex is InvalidOperationException)
+            catch (Exception ex) when (!DebugOption.IsDefined(args))
             {
                 output.WriteLine(ex.Message);
 
-                return ErrorCodes.Unknown;
+                return ErrorCodes.Error;
             }
 
             return 0;
         }
 
-        static int ShowUsage()
+        protected virtual void ShowUsage()
         {
             Console.WriteLine();
             Console.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} [command] [options|-?|-h|--help] [--save=]");
             Console.WriteLine();
             Console.WriteLine("Supported commands:");
 
-            var maxWidth = commandFactory.GetRegisteredCommands().Select(x => x.Key.Length).Max() + 2;
+            var maxWidth = commandFactory.GetRegisteredCommands().Select(x => x.Key.Length).Max() + 5;
             foreach (var command in commandFactory.GetRegisteredCommands())
-                Console.WriteLine($"\t- {command.Key.GetNormalizedString(maxWidth)}{command.Value.Description}");
-
-            return 0;
+                Console.WriteLine($"  {command.Key.GetNormalizedString(maxWidth)}{command.Value.Description}");
         }
     }
 }
