@@ -79,7 +79,7 @@ namespace VisualStudio
         protected virtual void ShowUsage()
         {
             Console.WriteLine();
-            Console.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} [command] [options|-?|-h|--help] [--save=]");
+            Console.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} [command] [options|-?|-h|--help] [--save=ALIAS[--global]]");
             Console.WriteLine();
             Console.WriteLine("Supported commands:");
 

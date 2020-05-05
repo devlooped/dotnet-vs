@@ -13,6 +13,7 @@ namespace VisualStudio
         public const string Kill = "kill";
         public const string Config = "config";
         public const string Log = "log";
+        public const string Alias = "alias";
 
         public class System
         {

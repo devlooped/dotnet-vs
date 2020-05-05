@@ -40,6 +40,7 @@ namespace VisualStudio.Tests
         [InlineData(Commands.Config, typeof(ConfigCommand))]
         [InlineData(Commands.Log, typeof(LogCommand))]
         [InlineData(Commands.Kill, typeof(KillCommand))]
+        [InlineData(Commands.Alias, typeof(AliasCommand))]
         [InlineData(Commands.System.GenerateReadme, typeof(GenerateReadmeCommand))]
         [InlineData(Commands.System.Save, typeof(SaveCommand))]
         [InlineData(Commands.System.UpdateSelf, typeof(UpdateSelfCommand))]
