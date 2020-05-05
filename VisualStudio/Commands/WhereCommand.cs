@@ -26,11 +26,15 @@ namespace VisualStudio
 
                 if (string.IsNullOrEmpty(Descriptor.Property))
                 {
-                    output.WriteLine();
                     output.WriteLine($"{ instance.DisplayName} - Version { instance.Catalog.ProductDisplayVersion}");
 
-                    foreach (var prop in properties)
-                        output.WriteLine($"{prop.PropertyName}: {prop.PropertyValue}");
+                    if (!Descriptor.ShowList)
+                    {
+                        foreach (var prop in properties)
+                            output.WriteLine($"{prop.PropertyName}: {prop.PropertyValue}");
+
+                        output.WriteLine();
+                    }
                 }
                 else
                 {
