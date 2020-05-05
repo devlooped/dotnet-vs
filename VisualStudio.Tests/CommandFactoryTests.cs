@@ -42,6 +42,7 @@ namespace VisualStudio.Tests
         [InlineData(Commands.Kill, typeof(KillCommand))]
         [InlineData(Commands.System.GenerateReadme, typeof(GenerateReadmeCommand))]
         [InlineData(Commands.System.Save, typeof(SaveCommand))]
+        [InlineData(Commands.System.UpdateSelf, typeof(UpdateSelfCommand))]
         public async Task when_creating_builtin_command_then_then_command_is_created(string commandName, Type expectedCommandType)
         {
             var commandFactory = new CommandFactory();
