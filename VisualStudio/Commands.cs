@@ -24,7 +24,7 @@ namespace VisualStudio
         public class DotNetConfig
         {
             public const string Section = ThisAssembly.Metadata.AssemblyName;
-            public const string SubSection = "aliases";
+            public const string SubSection = "alias";
 
             public static Config GetConfig(bool global = false) =>
                 global ? Microsoft.DotNet.Config.Read(ConfigLevel.Global) : Microsoft.DotNet.Config.Build();
