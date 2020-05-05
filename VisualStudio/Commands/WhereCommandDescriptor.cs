@@ -26,12 +26,5 @@ namespace VisualStudio
         public string Property => propOption.Value;
 
         public IEnumerable<string> WorkloadsArguments => workloads.Value;
-
-        public override void ShowUsage(ITextWriter output)
-        {
-            base.ShowUsage(output);
-
-            whereService.ShowUsage(output);
-        }
     }
 }
