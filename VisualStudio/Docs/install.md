@@ -18,10 +18,12 @@ Common options are `--passive`, `quiet` and `--wait`, for example.
 Examples:
 
 ```
+<!-- EXAMPLES_BEGIN -->
 // Installs VS enterprise with the Xamarin/Mobile workload
-vs install -sku:enterprise +mobile
+vs install Enterprise +mobile
 
 // Install VS community with the .NET Core, ASP.NET and Azure workloads, 
 // shows installation progress and waits for it to finish before returning
 vs install +core +web +azure
+<!-- EXAMPLES_END -->
 ```

@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace VisualStudio
@@ -55,8 +56,7 @@ namespace VisualStudio
                 writer.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} {commandName} [options] [--save=]");
 
                 ex.CommandDescriptor.ShowUsage(writer);
-
-                // TODO try to extract the examples from the .md command documentation
+                ShowExamples(commandName);
 
                 return ErrorCodes.ShowUsage;
             }
@@ -72,20 +72,48 @@ namespace VisualStudio
 
         protected virtual void ShowVersion()
         {
-            Console.WriteLine($"{ThisAssembly.Metadata.AssemblyName} {ThisAssembly.Metadata.Version}");
-            Console.WriteLine();
+            output.WriteLine($"{ThisAssembly.Metadata.AssemblyName} {ThisAssembly.Metadata.Version}");
+            output.WriteLine();
         }
 
         protected virtual void ShowUsage()
         {
-            Console.WriteLine();
-            Console.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} [command] [options|-?|-h|--help] [--save=ALIAS[--global]]");
-            Console.WriteLine();
-            Console.WriteLine("Supported commands:");
+            output.WriteLine();
+            output.WriteLine($"Usage: {ThisAssembly.Metadata.AssemblyName} [command] [options|-?|-h|--help] [--save=ALIAS[--global]]");
+            output.WriteLine();
+            output.WriteLine("Supported commands:");
 
             var maxWidth = commandFactory.GetRegisteredCommands().Select(x => x.Key.Length).Max() + 5;
             foreach (var command in commandFactory.GetRegisteredCommands())
-                Console.WriteLine($"  {command.Key.GetNormalizedString(maxWidth)}{command.Value.Description}");
+                output.WriteLine($"  {command.Key.GetNormalizedString(maxWidth)}{command.Value.Description}");
+        }
+
+        protected virtual void ShowExamples(string commandName)
+        {
+            if (Assembly.GetExecutingAssembly().GetManifestResourceStream("VisualStudio.Docs." + commandName + ".md") is Stream stream)
+            {
+                using (var reader = new StreamReader(stream))
+                {
+                    var showLine = false;
+                    var line = default(string);
+                    while ((line = reader.ReadLine()) != null && !line.StartsWith("<!-- EXAMPLES_END"))
+                    {
+                        if (line.StartsWith("<!-- EXAMPLES_BEGIN"))
+                        {
+                            // It means that we found the first comment and the file contains examples to be shown
+                            output.WriteLine();
+                            output.WriteLine("Examples:");
+                            output.WriteLine();
+
+                            showLine = true;
+                        }
+                        else if (showLine)
+                        {
+                            output.WriteLine(line);
+                        }
+                    }
+                }
+            }
         }
     }
 }

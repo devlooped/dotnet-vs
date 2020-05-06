@@ -67,12 +67,13 @@ namespace VisualStudio.Tests
             var commandFactory = new CommandFactory();
             commandFactory.RegisterCommand("test", () => commandDescriptor.Object, x => null);
 
-            var program = new Program(output, commandFactory, "test");
+            var program = new ProgramTest(output, commandFactory, "test");
 
             var exitCode = await program.RunAsync();
 
             Assert.Equal(ErrorCodes.ShowUsage, exitCode);
             commandDescriptor.Verify(x => x.ShowUsage(It.IsAny<ITextWriter>()));
+            Assert.True(program.ExamplesShown);
         }
 
         [Fact]
@@ -112,9 +113,11 @@ namespace VisualStudio.Tests
             {
             }
 
-            public bool UsageShown { get; set; }
+            public bool UsageShown { get; private set; }
 
-            public bool VersionShown { get; set; }
+            public bool VersionShown { get; private set; }
+
+            public bool ExamplesShown { get; private set; }
 
             protected override void ShowUsage()
             {
@@ -128,6 +131,13 @@ namespace VisualStudio.Tests
                 base.ShowVersion();
 
                 VersionShown = true;
+            }
+
+            protected override void ShowExamples(string commandName)
+            {
+                base.ShowExamples(commandName);
+
+                ExamplesShown = true;
             }
         }
     }

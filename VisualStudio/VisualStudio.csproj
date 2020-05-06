@@ -17,19 +17,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Docs\config.md" />
-    <None Remove="Docs\default.md" />
-    <None Remove="Docs\install.md" />
-    <None Remove="Docs\kill.md" />
-    <None Remove="Docs\log.md" />
-    <None Remove="Docs\modify.md" />
-    <None Remove="Docs\README.md" />
-    <None Remove="Docs\run.md" />
-    <None Remove="Docs\update.md" />
-    <None Remove="Docs\where.md" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="GitInfo" Version="2.0.20" PrivateAssets="all" />
     <PackageReference Include="vswhere" Version="2.8.4" PrivateAssets="all" />
     <PackageReference Include="Mono.Options" Version="6.6.0.161" />
@@ -42,33 +29,7 @@
   <ItemGroup>
     <None Include="$(VSWhereDir)vswhere.exe" Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="tools\$(TargetFramework)\any\%(Filename)%(Extension)" />
     <Content Include="..\docs\img\icon-128.png" Link="icon-128.png" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="%(Filename)%(Extension)" />
-    <Content Include="Docs\default.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Docs\kill.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Docs\log.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Docs\config.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Docs\modify.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Docs\update.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Docs\where.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Docs\run.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Docs\README.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="Docs\*.md" />
   </ItemGroup>
 
   <ItemGroup>
@@ -81,12 +42,6 @@
       <_Parameter1>AssemblyName</_Parameter1>
       <_Parameter2>$(AssemblyName)</_Parameter2>
     </AssemblyAttribute>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Docs\install.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
 </Project>
