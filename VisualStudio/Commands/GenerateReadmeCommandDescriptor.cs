@@ -10,7 +10,8 @@ namespace VisualStudio
 {
     class GenerateReadmeCommandDescriptor : CommandDescriptor
     {
-        const string DefaultCommandTemplateFilename = "default.md";
+        const string ResourcePrefix = "VisualStudio.Docs.";
+        const string ReadmeResource = ResourcePrefix + "README.md";
 
         public GenerateReadmeCommandDescriptor(Dictionary<string, CommandDescriptor> commands)
         {
@@ -30,31 +31,35 @@ namespace VisualStudio
 
         public Dictionary<string, CommandDescriptor> Commands { get; }
 
-        public virtual async Task<string> ReadReadmeTemplateContentAsync() =>
-            await File.ReadAllTextAsync(TemplateFile);
+        public virtual async Task<string> ReadReadmeTemplateContentAsync()
+        {
+            if (File.Exists(TemplateFile))
+                return await File.ReadAllTextAsync(TemplateFile);
+
+            using (var reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(ReadmeResource)))
+                return await reader.ReadToEndAsync();
+        }
 
         public virtual async Task<string> ReadCommandTemplateContentAsync(string commandName)
         {
-            var commandTemplateFilename = commandName + ".md";
-            var probingPaths = new string[]
+            var probingResources = new string[]
                 {
-                    Path.Combine(Path.GetDirectoryName(TemplateFile), commandTemplateFilename),
-                    Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Docs", commandTemplateFilename),
-                    Path.Combine(Path.GetDirectoryName(TemplateFile), DefaultCommandTemplateFilename),
-                    Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Docs", DefaultCommandTemplateFilename),
+                    ResourcePrefix + commandName + ".md",
+                    ResourcePrefix + "default.md"
                 };
 
-            var commandTemplatePath = probingPaths.FirstOrDefault(x => File.Exists(x));
+            var commandTemplateResource = probingResources.Select(x => Assembly.GetExecutingAssembly().GetManifestResourceStream(x)).FirstOrDefault();
 
-            if (string.IsNullOrEmpty(commandTemplatePath))
+            if (commandTemplateResource == null)
             {
                 throw new FileNotFoundException(
-                    $"Could not find a template file for command '{commandName}' in none of these locations:" +
+                    $"Could not find a template resource file for command '{commandName}' in none of these locations:" +
                     Environment.NewLine +
-                    string.Join(Environment.NewLine, probingPaths.Select(probingPath => $"\t - {probingPath}")));
+                    string.Join(Environment.NewLine, probingResources.Select(probingPath => $"\t - {probingPath}")));
             }
 
-            return await File.ReadAllTextAsync(commandTemplatePath);
+            using (var reader = new StreamReader(commandTemplateResource))
+                return await reader.ReadToEndAsync();
         }
     }
 }

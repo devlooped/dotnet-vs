@@ -17,6 +17,7 @@ and can be omitted).
 Examples:
 
 ```
+<!-- EXAMPLES_BEGIN -->
 // Runs the first VS enterprise with the Xamarin/Mobile workload
 vs -sku:ent -first +mobile
 
@@ -28,4 +29,5 @@ vs -v:16.4 -pre
 
 // Runs the last VS that was run
 vs
+<!-- EXAMPLES_END -->
 ```
