@@ -56,6 +56,11 @@ namespace VisualStudio
             if (!string.IsNullOrEmpty(command))
                 psi.ArgumentList.Add(command);
 
+            psi.ArgumentList.Add("--wait");
+
+            if (args.Contains("--passive"))
+                psi.ArgumentList.Add("--force");
+
             foreach (var arg in args)
                 psi.ArgumentList.Add(arg);
 
