@@ -23,18 +23,17 @@ namespace VisualStudio
         {
             var instances = await whereService.GetAllInstancesAsync(Descriptor.Options);
 
-            var instance = new Chooser().Choose(instances, output);
+            if (!Descriptor.All)
+                instances = new Chooser().ChooseMany(instances, output);
 
-            if (instance != null)
+            foreach (var instance in instances)
             {
-                var args = new List<string>();
-
-                args.Add("--passive");
-
-                args.Add("--installPath");
-                args.Add(instance.InstallationPath);
-
-                args.AddRange(Descriptor.ExtraArguments);
+                var args = new List<string>(Descriptor.ExtraArguments)
+                {
+                    "--passive",
+                    "--installPath",
+                    instance.InstallationPath
+                };
 
                 await installerService.UpdateAsync(instance.GetChannel(), instance.GetSku(), args, output);
             }
