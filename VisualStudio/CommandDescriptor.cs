@@ -19,14 +19,10 @@ namespace VisualStudio
 
         public virtual void Parse(IEnumerable<string> args)
         {
-            var showHelp = false;
-            var helpOption = new OptionSet();
-            helpOption.Add(Environment.NewLine);
-            helpOption.Add("?|h|help", "Display this help", h => showHelp = h != null);
-
+            var helpOption = new HelpOption();
             var extraArgs = Options.With(helpOption).Parse(args);
 
-            if (showHelp)
+            if (helpOption.Value)
                 throw new ShowUsageException(this);
 
             ExtraArguments = ImmutableArray.Create(extraArgs.ToArray());
