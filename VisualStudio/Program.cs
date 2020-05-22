@@ -12,14 +12,28 @@ namespace VisualStudio
         CommandFactory commandFactory;
         TextWriter output;
         string[] args;
+        Command executingCommand;
 
-        static Task<int> Main(string[] args) => new Program(Console.Out, new CommandFactory(), args).RunAsync();
+        static Task<int> Main(string[] args)
+        {
+            var program = new Program(Console.Out, new CommandFactory(), args);
+
+            Console.CancelKeyPress += async (sender, e) => await program.CancelAsync();
+
+            return program.RunAsync();
+        }
 
         public Program(TextWriter output, CommandFactory commandFactory, params string[] args)
         {
             this.output = output;
             this.args = args;
             this.commandFactory = commandFactory;
+        }
+
+        public async Task CancelAsync()
+        {
+            if (executingCommand != null)
+                await executingCommand.CancelAsync(output);
         }
 
         public async Task<int> RunAsync()
@@ -39,9 +53,9 @@ namespace VisualStudio
             var commandArgs = ImmutableArray.Create(args.Skip(1).ToArray());
             try
             {
-                var command = await commandFactory.CreateCommandAsync(commandName, commandArgs);
+                executingCommand = await commandFactory.CreateCommandAsync(commandName, commandArgs);
 
-                await command.ExecuteAsync(output);
+                await executingCommand.ExecuteAsync(output);
             }
             catch (ShowUsageException ex)
             {

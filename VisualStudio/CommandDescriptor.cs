@@ -12,7 +12,7 @@ namespace VisualStudio
 
         public string Description { get; protected set; } = string.Empty;
 
-        public ImmutableArray<string> ExtraArguments { get; private set; } = ImmutableArray.Create<string>();
+        public ImmutableArray<string> ExtraArguments { get; protected set; } = ImmutableArray.Create<string>();
 
         public virtual void ShowUsage(ITextWriter output) =>
             Options?.ShowUsage(output);

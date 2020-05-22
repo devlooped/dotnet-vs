@@ -36,6 +36,7 @@ namespace VisualStudio
             RegisterCommand<ConfigCommandDescriptor>(Commands.Config, x => new ConfigCommand(x, whereService));
             RegisterCommand<LogCommandDescriptor>(Commands.Log, x => new LogCommand(x, whereService));
             RegisterCommand<AliasCommandDescriptor>(Commands.Alias, x => new AliasCommand(x));
+            RegisterCommand<ClientCommandDescriptor>(Commands.Client, x => new ClientCommand(x, whereService));
 
             // System commands
             RegisterCommand(

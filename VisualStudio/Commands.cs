@@ -14,6 +14,7 @@ namespace VisualStudio
         public const string Config = "config";
         public const string Log = "log";
         public const string Alias = "alias";
+        public const string Client = "client";
 
         public class System
         {
