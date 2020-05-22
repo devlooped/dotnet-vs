@@ -6,6 +6,8 @@ namespace VisualStudio
 {
     abstract class Command
     {
+        public virtual Task CancelAsync(TextWriter output) => Task.CompletedTask;
+
         public abstract Task ExecuteAsync(TextWriter output);
     }
 

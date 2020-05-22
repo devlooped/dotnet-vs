@@ -106,6 +106,23 @@ namespace VisualStudio.Tests
             await Assert.ThrowsAsync<InvalidOperationException>(async () => await program.RunAsync());
         }
 
+        [Fact]
+        public async Task when_program_is_cancelled_then_executing_command_is_cancelled()
+        {
+            var commandFactory = new CommandFactory();
+            var program = new Program(output, commandFactory, "test");
+
+            // Cancel the program while the command is executed
+            var testCommand = new Mock<Command>();
+            testCommand.Setup(x => x.ExecuteAsync(output)).Callback(async () => await program.CancelAsync());
+
+            commandFactory.RegisterCommand("test", () => Mock.Of<CommandDescriptor>(), x => testCommand.Object);
+
+            await program.RunAsync();
+
+            testCommand.Verify(x => x.CancelAsync(output));
+        }
+
         class ProgramTest : Program
         {
             public ProgramTest(TextWriter output, CommandFactory commandFactory, params string[] args)
