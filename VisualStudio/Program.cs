@@ -32,8 +32,10 @@ namespace VisualStudio
 
         public async Task CancelAsync()
         {
-            if (executingCommand != null)
-                await executingCommand.CancelAsync(output);
+            if (executingCommand is IAsyncDisposable disposableCommand)
+                await disposableCommand.DisposeAsync();
+            else
+                (executingCommand as IDisposable)?.Dispose();
         }
 
         public async Task<int> RunAsync()

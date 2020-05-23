@@ -89,17 +89,14 @@ namespace VisualStudio.Tests
             await command.ExecuteAsync(new DevEnv(), output);
 
             Assert.NotNull(command.Server);
-            Assert.Equal(@"c:\src\foo.sln", command.Server.StartInfo.ArgumentList[0]);
-            Assert.Equal("/rootSuffix", command.Server.StartInfo.ArgumentList[1]);
-            Assert.Equal("Exp", command.Server.StartInfo.ArgumentList[2]);
-            Assert.Equal("/server", command.Server.StartInfo.ArgumentList[3]);
+            Assert.Equal(
+                @"c:\src\foo.sln /rootSuffix Exp /server",
+                string.Join(" ", command.Server.StartInfo.ArgumentList));
 
             Assert.NotNull(command.Client);
-            Assert.Equal("/rootSuffix", command.Client.StartInfo.ArgumentList[0]);
-            Assert.Equal("Exp", command.Client.StartInfo.ArgumentList[1]);
-            Assert.Equal("/client", command.Client.StartInfo.ArgumentList[2]);
-            Assert.Equal("/joinworkspace", command.Client.StartInfo.ArgumentList[3]);
-            Assert.Equal($"vsls:?workspaceId={command.GeneratedServerWorkspaceId}&remoteJoin=true", command.Client.StartInfo.ArgumentList[4]);
+            Assert.Equal(
+                $"/rootSuffix Exp /client /joinworkspace vsls:?workspaceId={command.GeneratedServerWorkspaceId}&remoteJoin=true",
+                string.Join(" ", command.Client.StartInfo.ArgumentList));
         }
 
         class ClientCommandTest : ClientCommand
@@ -108,27 +105,10 @@ namespace VisualStudio.Tests
                 : base(new ClientCommandDescriptorTest(workspaceId, isExperimental, solutionPath), default)
             { }
 
-            public Process Server { get; private set; }
-
-            public Process Client { get; private set; }
-
             public string GeneratedServerWorkspaceId { get; } = Guid.NewGuid().ToString();
 
-            protected override Process Start(VisualStudioInstance devenv, params string[] args)
-            {
-                if (args.Contains("/server"))
-                {
-                    Server = CreateProcess(devenv, args);
-                    return Server;
-                }
-                else if (args.Contains("/client"))
-                {
-                    Client = CreateProcess(devenv, args);
-                    return Client;
-                }
-
-                throw new InvalidOperationException("/server or /client are only supported");
-            }
+            protected override Process CreateProcess(DevEnv devenv, IEnumerable<string> args, bool start = true) =>
+                base.CreateProcess(devenv, args, false);
 
             protected override IEnumerable<string> ReadOutputLines(Process process)
             {
@@ -138,18 +118,6 @@ namespace VisualStudio.Tests
                     yield return "Start Live Share Session command succeeded: True";
                     yield return $"Invitation link:https://prod.liveshare.vsengsaas.visualstudio.com/join?{GeneratedServerWorkspaceId}";
                 }
-
-                yield break;
-            }
-
-            Process CreateProcess(VisualStudioInstance devenv, params string[] args)
-            {
-                var psi = new ProcessStartInfo();
-
-                foreach (var arg in args)
-                    psi.ArgumentList.Add(arg);
-
-                return new Process { StartInfo = psi };
             }
 
             class ClientCommandDescriptorTest : ClientCommandDescriptor

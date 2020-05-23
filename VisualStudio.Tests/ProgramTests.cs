@@ -107,20 +107,70 @@ namespace VisualStudio.Tests
         }
 
         [Fact]
-        public async Task when_program_is_cancelled_then_executing_command_is_cancelled()
+        public async Task when_program_is_cancelled_then_executing_command_is_async_disposed()
         {
             var commandFactory = new CommandFactory();
             var program = new Program(output, commandFactory, "test");
+            var command = new AsyncDisposableCommand();
+
+            // Register the command
+            commandFactory.RegisterCommand("test", () => Mock.Of<CommandDescriptor>(), x => command);
 
             // Cancel the program while the command is executed
-            var testCommand = new Mock<Command>();
-            testCommand.Setup(x => x.ExecuteAsync(output)).Callback(async () => await program.CancelAsync());
+            command.Executing += async (sender, e) => await program.CancelAsync();
 
-            commandFactory.RegisterCommand("test", () => Mock.Of<CommandDescriptor>(), x => testCommand.Object);
-
+            // Run the program
             await program.RunAsync();
 
-            testCommand.Verify(x => x.CancelAsync(output));
+            Assert.True(command.IsDisposed);
+        }
+
+        [Fact]
+        public async Task when_program_is_cancelled_then_executing_command_is_disposed()
+        {
+            var commandFactory = new CommandFactory();
+            var program = new Program(output, commandFactory, "test");
+            var command = new DisposableCommand();
+
+            // Register the command
+            commandFactory.RegisterCommand("test", () => Mock.Of<CommandDescriptor>(), x => command);
+
+            // Cancel the program while the command is executed
+            command.Executing += async (sender, e) => await program.CancelAsync();
+
+            // Run the program
+            await program.RunAsync();
+
+            Assert.True(command.IsDisposed);
+        }
+
+        class TestCommand : Command
+        {
+            public event EventHandler Executing;
+
+            public bool IsDisposed { get; protected set; }
+
+            public override Task ExecuteAsync(TextWriter output)
+            {
+                Executing?.Invoke(this, new EventArgs());
+
+                return Task.CompletedTask;
+            }
+        }
+
+        class AsyncDisposableCommand : TestCommand, IAsyncDisposable
+        {
+            public ValueTask DisposeAsync()
+            {
+                IsDisposed = true;
+
+                return new ValueTask();
+            }
+        }
+
+        class DisposableCommand : TestCommand, IDisposable
+        {
+            public void Dispose() => IsDisposed = true;
         }
 
         class ProgramTest : Program

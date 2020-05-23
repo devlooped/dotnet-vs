@@ -8,19 +8,21 @@ using DevEnv = vswhere.VisualStudioInstance;
 
 namespace VisualStudio
 {
-    class ClientCommand : Command<ClientCommandDescriptor>
+    class ClientCommand : Command<ClientCommandDescriptor>, IDisposable
     {
         const string JoinToken = "/join?";
 
         readonly WhereService whereService;
-
-        Process server;
 
         public ClientCommand(ClientCommandDescriptor descriptor, WhereService whereService)
             : base(descriptor)
         {
             this.whereService = whereService;
         }
+
+        public Process Server { get; private set; }
+
+        public Process Client { get; private set; }
 
         public override async Task ExecuteAsync(TextWriter output) =>
             await ExecuteAsync(new Chooser().Choose(await whereService.GetAllInstancesAsync(Descriptor.Options), output), output);
@@ -31,14 +33,6 @@ namespace VisualStudio
                 StartServerAndClient(devenv, output);
             else
                 StartClient(devenv, Descriptor.WorkspaceId, output);
-        }
-
-        public override Task CancelAsync(TextWriter output)
-        {
-            if (server != null)
-                server.Kill();
-
-            return base.CancelAsync(output);
         }
 
         void StartClient(DevEnv devenv, string workspaceId, TextWriter output)
@@ -53,7 +47,8 @@ namespace VisualStudio
 
             output.WriteLine($"Starting client: {devenv.ProductPath} {string.Join(" ", args)}");
 
-            Start(devenv, args.ToArray());
+            Client = CreateProcess(devenv, args);
+
         }
 
         void StartServerAndClient(DevEnv devenv, TextWriter output)
@@ -71,9 +66,9 @@ namespace VisualStudio
 
             output.WriteLine($"Starting server: {devenv.ProductPath} {string.Join(" ", args)}");
 
-            server = Start(devenv, args.ToArray());
+            Server = CreateProcess(devenv, args);
 
-            foreach (var line in ReadOutputLines(server))
+            foreach (var line in ReadOutputLines(Server))
             {
                 output.WriteLine("[devenv] " + line);
 
@@ -82,7 +77,7 @@ namespace VisualStudio
             }
         }
 
-        protected virtual Process Start(DevEnv devenv, params string[] args)
+        protected virtual Process CreateProcess(DevEnv devenv, IEnumerable<string> args, bool start = true)
         {
             var psi = new ProcessStartInfo(devenv.ProductPath)
             {
@@ -95,7 +90,12 @@ namespace VisualStudio
                     psi.ArgumentList.Add(arg);
             }
 
-            return Process.Start(psi);
+            var process = new Process() { StartInfo = psi };
+
+            if (start)
+                process.Start();
+
+            return process;
         }
 
         protected virtual IEnumerable<string> ReadOutputLines(Process process)
@@ -104,5 +104,7 @@ namespace VisualStudio
             while ((line = process.StandardOutput.ReadLine()) != null)
                 yield return line;
         }
+
+        public void Dispose() => Server?.Kill();
     }
 }
