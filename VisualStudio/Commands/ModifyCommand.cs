@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -29,7 +28,7 @@ namespace VisualStudio
             {
                 var args = new List<string>();
 
-                if (Descriptor.WorkloadsAdded.Any() || Descriptor.WorkloadsRemoved.Any())
+                if (Descriptor.WorkloadsAdded.Any() || Descriptor.WorkloadsRemoved.Any() || Descriptor.ExtraArguments.Contains("--config"))
                     args.Add("--passive"); // otherwise let the user to select the workload in the UI
 
                 args.AddRange(Descriptor.WorkloadsAdded);
