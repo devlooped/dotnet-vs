@@ -50,7 +50,10 @@ namespace VisualStudio
 
             var bootstrapper = await DownloadAsync(uri.ToString(), output);
 
-            var psi = new ProcessStartInfo(bootstrapper);
+            var psi = new ProcessStartInfo(bootstrapper)
+            {
+                WorkingDirectory = Directory.GetCurrentDirectory()
+            };
 
             // install command should be empty
             if (!string.IsNullOrEmpty(command))
