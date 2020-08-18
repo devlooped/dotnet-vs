@@ -27,8 +27,8 @@ namespace VisualStudio
                 uri = uri.Append("pre/");
             else if (channel == Channel.IntPreview)
                 uri = uri.Append("intpreview/");
-            else if (channel == Channel.Master)
-                uri = uri.Append("int.master/");
+            else if (channel == Channel.Main)
+                uri = uri.Append("int.main/");
             else
                 uri = uri.Append("release/");
 

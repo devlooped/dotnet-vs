@@ -37,8 +37,8 @@ namespace VisualStudio
                     args.Add("Preview");
                 else if (Descriptor.Channel == Channel.IntPreview)
                     args.Add("IntPreview");
-                else if (Descriptor.Channel == Channel.Master)
-                    args.Add("master");
+                else if (Descriptor.Channel == Channel.Main)
+                    args.Add("main");
                 else
                     args.Add(Descriptor.Sku.ToString().Substring(0, 3));
             }

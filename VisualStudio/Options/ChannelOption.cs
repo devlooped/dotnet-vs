@@ -6,7 +6,7 @@ namespace VisualStudio
 {
     class ChannelOption : OptionSet<Channel?>
     {
-        readonly static string[] shortcuts = new[] { "pre", "preview", "int", "internal", "master", "rel", "release" };
+        readonly static string[] shortcuts = new[] { "pre", "preview", "int", "internal", "main", "rel", "release" };
 
         public ChannelOption(string verb, Channel? defaultValue = default) : base(defaultValue)
         {
@@ -14,7 +14,7 @@ namespace VisualStudio
             Add("rel|release", verb + " release version", _ => Value = Channel.Release);
             Add("pre|preview", verb + " preview version", _ => Value = Channel.Preview);
             Add("int|internal", verb + " internal (aka 'dogfood') version", _ => Value = Channel.IntPreview);
-            Add("master", verb + " master version", _ => Value = Channel.Master, hidden: true);
+            Add("main", verb + " main version", _ => Value = Channel.Main, hidden: true);
         }
 
         protected override bool Parse(string argument, OptionContext c)

@@ -72,7 +72,7 @@ namespace VisualStudio.Tests
 
             var command = await commandFactory.CreateCommandAsync(
                 "update",
-                ImmutableArray.Create(new[] { "master", "--save=foo" }));
+                ImmutableArray.Create(new[] { "main", "--save=foo" }));
 
             Assert.IsType<SaveCommand>(command);
         }
@@ -93,7 +93,7 @@ namespace VisualStudio.Tests
         public async Task when_saved_command_is_specified_then_saved_command_is_created()
         {
             var config = Config.FromFile(Path.GetTempFileName());
-            config.Set(Commands.DotNetConfig.Section, Commands.DotNetConfig.SubSection, "foo", "update|master");
+            config.Set(Commands.DotNetConfig.Section, Commands.DotNetConfig.SubSection, "foo", "update|main");
 
             var commandFactory = new CommandFactory(config);
 
