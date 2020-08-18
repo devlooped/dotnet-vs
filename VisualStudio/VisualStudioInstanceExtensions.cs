@@ -34,8 +34,8 @@ namespace vswhere
                     return Channel.Preview;
                 case "VisualStudio.16.IntPreview":
                     return Channel.IntPreview;
-                case "VisualStudio.16.int.master":
-                    return Channel.Master;
+                case "VisualStudio.16.int.main":
+                    return Channel.Main;
             }
 
             throw new ArgumentException($"Invalid ChannelId {vsInstance.ChannelId}. Must be one of {string.Join(", ", Enum.GetNames(typeof(Channel)).Select(x => x.ToLowerInvariant()))}.", "sku");

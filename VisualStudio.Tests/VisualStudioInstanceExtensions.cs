@@ -18,7 +18,7 @@ namespace vswhere
             { Channel.Release, "VisualStudio.16.Release" },
             { Channel.Preview, "VisualStudio.16.Preview" },
             { Channel.IntPreview, "VisualStudio.16.IntPreview" },
-            { Channel.Master, "VisualStudio.16.int.master" },
+            { Channel.Main, "VisualStudio.16.int.main" },
         };
 
         public static VisualStudioInstance WithSku(this VisualStudioInstance vsInstance, Sku sku)

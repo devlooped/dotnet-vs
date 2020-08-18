@@ -23,8 +23,8 @@ namespace VisualStudio.Tests
         [InlineData("internal", Channel.IntPreview)]
         [InlineData("--int", Channel.IntPreview)]
         [InlineData("--internal", Channel.IntPreview)]
-        [InlineData("master", Channel.Master)]
-        [InlineData("--master", Channel.Master)]
+        [InlineData("main", Channel.Main)]
+        [InlineData("--main", Channel.Main)]
         public void when_parsing_channel_argument_then_channel_is_set(string argument, Channel? expectedValue)
         {
             var options = VisualStudioOptions.Empty().WithChannel();
@@ -134,10 +134,10 @@ namespace VisualStudio.Tests
             new (string[] Arguments, Func<VisualStudioOptions, bool> VerifyResult)[]
             {
                 (new [] { "enterprise" , "preview" }, x => x.Sku == Sku.Enterprise && x.Channel == Channel.Preview),
-                (new [] { "master" , "exp" }, x => x.Channel == Channel.Master && x.IsExperimental),
+                (new [] { "main" , "exp" }, x => x.Channel == Channel.Main && x.IsExperimental),
                 (new [] { "all", "exp" }, x => x.All && x.IsExperimental),
-                (new [] { "ent", "master" }, x => x.Sku == Sku.Enterprise && x.Channel == Channel.Master),
-                (new [] { "master", "x => x.InstanceId == '123'" }, x => x.Channel == Channel.Master && x.Expression == "x => x.InstanceId == \"123\""),
+                (new [] { "ent", "main" }, x => x.Sku == Sku.Enterprise && x.Channel == Channel.Main),
+                (new [] { "main", "x => x.InstanceId == '123'" }, x => x.Channel == Channel.Main && x.Expression == "x => x.InstanceId == \"123\""),
                 (new [] { "pro" , "release", "--nick=foo" }, x => x.Sku == Sku.Professional && x.Channel == Channel.Release && x.Nickname == "foo"),
             };
 

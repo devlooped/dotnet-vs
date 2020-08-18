@@ -29,7 +29,7 @@ namespace VisualStudio.Tests
             Assert.True(predicate(new vswhere.VisualStudioInstance().WithChannel(Channel.Preview)));
             Assert.False(predicate(new vswhere.VisualStudioInstance().WithChannel(Channel.IntPreview)));
             Assert.False(predicate(new vswhere.VisualStudioInstance().WithChannel(Channel.Release)));
-            Assert.False(predicate(new vswhere.VisualStudioInstance().WithChannel(Channel.Master)));
+            Assert.False(predicate(new vswhere.VisualStudioInstance().WithChannel(Channel.Main)));
         }
 
         [Fact]
