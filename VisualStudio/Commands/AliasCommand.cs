@@ -20,10 +20,9 @@ namespace VisualStudio
                 .Where(x => x.Section == Commands.DotNetConfig.Section && x.Subsection == Commands.DotNetConfig.SubSection)
                 .ToList();
 
-            var maxWidth = entries.Select(x => x.Name.Length).Max() + 5;
+            var maxWidth = entries.Select(x => x.Variable.Length).Max() + 5;
             foreach (var entry in entries)
-                output.WriteLine($"  {entry.Name.GetNormalizedString(maxWidth)}{entry.Value.Replace("|", " ")}");
-
+                output.WriteLine($"  {entry.Variable.GetNormalizedString(maxWidth)}{entry.RawValue.Replace("|", " ")}");
 
             return Task.CompletedTask;
         }

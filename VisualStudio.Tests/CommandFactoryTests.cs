@@ -92,8 +92,8 @@ namespace VisualStudio.Tests
         [Fact]
         public async Task when_saved_command_is_specified_then_saved_command_is_created()
         {
-            var config = Config.FromFile(Path.GetTempFileName());
-            config.Set(Commands.DotNetConfig.Section, Commands.DotNetConfig.SubSection, "foo", "update|main");
+            var config = Config.Build(Path.GetTempFileName());
+            config.SetString(Commands.DotNetConfig.Section, Commands.DotNetConfig.SubSection, "foo", "update|main");
 
             var commandFactory = new CommandFactory(config);
 

@@ -17,7 +17,7 @@ namespace VisualStudio
 
             Commands.DotNetConfig
                 .GetConfig(Descriptor.Global)
-                .Set(Commands.DotNetConfig.Section, Commands.DotNetConfig.SubSection, Descriptor.Alias, string.Join('|', Descriptor.ExtraArguments));
+                .SetString(Commands.DotNetConfig.Section, Commands.DotNetConfig.SubSection, Descriptor.Alias, string.Join('|', Descriptor.ExtraArguments));
 
             return Task.CompletedTask;
         }
