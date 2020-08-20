@@ -29,7 +29,7 @@ namespace VisualStudio
             public const string SubSection = "alias";
 
             public static Config GetConfig(bool global = false) =>
-                global ? Microsoft.DotNet.Config.Read(ConfigLevel.Global) : Microsoft.DotNet.Config.Build();
+                global ? Microsoft.DotNet.Config.Build(ConfigLevel.Global) : Microsoft.DotNet.Config.Build();
         }
     }
 }

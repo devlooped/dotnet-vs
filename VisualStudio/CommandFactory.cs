@@ -75,7 +75,7 @@ namespace VisualStudio
             if (!factories.TryGetValue(command, out var factory))
             {
                 // Or check if exists a saved command
-                var savedCommand = config.Get<string>(Commands.DotNetConfig.Section, Commands.DotNetConfig.SubSection, command, default);
+                var savedCommand = config.GetString(Commands.DotNetConfig.Section, Commands.DotNetConfig.SubSection, command);
                 if (!string.IsNullOrEmpty(savedCommand))
                 {
                     // Initially the args contains the command name and the args
