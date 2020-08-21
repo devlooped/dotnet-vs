@@ -84,11 +84,20 @@ namespace VisualStudio
                     // It's a saved command => the first argument should be the command name
                     var savedCommandName = savedCommandArgs.FirstOrDefault();
 
-                    if (!string.IsNullOrEmpty(savedCommandName) && factories.TryGetValue(savedCommandName, out factory))
+                    if (!string.IsNullOrEmpty(savedCommandName))
                     {
-                        // Restore the saved args
-                        args = ImmutableArray.Create(savedCommandArgs.Skip(1).ToArray());
-                        command = savedCommandName;
+                        if (factories.TryGetValue(savedCommandName, out factory))
+                        {
+                            // Restore the saved args
+                            args = ImmutableArray.Create(savedCommandArgs.Skip(1).ToArray());
+                            command = savedCommandName;
+                        }
+                        // If the factory is still null, use the Run command as the default
+                        else if (factories.TryGetValue(Commands.Run, out factory))
+                        {
+                            args = ImmutableArray.Create(savedCommandArgs.ToArray());
+                            command = Commands.Run;
+                        }
                     }
                 }
             }
