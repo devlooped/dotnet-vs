@@ -86,6 +86,14 @@ namespace VisualStudio
                 psi.ArgumentList.Add("Exp");
             }
 
+            // NOTE: the /log argument, if present, *must* be the last
+            var log = psi.ArgumentList.FirstOrDefault(arg => "/log".Equals(arg, StringComparison.OrdinalIgnoreCase));
+            if (log != null)
+            {
+                psi.ArgumentList.Remove(log);
+                psi.ArgumentList.Add(log);
+            }
+
             psi.Log(output);
             var process = Process.Start(psi);
 
