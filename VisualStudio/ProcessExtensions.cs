@@ -12,7 +12,7 @@ namespace VisualStudio
         {
             output.Write(Quote(info.FileName));
 
-            foreach (var arg in info.ArgumentList)
+            foreach (var arg in info.ArgumentList.Where(arg => arg != null))
             {
                 output.Write(' ');
                 output.Write(Quote(arg));

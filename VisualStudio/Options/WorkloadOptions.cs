@@ -58,6 +58,8 @@ namespace VisualStudio
         {
             if (aliases.Keys.Any(alias => argument.StartsWith(prefix + alias)))
                 argument = "--" + this.argument + "=" + GetWorkloadId(argument.Substring(prefix.Length));
+            else if (argument.StartsWith(prefix))
+                argument = "--" + this.argument + "=" + argument.Substring(1);
 
             return base.Parse(argument, c);
         }
