@@ -4,13 +4,13 @@
     <Description>A global tool for managing Visual Studio installations</Description>
 
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFrameworks>netcoreapp2.1;netcoreapp3.1</TargetFrameworks>
 
     <AssemblyName>vs</AssemblyName>
     <RootNamespace>VisualStudio</RootNamespace>
 
     <PackageId>dotnet-vs</PackageId>
-    <ToolCommandName>vs</ToolCommandName>
+    <ToolCommandName>vs</ToolCommandName> 
     <PackAsTool>true</PackAsTool>
 
     <NoWarn>$(NoWarn);NU5118</NoWarn>
@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$(VSWhereDir)vswhere.exe" Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="tools\$(TargetFramework)\any\%(Filename)%(Extension)" />
+    <None Condition="'$(TargetFramework)' != ''" Include="$(VSWhereDir)vswhere.exe" Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="tools\$(TargetFramework)\any\%(Filename)%(Extension)" />
     <Content Include="..\docs\img\icon-128.png" Link="icon-128.png" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="%(Filename)%(Extension)" />
     <EmbeddedResource Include="Docs\*.md" />
   </ItemGroup>
