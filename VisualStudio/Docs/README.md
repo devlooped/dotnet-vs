@@ -3,7 +3,7 @@
 
 A global tool for running, managing and querying Visual Studio installations
 
-[![Build Status](https://dev.azure.com/kzu/oss/_apis/build/status/dotnet-vs?branchName=master)](https://dev.azure.com/kzu/oss/_build/latest?definitionId=32&branchName=master)
+[![Build Status](https://dev.azure.com/kzu/oss/_apis/build/status/dotnet-vs?branchName=main)](https://dev.azure.com/kzu/oss/_build/latest?definitionId=32&branchName=main)
 [![Version](https://img.shields.io/nuget/v/dotnet-vs.svg?color=royalblue)](https://www.nuget.org/packages/dotnet-vs)
 [![Downloads](https://img.shields.io/nuget/dt/dotnet-vs.svg?color=darkmagenta)](https://www.nuget.org/packages/dotnet-vs)
 
