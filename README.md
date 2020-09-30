@@ -80,6 +80,7 @@ Usage: vs run [options]
 | `f\|first` | If more than one instance matches the criteria, run the first one sorted by descending build version. |
 | `v\|version:` | Run specific (semantic) version, such as 16.4 or 16.5.3. |
 | `w\|wait` | Wait for the started Visual Studio to exit. |
+| `nr\|nodereuse` | Disable MSBuild node reuse. Useful when testing analyzers, tasks and targets. Defaults to true when running experimental instance. |
 | `default` | Set as the default version to run when no arguments are provided, or remove the current default (with --default-). |
 | `requires:` | A workload ID |
 
