@@ -29,7 +29,7 @@ namespace VisualStudio
             Default(verb).WithExperimental().WithNickname().WithSelectAll();
 
         public static VisualStudioOptions Default(string verb = DefaultVerb) =>
-            Empty(verb).WithChannel().WithSku().WithExpression();
+            Empty(verb).WithChannel().WithSku().WithFilter();
 
         public static VisualStudioOptions Empty(string verb = DefaultVerb) => new VisualStudioOptions(verb);
 
@@ -39,7 +39,7 @@ namespace VisualStudio
 
         public VisualStudioOptions WithExperimental() => new VisualStudioOptions(verb, options.With(new ExperimentalOption(verb)));
 
-        public VisualStudioOptions WithExpression() => new VisualStudioOptions(verb, options.With(new ExpressionOption()));
+        public VisualStudioOptions WithFilter() => new VisualStudioOptions(verb, options.With(new FilterOption()));
 
         public VisualStudioOptions WithSelectAll() => new VisualStudioOptions(verb, options.With(new SelectAllOption(verb)));
 
@@ -51,7 +51,7 @@ namespace VisualStudio
 
         public bool IsExperimental => GetValue<ExperimentalOption, bool>();
 
-        public string Expression => GetValue<ExpressionOption, string>();
+        public string Expression => GetValue<FilterOption, string>();
 
         public bool All => GetValue<SelectAllOption, bool>();
 

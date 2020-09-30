@@ -66,6 +66,6 @@ namespace VisualStudio.Tests
             new Options(
                 new SkuOption(sku),
                 new ChannelOption("test", channel),
-                new ExpressionOption(expression));
+                new FilterOption(expression));
     }
 }

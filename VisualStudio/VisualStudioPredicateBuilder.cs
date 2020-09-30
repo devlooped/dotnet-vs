@@ -20,11 +20,11 @@ namespace VisualStudio
             if (options.GetValue<ChannelOption, Channel?>() is Channel channel)
                 channelPredicate = x => x.GetChannel() == channel;
 
-            Func<VisualStudioInstance, bool> exprPredicate = _ => true;
-            if (options.GetValue<ExpressionOption, string>() is string expression && !string.IsNullOrEmpty(expression))
-                exprPredicate = await CSharpScript.EvaluateAsync<Func<VisualStudioInstance, bool>>(expression, scriptOptions);
+            Func<VisualStudioInstance, bool> filterPredicate = _ => true;
+            if (options.GetValue<FilterOption, string>() is string filter && !string.IsNullOrEmpty(filter))
+                filterPredicate = await CSharpScript.EvaluateAsync<Func<VisualStudioInstance, bool>>(filter, scriptOptions);
 
-            return x => skuPredicate(x) && channelPredicate(x) && exprPredicate(x);
+            return x => skuPredicate(x) && channelPredicate(x) && filterPredicate(x);
         }
     }
 }

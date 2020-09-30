@@ -103,13 +103,11 @@ namespace VisualStudio.Tests
         [Theory]
         [InlineData("", default)]
         [InlineData("x => x.Prop == 'value'", "x => x.Prop == \"value\"")]
-        [InlineData("--expr= x => x.Prop == 'value'", "x => x.Prop == \"value\"")]
-        [InlineData("--expression= x => x.Prop == 'value'", "x => x.Prop == \"value\"")]
-        [InlineData("/expr: x => x.Prop == 'value'", "x => x.Prop == \"value\"")]
-        [InlineData("/expression: x => x.Prop == 'value'", "x => x.Prop == \"value\"")]
+        [InlineData("--filter= x => x.Prop == 'value'", "x => x.Prop == \"value\"")]
+        [InlineData("/filter: x => x.Prop == 'value'", "x => x.Prop == \"value\"")]
         public void when_parsing_expression_then_exppression_is_set(string argument, string expectedValue)
         {
-            var options = VisualStudioOptions.Empty().WithExpression();
+            var options = VisualStudioOptions.Empty().WithFilter();
 
             options.Parse(new[] { argument });
 
