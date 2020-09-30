@@ -86,6 +86,11 @@ namespace VisualStudio
                 psi.ArgumentList.Add("Exp");
             }
 
+            if (Descriptor.DisableNodeReuse || Descriptor.IsExperimental)
+            {
+                psi.EnvironmentVariables.Add("MSBUILDDISABLENODEREUSE", "1");
+            }
+
             // NOTE: the /log argument, if present, *must* be the last
             var log = psi.ArgumentList.FirstOrDefault(arg => "/log".Equals(arg, StringComparison.OrdinalIgnoreCase));
             if (log != null)

@@ -21,6 +21,7 @@ namespace VisualStudio
                         { "f|first", "If more than one instance matches the criteria, run the first one sorted by descending build version.", f => First = f != null },
                         { "v|version:", "Run specific (semantic) version, such as 16.4 or 16.5.3.", v => Version = v },
                         { "w|wait", "Wait for the started Visual Studio to exit.", w => Wait = w != null },
+                        { "nr|nodereuse", "Disable MSBuild node reuse. Useful when testing analyzers, tasks and targets. Defaults to true when running experimental instance.", nr => DisableNodeReuse = nr != null },
                         { "default", "Set as the default version to run when no arguments are provided, or remove the current default (with --default-).", d => SetDefault = d != null },
                     })
                 .With(workloads);
@@ -37,6 +38,8 @@ namespace VisualStudio
         public string Id { get; private set; }
 
         public bool IsExperimental => vsOptions.IsExperimental;
+
+        public bool DisableNodeReuse { get; private set; }
 
         public IEnumerable<string> WorkloadsArguments => workloads.Value;
 
