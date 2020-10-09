@@ -88,7 +88,7 @@ namespace VisualStudio
 
             if (Descriptor.DisableNodeReuse || Descriptor.IsExperimental)
             {
-                psi.EnvironmentVariables.Add("MSBUILDDISABLENODEREUSE", "1");
+                psi.EnvironmentVariables["MSBUILDDISABLENODEREUSE"] = "1";
             }
 
             // NOTE: the /log argument, if present, *must* be the last
