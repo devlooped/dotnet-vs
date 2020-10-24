@@ -37,7 +37,7 @@ namespace VisualStudio
                     output.WriteLine($"{i + 1}: {GetItemDescription(instancesAsList[i])}");
 
                 if (chooseMany)
-                    output.WriteLine($"You can also {verb} [a|all] or skip !N");
+                    output.WriteLine($"You can also {verb} [a|all] or skip one instance with !x");
 
                 if (inputProvider() is string input)
                 {
