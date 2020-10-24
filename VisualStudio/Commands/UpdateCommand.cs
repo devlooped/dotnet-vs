@@ -26,9 +26,14 @@ namespace VisualStudio
             if (!Descriptor.All)
                 instances = new Chooser().ChooseMany(instances, output);
 
+            var extra =
+                !Descriptor.ExtraArguments.Any(x => x.TrimStart('-') == "config") && File.Exists(".vsconfig") ?
+                Descriptor.ExtraArguments.Add("--config").Add(".vsconfig") :
+                Descriptor.ExtraArguments;
+
             foreach (var instance in instances)
             {
-                var args = new List<string>(Descriptor.ExtraArguments)
+                var args = new List<string>(extra)
                 {
                     "--passive",
                     "--installPath",

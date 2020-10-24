@@ -177,7 +177,7 @@ See also [vswhere on GitHub](https://github.com/microsoft/vswhere).
 
 ## update
 
-Updates an installtion of Visual Studio
+Updates an installation of Visual Studio
 
 ```
 Usage: vs update [options]

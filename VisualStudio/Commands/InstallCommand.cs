@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace VisualStudio
@@ -23,6 +24,9 @@ namespace VisualStudio
                 args.Add("--nickname");
                 args.Add(Descriptor.Nickname);
             }
+
+            if (!Descriptor.ExtraArguments.Any(x => x.TrimStart('-') == "config") && File.Exists(".vsconfig"))
+                args.AddRange(new[] { "--config", ".vsconfig" });
 
             args.AddRange(Descriptor.ExtraArguments);
 
