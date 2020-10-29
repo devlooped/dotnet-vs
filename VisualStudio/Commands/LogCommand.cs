@@ -30,7 +30,7 @@ namespace VisualStudio
                     "ActivityLog.xml");
 
                 if (File.Exists(path))
-                    Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
+                    Process.Start(new ProcessStartInfo("explorer.exe", $"/select, \"{path}\"") { UseShellExecute = true });
             }
         }
     }
