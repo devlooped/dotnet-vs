@@ -5,6 +5,7 @@
         Community,
         Professional,
         Enterprise,
-        BuildTools
+        BuildTools,
+        TestAgent
     }
 }
