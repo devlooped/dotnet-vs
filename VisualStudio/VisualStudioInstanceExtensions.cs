@@ -19,6 +19,8 @@ namespace vswhere
                     return Sku.Professional;
                 case "Microsoft.VisualStudio.Product.Community":
                     return Sku.Community;
+                case "Microsoft.VisualStudio.Product.BuildTools":
+                    return Sku.BuildTools;
             }
 
             throw new ArgumentException($"Invalid SKU {vsInstance.ProductId}. Must be one of {string.Join(", ", Enum.GetNames(typeof(Sku)).Select(x => x.ToLowerInvariant()))}.", "sku");

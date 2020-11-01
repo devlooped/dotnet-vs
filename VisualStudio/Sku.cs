@@ -5,5 +5,6 @@
         Community,
         Professional,
         Enterprise,
+        BuildTools
     }
 }

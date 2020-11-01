@@ -27,6 +27,8 @@ namespace VisualStudio
                 RedirectStandardOutput = true,
                 ArgumentList =
                 {
+                    "-products",
+                    "*",
                     "-nologo",
                     "-prerelease",
                     "-format",

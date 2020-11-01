@@ -41,6 +41,9 @@ namespace VisualStudio
                 case Sku.Enterprise:
                     uri = uri.Append("enterprise");
                     break;
+                case Sku.BuildTools:
+                    uri = uri.Append("buildtools");
+                    break;
                 case Sku.Community:
                 default:
                     uri = uri.Append("community");
