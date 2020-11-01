@@ -10,7 +10,9 @@ namespace vswhere
         {
             { Sku.Enterprise, "Microsoft.VisualStudio.Product.Enterprise" },
             { Sku.Professional, "Microsoft.VisualStudio.Product.Professional" },
-            { Sku.Community, "Microsoft.VisualStudio.Product.Community" }
+            { Sku.Community, "Microsoft.VisualStudio.Product.Community" },
+            { Sku.BuildTools, "Microsoft.VisualStudio.Product.BuildTools" },
+            { Sku.TestAgent, "Microsoft.VisualStudio.Product.TestAgent" }
         };
 
         static readonly Dictionary<Channel, string> productIdByChannel = new Dictionary<Channel, string>

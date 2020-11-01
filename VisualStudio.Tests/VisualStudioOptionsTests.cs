@@ -63,6 +63,25 @@ namespace VisualStudio.Tests
         [InlineData("--sku=com", Sku.Community)]
         [InlineData("--sku=community", Sku.Community)]
         [InlineData("--sku=Community", Sku.Community)]
+        [InlineData("b", Sku.BuildTools)]
+        [InlineData("bld", Sku.BuildTools)]
+        [InlineData("buildtools", Sku.BuildTools)]
+        [InlineData("Bld", Sku.BuildTools)]
+        [InlineData("BuildTools", Sku.BuildTools)]
+        [InlineData("--sku=b", Sku.BuildTools)]
+        [InlineData("--sku=bld", Sku.BuildTools)]
+        [InlineData("--sku=buildtools", Sku.BuildTools)]
+        [InlineData("--sku=BuildTools", Sku.BuildTools)]
+        [InlineData("t", Sku.TestAgent)]
+        [InlineData("tsa", Sku.TestAgent)]
+        [InlineData("testagent", Sku.TestAgent)]
+        [InlineData("Tsa", Sku.TestAgent)]
+        [InlineData("TestAgent", Sku.TestAgent)]
+        [InlineData("--sku=t", Sku.TestAgent)]
+        [InlineData("--sku=tsa", Sku.TestAgent)]
+        [InlineData("--sku=testagent", Sku.TestAgent)]
+        [InlineData("--sku=TestAgent", Sku.TestAgent)]
+
         public void when_parsing_sku_argument_then_sku_is_set(string argument, Sku? expectedValue)
         {
             var options = VisualStudioOptions.Empty().WithSku();
@@ -137,6 +156,8 @@ namespace VisualStudio.Tests
                 (new [] { "ent", "main" }, x => x.Sku == Sku.Enterprise && x.Channel == Channel.Main),
                 (new [] { "main", "x => x.InstanceId == '123'" }, x => x.Channel == Channel.Main && x.Expression == "x => x.InstanceId == \"123\""),
                 (new [] { "pro" , "release", "--nick=foo" }, x => x.Sku == Sku.Professional && x.Channel == Channel.Release && x.Nickname == "foo"),
+                (new [] { "bld", "release" }, x => x.Sku == Sku.BuildTools && x.Channel == Channel.Release),
+                (new [] { "tsa", "release" }, x => x.Sku == Sku.TestAgent && x.Channel == Channel.Release)
             };
 
         // Hack to use typed func and avoid to make VisualStudioOptions type public
