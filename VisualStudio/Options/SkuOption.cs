@@ -11,8 +11,8 @@ namespace VisualStudio
             "e", "ent", "enterprise",
             "p", "pro", "professional",
             "c", "com", "community",
-            "b", "bld", "buildtools",
-            "t", "tsa", "testagent" };
+            "b", "build", "buildtools",
+            "t", "test", "testagent" };
 
         public SkuOption(Sku? defaultValue = default) : base(defaultValue)
         {

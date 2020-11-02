@@ -52,20 +52,17 @@ namespace VisualStudio
             process.WaitForExit();
         }
 
-        private string MapChannel(Channel? channel)
-        {
-            return channel switch
+        string MapChannel(Channel? channel)
+            => channel switch
             {
                 Channel.Preview => "pre",
                 Channel.IntPreview => "intpreview",
                 Channel.Main => "int.main",
                 _ => "release"
             };
-        }
 
-        private string MapSku(Sku? sku)
-        {
-            return sku switch
+        string MapSku(Sku? sku)
+         => sku switch
             {
                 Sku.Professional => "professional",
                 Sku.Enterprise => "enterprise",
@@ -73,7 +70,6 @@ namespace VisualStudio
                 Sku.TestAgent => "testagent",
                 _ => "community"
             };
-        }
 
         async Task<string> DownloadAsync(string bootstrapperUrl, TextWriter output)
         {
