@@ -156,8 +156,8 @@ namespace VisualStudio.Tests
                 (new [] { "ent", "main" }, x => x.Sku == Sku.Enterprise && x.Channel == Channel.Main),
                 (new [] { "main", "x => x.InstanceId == '123'" }, x => x.Channel == Channel.Main && x.Expression == "x => x.InstanceId == \"123\""),
                 (new [] { "pro" , "release", "--nick=foo" }, x => x.Sku == Sku.Professional && x.Channel == Channel.Release && x.Nickname == "foo"),
-                (new [] { "bld", "release" }, x => x.Sku == Sku.BuildTools && x.Channel == Channel.Release),
-                (new [] { "tsa", "release" }, x => x.Sku == Sku.TestAgent && x.Channel == Channel.Release)
+                (new [] { "build", "release" }, x => x.Sku == Sku.BuildTools && x.Channel == Channel.Release),
+                (new [] { "test", "release" }, x => x.Sku == Sku.TestAgent && x.Channel == Channel.Release)
             };
 
         // Hack to use typed func and avoid to make VisualStudioOptions type public
