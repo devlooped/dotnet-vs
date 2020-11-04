@@ -38,7 +38,7 @@ Usage: vs install [options]
 |-|-|
 | `pre\|preview` | install preview version |
 | `int\|internal` | install internal (aka 'dogfood') version |
-| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build|buildtools` or `t|test|testagent`  |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
 | `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
 | `add:` | A workload ID |
 
@@ -73,7 +73,7 @@ Usage: vs run [options]
 |-|-|
 | `pre\|preview` | run preview version |
 | `int\|internal` | run internal (aka 'dogfood') version |
-| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build|buildtools` or `t|test|testagent`  |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
 | `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
 | `exp\|experimental` | run experimental instance instead of regular. |
 | `id:` | Run a specific instance by its ID |
@@ -119,7 +119,7 @@ Usage: vs where [options]
 |-|-|
 | `pre\|preview` | show preview version |
 | `int\|internal` | show internal (aka 'dogfood') version |
-| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build|buildtools` or `t|test|testagent`  |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
 | `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
 | `all` | show all instances. |
 | `prop\|property:` | The name of a property to return |
@@ -187,7 +187,7 @@ Usage: vs update [options]
 |-|-|
 | `pre\|preview` | Update preview version |
 | `int\|internal` | Update internal (aka 'dogfood') version |
-| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build|buildtools` or `t|test|testagent`  |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
 | `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
 '123'` |
 
@@ -209,7 +209,7 @@ Usage: vs modify [options]
 |-|-|
 | `pre\|preview` | modify preview version |
 | `int\|internal` | modify internal (aka 'dogfood') version |
-| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build|buildtools` or `t|test|testagent`  |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
 | `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
 | `add:` | A workload ID |
 | `remove:` | A workload ID |
@@ -254,7 +254,7 @@ Usage: vs log [options]
 |-|-|
 | `pre\|preview` | open preview version |
 | `int\|internal` | open internal (aka 'dogfood') version |
-| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build|buildtools` or `t|test|testagent`  |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
 | `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
 | `exp\|experimental` | open experimental instance instead of regular. |
 
@@ -276,7 +276,7 @@ Usage: vs kill [options]
 |-|-|
 | `pre\|preview` | kill preview version |
 | `int\|internal` | kill internal (aka 'dogfood') version |
-| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build|buildtools` or `t|test|testagent`  |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
 | `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
 | `exp\|experimental` | kill experimental instance instead of regular. |
 | `all` | kill all instances. |
