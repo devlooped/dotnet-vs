@@ -9,9 +9,9 @@ namespace VisualStudio
 {
     class Program
     {
-        CommandFactory commandFactory;
-        TextWriter output;
-        string[] args;
+        readonly CommandFactory commandFactory;
+        readonly TextWriter output;
+        readonly string[] args;
         Command executingCommand;
 
         static Task<int> Main(string[] args)
@@ -108,25 +108,23 @@ namespace VisualStudio
         {
             if (Assembly.GetExecutingAssembly().GetManifestResourceStream("VisualStudio.Docs." + commandName + ".md") is Stream stream)
             {
-                using (var reader = new StreamReader(stream))
+                using var reader = new StreamReader(stream);
+                var showLine = false;
+                var line = default(string);
+                while ((line = reader.ReadLine()) != null && !line.StartsWith("<!-- EXAMPLES_END"))
                 {
-                    var showLine = false;
-                    var line = default(string);
-                    while ((line = reader.ReadLine()) != null && !line.StartsWith("<!-- EXAMPLES_END"))
+                    if (line.StartsWith("<!-- EXAMPLES_BEGIN"))
                     {
-                        if (line.StartsWith("<!-- EXAMPLES_BEGIN"))
-                        {
-                            // It means that we found the first comment and the file contains examples to be shown
-                            output.WriteLine();
-                            output.WriteLine("Examples:");
-                            output.WriteLine();
+                        // It means that we found the first comment and the file contains examples to be shown
+                        output.WriteLine();
+                        output.WriteLine("Examples:");
+                        output.WriteLine();
 
-                            showLine = true;
-                        }
-                        else if (showLine)
-                        {
-                            output.WriteLine(line);
-                        }
+                        showLine = true;
+                    }
+                    else if (showLine)
+                    {
+                        output.WriteLine(line);
                     }
                 }
             }

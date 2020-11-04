@@ -23,29 +23,9 @@ namespace VisualStudio
         async Task RunAsync(string command, Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
         {
             var uri = new StringBuilder("https://aka.ms/vs/16/");
-            if (channel == Channel.Preview)
-                uri = uri.Append("pre/");
-            else if (channel == Channel.IntPreview)
-                uri = uri.Append("intpreview/");
-            else if (channel == Channel.Main)
-                uri = uri.Append("int.main/");
-            else
-                uri = uri.Append("release/");
-
-            uri = uri.Append("vs_");
-            switch (sku)
-            {
-                case Sku.Professional:
-                    uri = uri.Append("professional");
-                    break;
-                case Sku.Enterprise:
-                    uri = uri.Append("enterprise");
-                    break;
-                case Sku.Community:
-                default:
-                    uri = uri.Append("community");
-                    break;
-            }
+            uri = uri.Append(MapChannel(channel));
+            uri = uri.Append("/vs_");
+            uri = uri.Append(MapSku(sku));
             uri = uri.Append(".exe");
 
             var bootstrapper = await DownloadAsync(uri.ToString(), output);
@@ -72,26 +52,42 @@ namespace VisualStudio
             process.WaitForExit();
         }
 
+        string MapChannel(Channel? channel)
+            => channel switch
+            {
+                Channel.Preview => "pre",
+                Channel.IntPreview => "intpreview",
+                Channel.Main => "int.main",
+                _ => "release"
+            };
+
+        string MapSku(Sku? sku)
+         => sku switch
+            {
+                Sku.Professional => "professional",
+                Sku.Enterprise => "enterprise",
+                Sku.BuildTools => "buildtools",
+                Sku.TestAgent => "testagent",
+                _ => "community"
+            };
+
         async Task<string> DownloadAsync(string bootstrapperUrl, TextWriter output)
         {
-            using (var client = new HttpClient())
-            {
-                output.WriteLine($"Downloading {bootstrapperUrl}...");
-                var request = new HttpRequestMessage(HttpMethod.Get, bootstrapperUrl);
-                var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-                response.EnsureSuccessStatusCode();
-                var filePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString(), new Uri(bootstrapperUrl).Segments.Last());
-                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-                using (var httpStream = await response.Content.ReadAsStreamAsync())
-                {
-                    using (var fileStream = File.Create(filePath))
-                    {
-                        await httpStream.CopyToAsync(fileStream, 8 * 1024);
-                    }
-                }
+            using var client = new HttpClient();
+            output.WriteLine($"Downloading {bootstrapperUrl}...");
+            using var request = new HttpRequestMessage(HttpMethod.Get, bootstrapperUrl);
+            using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
 
-                return filePath;
-            }
+            response.EnsureSuccessStatusCode();
+            
+            var filePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString(), new Uri(bootstrapperUrl).Segments.Last());
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+            using var httpStream = await response.Content.ReadAsStreamAsync();
+            
+            using var fileStream = File.Create(filePath);
+            await httpStream.CopyToAsync(fileStream, 8 * 1024);
+
+            return filePath;
         }
     }
 }

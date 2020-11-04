@@ -6,13 +6,19 @@ namespace VisualStudio
 {
     class SkuOption : OptionSet<Sku?>
     {
-        readonly static string[] shortcuts = new[] { "e", "ent", "enterprise", "p", "pro", "professional", "c", "com", "community" };
+        readonly static string[] shortcuts = new[]
+        {
+            "e", "ent", "enterprise",
+            "p", "pro", "professional",
+            "c", "com", "community",
+            "b", "build", "buildtools",
+            "t", "test", "testagent" };
 
         public SkuOption(Sku? defaultValue = default) : base(defaultValue)
         {
             Value = defaultValue;
 
-            Add("sku:", "Edition, one of [e|ent|enterprise], [p|pro|professional] or [c|com|community]", s => Value = ParseSku(s));
+            Add("sku:", "Edition, one of [e|ent|enterprise], [p|pro|professional], [c|com|community], [b|bld|buildtools] or [t|tsa|testagent]", s => Value = ParseSku(s));
         }
 
         protected override bool Parse(string argument, OptionContext c)
@@ -31,6 +37,10 @@ namespace VisualStudio
                 return VisualStudio.Sku.Professional;
             else if (sku.StartsWith("c", StringComparison.OrdinalIgnoreCase))
                 return VisualStudio.Sku.Community;
+            else if (sku.StartsWith("b", StringComparison.OrdinalIgnoreCase))
+                return VisualStudio.Sku.BuildTools;
+            else if (sku.StartsWith("t", StringComparison.OrdinalIgnoreCase))
+                return VisualStudio.Sku.TestAgent;
             else
                 throw new OptionException($"Invalid SKU {sku}. Must be one of {string.Join(", ", Enum.GetNames(typeof(Sku)).Select(x => x.ToLowerInvariant()))}.", "sku");
         }

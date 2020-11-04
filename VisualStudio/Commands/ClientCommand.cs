@@ -27,12 +27,14 @@ namespace VisualStudio
         public override async Task ExecuteAsync(TextWriter output) =>
             await ExecuteAsync(new Chooser().Choose(await whereService.GetAllInstancesAsync(Descriptor.Options), output), output);
 
-        public async Task ExecuteAsync(DevEnv devenv, TextWriter output)
+        public Task ExecuteAsync(DevEnv devenv, TextWriter output)
         {
             if (string.IsNullOrEmpty(Descriptor.WorkspaceId))
                 StartServerAndClient(devenv, output);
             else
                 StartClient(devenv, Descriptor.WorkspaceId, output);
+
+            return Task.CompletedTask;
         }
 
         void StartClient(DevEnv devenv, string workspaceId, TextWriter output)

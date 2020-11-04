@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 using VisualStudio;
 
 namespace vswhere
@@ -10,35 +7,24 @@ namespace vswhere
     static class VisualStudioInstanceExtensions
     {
         public static Sku GetSku(this VisualStudioInstance vsInstance)
-        {
-            switch (vsInstance.ProductId)
+            => vsInstance.ProductId switch
             {
-                case "Microsoft.VisualStudio.Product.Enterprise":
-                    return Sku.Enterprise;
-                case "Microsoft.VisualStudio.Product.Professional":
-                    return Sku.Professional;
-                case "Microsoft.VisualStudio.Product.Community":
-                    return Sku.Community;
-            }
-
-            throw new ArgumentException($"Invalid SKU {vsInstance.ProductId}. Must be one of {string.Join(", ", Enum.GetNames(typeof(Sku)).Select(x => x.ToLowerInvariant()))}.", "sku");
-        }
+                "Microsoft.VisualStudio.Product.Enterprise" => Sku.Enterprise,
+                "Microsoft.VisualStudio.Product.Professional" => Sku.Professional,
+                "Microsoft.VisualStudio.Product.Community" => Sku.Community,
+                "Microsoft.VisualStudio.Product.BuildTools" => Sku.BuildTools,
+                "Microsoft.VisualStudio.Product.TestAgent" => Sku.TestAgent,
+                _ => throw new ArgumentException($"Invalid SKU {vsInstance.ProductId}. Must be one of {string.Join(", ", Enum.GetNames(typeof(Sku)).Select(x => x.ToLowerInvariant()))}.", "sku"),
+            };
 
         public static Channel GetChannel(this VisualStudioInstance vsInstance)
-        {
-            switch (vsInstance.ChannelId)
+            => vsInstance.ChannelId switch
             {
-                case "VisualStudio.16.Release":
-                    return Channel.Release;
-                case "VisualStudio.16.Preview":
-                    return Channel.Preview;
-                case "VisualStudio.16.IntPreview":
-                    return Channel.IntPreview;
-                case "VisualStudio.16.int.main":
-                    return Channel.Main;
-            }
-
-            throw new ArgumentException($"Invalid ChannelId {vsInstance.ChannelId}. Must be one of {string.Join(", ", Enum.GetNames(typeof(Channel)).Select(x => x.ToLowerInvariant()))}.", "sku");
-        }
+                "VisualStudio.16.Release" => Channel.Release,
+                "VisualStudio.16.Preview" => Channel.Preview,
+                "VisualStudio.16.IntPreview" => Channel.IntPreview,
+                "VisualStudio.16.int.main" => Channel.Main,
+                _ => throw new ArgumentException($"Invalid ChannelId {vsInstance.ChannelId}. Must be one of {string.Join(", ", Enum.GetNames(typeof(Channel)).Select(x => x.ToLowerInvariant()))}.", "sku"),
+            };        
     }
 }

@@ -17,6 +17,8 @@ namespace VisualStudio.Tests
             Assert.True(predicate(new vswhere.VisualStudioInstance().WithSku(Sku.Enterprise)));
             Assert.False(predicate(new vswhere.VisualStudioInstance().WithSku(Sku.Professional)));
             Assert.False(predicate(new vswhere.VisualStudioInstance().WithSku(Sku.Community)));
+            Assert.False(predicate(new vswhere.VisualStudioInstance().WithSku(Sku.BuildTools)));
+            Assert.False(predicate(new vswhere.VisualStudioInstance().WithSku(Sku.TestAgent)));
         }
 
         [Fact]
