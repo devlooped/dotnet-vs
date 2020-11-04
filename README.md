@@ -232,7 +232,7 @@ Usage: vs config [options]
 |-|-|
 | `pre\|preview` | open preview version |
 | `int\|internal` | open internal (aka 'dogfood') version |
-| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional` or `c\|com\|community` |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
 | `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
 | `exp\|experimental` | open experimental instance instead of regular. |
 
