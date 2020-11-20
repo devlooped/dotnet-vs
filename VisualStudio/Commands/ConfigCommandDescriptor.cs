@@ -4,7 +4,9 @@ namespace VisualStudio
 {
     class ConfigCommandDescriptor : CommandDescriptor
     {
-        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("open").WithExperimental();
+        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("open")
+            .WithFirst()
+            .WithExperimental();
 
         public ConfigCommandDescriptor()
         {

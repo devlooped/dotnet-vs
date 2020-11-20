@@ -4,7 +4,9 @@ namespace VisualStudio
 {
     class ClientCommandDescriptor : CommandDescriptor
     {
-        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("Run").WithExperimental();
+        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("Run")
+            .WithFirst()
+            .WithExperimental();
         readonly ClientOptions clientOptions = new ClientOptions();
 
         public ClientCommandDescriptor()

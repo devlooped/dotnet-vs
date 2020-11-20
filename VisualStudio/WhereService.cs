@@ -52,7 +52,12 @@ namespace VisualStudio
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 });
 
-            return instances.Where(await new VisualStudioPredicateBuilder().BuildPredicateAsync(options));
+            var result = instances.Where(await new VisualStudioPredicateBuilder().BuildPredicateAsync(options));
+
+            if (options.GetValue<FirstOption, bool>())
+                return result.Take(1);
+
+            return result;
         }
 
         public void ShowUsage(ITextWriter output)
