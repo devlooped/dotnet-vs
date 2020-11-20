@@ -45,11 +45,11 @@ namespace VisualStudio
                 ShowUsage();
                 return 0;
             }
-            else if (VersionOption.IsDefined(args))
-            {
-                ShowVersion();
-                return 0;
-            }
+            //else if (VersionOption.IsDefined(args))
+            //{
+            //    ShowVersion();
+            //    return 0;
+            //}
 
             var commandName = args[0];
             var commandArgs = ImmutableArray.Create(args.Skip(1).ToArray());

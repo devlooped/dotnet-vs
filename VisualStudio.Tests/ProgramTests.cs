@@ -32,7 +32,7 @@ namespace VisualStudio.Tests
             Assert.True(program.UsageShown);
         }
 
-        [Fact]
+        [Fact(Skip = "--version disabled pending a redesign")]
         public async Task when_running_with_version_arg_then_version_is_shown()
         {
             var program = new ProgramTest(output, new CommandFactory(), "--version");
