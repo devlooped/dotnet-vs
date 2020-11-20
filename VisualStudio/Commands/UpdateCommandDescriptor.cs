@@ -4,7 +4,9 @@ namespace VisualStudio
 {
     class UpdateCommandDescriptor : CommandDescriptor
     {
-        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("Update").WithSelectAll();
+        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("Update")
+            .WithFirst()
+            .WithSelectAll();
 
         public UpdateCommandDescriptor()
         {

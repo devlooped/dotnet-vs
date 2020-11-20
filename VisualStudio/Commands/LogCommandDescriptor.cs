@@ -4,7 +4,9 @@ namespace VisualStudio
 {
     class LogCommandDescriptor : CommandDescriptor
     {
-        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("open").WithExperimental();
+        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("open")
+            .WithFirst()
+            .WithExperimental();
 
         public LogCommandDescriptor()
         {

@@ -121,6 +121,7 @@ Usage: vs where [options]
 | `int\|internal` | show internal (aka 'dogfood') version |
 | `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
 | `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `first` | show first matching instance. |
 | `all` | show all instances. |
 | `prop\|property:` | The name of a property to return |
 | `requires:` | A workload ID |
@@ -189,7 +190,7 @@ Usage: vs update [options]
 | `int\|internal` | Update internal (aka 'dogfood') version |
 | `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
 | `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
-'123'` |
+| `first` | Update first matching instance. |
 
 
 Examples:
@@ -211,6 +212,7 @@ Usage: vs modify [options]
 | `int\|internal` | modify internal (aka 'dogfood') version |
 | `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
 | `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `first` | Modify first matching instance. |
 | `add:` | A workload ID |
 | `remove:` | A workload ID |
 
@@ -234,6 +236,7 @@ Usage: vs config [options]
 | `int\|internal` | open internal (aka 'dogfood') version |
 | `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
 | `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `first` | Use first matching VS instance. |
 | `exp\|experimental` | open experimental instance instead of regular. |
 
 
@@ -256,6 +259,7 @@ Usage: vs log [options]
 | `int\|internal` | open internal (aka 'dogfood') version |
 | `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
 | `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `first` | Use first matching VS instance. |
 | `exp\|experimental` | open experimental instance instead of regular. |
 
 
@@ -279,6 +283,7 @@ Usage: vs kill [options]
 | `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
 | `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
 | `exp\|experimental` | kill experimental instance instead of regular. |
+| `first` | kill first matching instance. |
 | `all` | kill all instances. |
 
 

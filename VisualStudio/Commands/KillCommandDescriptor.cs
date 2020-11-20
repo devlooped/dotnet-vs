@@ -4,7 +4,10 @@ namespace VisualStudio
 {
     class KillCommandDescriptor : CommandDescriptor
     {
-        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("kill").WithExperimental().WithSelectAll();
+        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("kill")
+            .WithExperimental()
+            .WithFirst()
+            .WithSelectAll();
 
         public KillCommandDescriptor()
         {

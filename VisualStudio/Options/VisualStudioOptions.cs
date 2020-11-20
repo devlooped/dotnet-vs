@@ -41,6 +41,8 @@ namespace VisualStudio
 
         public VisualStudioOptions WithFilter() => new VisualStudioOptions(verb, options.With(new FilterOption()));
 
+        public VisualStudioOptions WithFirst() => new VisualStudioOptions(verb, options.With(new FirstOption(verb)));
+
         public VisualStudioOptions WithSelectAll() => new VisualStudioOptions(verb, options.With(new SelectAllOption(verb)));
 
         public VisualStudioOptions WithNickname() => new VisualStudioOptions(verb, options.With(new NicknameOption()));
@@ -54,6 +56,8 @@ namespace VisualStudio
         public string Expression => GetValue<FilterOption, string>();
 
         public bool All => GetValue<SelectAllOption, bool>();
+
+        public bool First => GetValue<FirstOption, bool>();
 
         public string Nickname => GetValue<NicknameOption, string>();
 

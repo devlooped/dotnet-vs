@@ -147,6 +147,20 @@ namespace VisualStudio.Tests
             Assert.Equal(expectedValue, options.All);
         }
 
+        [Theory]
+        [InlineData("", false)]
+        [InlineData("first", true)]
+        [InlineData("First", true)]
+        [InlineData("--first", true)]
+        public void when_parsing_first_argument_then_first_is_set(string argument, bool expectedValue)
+        {
+            var options = VisualStudioOptions.Empty().WithFirst();
+
+            options.Parse(new[] { argument });
+
+            Assert.Equal(expectedValue, options.First);
+        }
+
         static (string[] Arguments, Func<VisualStudioOptions, bool> VerifyResult)[] TestCases =>
             new (string[] Arguments, Func<VisualStudioOptions, bool> VerifyResult)[]
             {

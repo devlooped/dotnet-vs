@@ -6,7 +6,7 @@ namespace VisualStudio
 {
     class WhereCommandDescriptor : CommandDescriptor
     {
-        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("show");
+        readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("show").WithFirst();
         readonly SelectPropertyOption propOption = new SelectPropertyOption();
         readonly ListOption listOption = new ListOption();
         readonly WorkloadOptions workloads = new WorkloadOptions("requires", "--", "-");
