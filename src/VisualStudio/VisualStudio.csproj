@@ -23,7 +23,7 @@
     <PackageReference Include="ThisAssembly" Version="1.0.0" PrivateAssets="all" />
     <PackageReference Include="System.Management" Version="5.0.0-preview.3.20214.6" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.5.0" />
-    <PackageReference Include="dotnet-config-lib" Version="1.0.0-alpha.6" />
+    <PackageReference Include="dotnet-config-lib" Version="1.0.0-beta" />
   </ItemGroup>
 
   <ItemGroup>
