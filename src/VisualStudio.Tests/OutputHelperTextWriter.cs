@@ -1,7 +1,5 @@
-﻿using System.Collections.Immutable;
-using System.IO;
+﻿using System.IO;
 using System.Text;
-using Mono.Options;
 using Xunit.Abstractions;
 
 namespace VisualStudio.Tests

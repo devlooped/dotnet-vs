@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace VisualStudio
+﻿namespace VisualStudio
 {
     class UpdateCommandDescriptor : CommandDescriptor
     {

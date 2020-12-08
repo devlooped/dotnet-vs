@@ -1,5 +1,4 @@
-﻿using System;
-using Mono.Options;
+﻿using Mono.Options;
 
 namespace VisualStudio
 {

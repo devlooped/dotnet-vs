@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.DotNet;
+﻿using DotNetConfig;
 
 namespace VisualStudio
 {
@@ -29,7 +28,7 @@ namespace VisualStudio
             public const string SubSection = "alias";
 
             public static Config GetConfig(bool global = false) =>
-                global ? Microsoft.DotNet.Config.Build(ConfigLevel.Global) : Microsoft.DotNet.Config.Build();
+                global ? global::DotNetConfig.Config.Build(ConfigLevel.Global) : global::DotNetConfig.Config.Build();
         }
     }
 }

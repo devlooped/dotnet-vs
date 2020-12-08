@@ -2,8 +2,6 @@
 using System.Collections.Immutable;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.DotNet;
-using Moq;
 using Xunit;
 
 namespace VisualStudio.Tests

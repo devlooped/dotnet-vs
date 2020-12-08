@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace VisualStudio
+﻿namespace VisualStudio
 {
     class HelpOption : OptionSet<bool>
     {
