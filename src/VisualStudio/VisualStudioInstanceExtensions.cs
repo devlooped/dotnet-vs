@@ -17,14 +17,14 @@ namespace vswhere
                 _ => throw new ArgumentException($"Invalid SKU {vsInstance.ProductId}. Must be one of {string.Join(", ", Enum.GetNames(typeof(Sku)).Select(x => x.ToLowerInvariant()))}.", "sku"),
             };
 
-        public static Channel GetChannel(this VisualStudioInstance vsInstance)
+        public static Channel? GetChannel(this VisualStudioInstance vsInstance)
             => vsInstance.ChannelId switch
             {
                 "VisualStudio.16.Release" => Channel.Release,
                 "VisualStudio.16.Preview" => Channel.Preview,
                 "VisualStudio.16.IntPreview" => Channel.IntPreview,
                 "VisualStudio.16.int.main" => Channel.Main,
-                _ => throw new ArgumentException($"Invalid ChannelId {vsInstance.ChannelId}. Must be one of {string.Join(", ", Enum.GetNames(typeof(Channel)).Select(x => x.ToLowerInvariant()))}.", "sku"),
+                _ => null,
             };
     }
 }

@@ -4,31 +4,33 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace VisualStudio
 {
     class InstallerService
     {
-        public Task InstallAsync(Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output) =>
-            RunAsync(string.Empty, channel, sku, args, output);
+        public Task InstallAsync(Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
+            => RunAsync(string.Empty, channel, sku, args, output);
 
-        public Task UpdateAsync(Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output) =>
-            RunAsync("update", channel, sku, args, output);
+        public Task UpdateAsync(Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
+            => RunAsync("update", channel, sku, args, output);
 
-        public Task ModifyAsync(Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output) =>
-            RunAsync("modify", channel, sku, args, output);
+        public Task ModifyAsync(Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
+            => RunAsync("modify", channel, sku, args, output);
 
-        async Task RunAsync(string command, Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
+        public Task UpdateAsync(string channelUri, Sku? sku, IEnumerable<string> args, TextWriter output)
+            => RunAsync("update", channelUri, sku, args, output);
+
+        public Task ModifyAsync(string channelUri, Sku? sku, IEnumerable<string> args, TextWriter output)
+            => RunAsync("modify", channelUri, sku, args, output);
+
+        Task RunAsync(string command, Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
+            => RunAsync(command, "https://aka.ms/vs/16/" + MapChannel(channel), sku, args, output);
+
+        async Task RunAsync(string command, string channelUri, Sku? sku, IEnumerable<string> args, TextWriter output)
         {
-            var uri = new StringBuilder("https://aka.ms/vs/16/");
-            uri = uri.Append(MapChannel(channel));
-            uri = uri.Append("/vs_");
-            uri = uri.Append(MapSku(sku));
-            uri = uri.Append(".exe");
-
-            var bootstrapper = await DownloadAsync(uri.ToString(), output);
+            var bootstrapper = await DownloadAsync($"{channelUri}/vs_{MapSku(sku)}.exe", output);
 
             var psi = new ProcessStartInfo(bootstrapper)
             {
