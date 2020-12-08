@@ -21,7 +21,7 @@
     <PackageReference Include="vswhere" Version="2.8.4" PrivateAssets="all" />
     <PackageReference Include="Mono.Options" Version="6.6.0.161" />
     <PackageReference Include="ThisAssembly" Version="1.0.0" PrivateAssets="all" />
-    <PackageReference Include="System.Management" Version="5.0.0-preview.3.20214.6" />
+    <PackageReference Include="System.Management" Version="5.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.5.0" />
     <PackageReference Include="dotnet-config-lib" Version="1.0.0-beta" />
   </ItemGroup>
