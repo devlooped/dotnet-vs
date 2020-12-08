@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>A global tool for managing Visual Studio installations</Description>
+
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>netcoreapp2.1;netcoreapp3.1</TargetFrameworks>
+
+    <AssemblyName>vs</AssemblyName>
+    <RootNamespace>VisualStudio</RootNamespace>
+
+    <PackageId>dotnet-vs</PackageId>
+    <ToolCommandName>vs</ToolCommandName> 
+    <PackAsTool>true</PackAsTool>
+
+    <NoWarn>$(NoWarn);NU5118</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="4.7.2" />
+    <PackageReference Include="vswhere" Version="2.8.4" PrivateAssets="all" />
+    <PackageReference Include="Mono.Options" Version="6.6.0.161" />
+    <PackageReference Include="ThisAssembly" Version="1.0.0" PrivateAssets="all" />
+    <PackageReference Include="System.Management" Version="5.0.0-preview.3.20214.6" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.5.0" />
+    <PackageReference Include="dotnet-config-lib" Version="1.0.0-alpha.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Condition="'$(TargetFramework)' != ''" Include="$(VSWhereDir)vswhere.exe" Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="tools\$(TargetFramework)\any\%(Filename)%(Extension)" />
+    <EmbeddedResource Include="Docs\*.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    <InternalsVisibleTo Include="VisualStudio.Tests" />
+  </ItemGroup>
+
+</Project>
