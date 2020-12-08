@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using VisualStudio;
 
 namespace vswhere
@@ -30,7 +31,10 @@ namespace vswhere
 
         public static VisualStudioInstance WithChannel(this VisualStudioInstance vsInstance, Channel channel)
         {
-            vsInstance.ChannelId = productIdByChannel[channel];
+            vsInstance.ChannelId = productIdByChannel.TryGetValue(channel, out var channelId) ?
+                vsInstance.ChannelId = channelId :
+                throw new NotSupportedException("Cannot filter instances by the given channel.");
+
             return vsInstance;
         }
     }

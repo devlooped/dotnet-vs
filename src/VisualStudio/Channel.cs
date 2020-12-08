@@ -5,6 +5,6 @@
         Release,
         Preview,
         IntPreview,
-        Main
+        Main,
     }
 }
