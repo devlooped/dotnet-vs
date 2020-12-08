@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "VisualStudio": {
-      "commandName": "Project",
-      "commandLineArgs": "client master exp --startServer --sync"
-    }
-  }
-}

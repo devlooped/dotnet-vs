@@ -1,0 +1,12 @@
+<Project>
+  <!-- Extends Directory.Build.props -->
+
+  <PropertyGroup Label="Build">
+    <!-- Until we can fix the large number of warnings -->
+    <Nullable>disable</Nullable>
+    <SignAssembly>false</SignAssembly>
+    <PublicKey />
+    <PublicKeyToken />
+  </PropertyGroup>
+
+</Project>
