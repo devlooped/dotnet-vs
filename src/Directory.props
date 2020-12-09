@@ -7,6 +7,8 @@
     <SignAssembly>false</SignAssembly>
     <PublicKey />
     <PublicKeyToken />
+
+    <RestoreSources Condition="Exists('$(MSBuildThisFileDirectory)..\..\ThisAssembly\bin\')">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\ThisAssembly\bin'));$(RestoreSources)</RestoreSources>
   </PropertyGroup>
 
 </Project>
