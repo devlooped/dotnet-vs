@@ -1,4 +1,4 @@
-<h1 id="nugetizer"><img src="https://raw.githubusercontent.com/kzu/dotnet-vs/main/docs/img/icon.svg" alt="icon" height="32" width="32" style="vertical-align: text-top; border: 0px; padding: 0px; margin: 0px">  dotnet-vs</h1>
+<h1 id="dotnet-vs"><img src="https://raw.githubusercontent.com/kzu/dotnet-vs/main/docs/img/icon.svg" alt="icon" height="32" width="32" style="vertical-align: text-top; border: 0px; padding: 0px; margin: 0px">  dotnet-vs</h1>
 
 A global tool for running, managing and querying Visual Studio installations
 
