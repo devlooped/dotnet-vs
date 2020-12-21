@@ -19,7 +19,7 @@
 	weak
 [file ".github/FUNDING.yml"]
 	url = https://github.com/kzu/oss/blob/main/.github/FUNDING.yml
-	etag = dbc0e0c56e48bf06a70f50ba2fdaf6f048bb81ac8558b743c8e919487da3bfcf
+	etag = 175f855cce8867cc01b44fd7b0d9985f7280d7b545db9ec8e1b07eca8ef85f82
 	weak
 [file ".github/ISSUE_TEMPLATE/bug.md"]
 	url = https://github.com/kzu/oss/blob/main/.github/ISSUE_TEMPLATE/bug.md
@@ -31,11 +31,11 @@
 	weak
 [file ".github/workflows/build.yml"]
 	url = https://github.com/kzu/oss/blob/main/.github/workflows/build.yml
-	etag = c56db40b37f8dbcff13aea20eefc263caf825d17d86b0dc055ce504d8cb8ae9d
+	etag = 868172e62b2cac855039731fd1ea929f0a569f675586903450d24bc232c43ea9
 	weak
 [file ".github/workflows/release.yml"]
 	url = https://github.com/kzu/oss/blob/main/.github/workflows/release.yml
-	etag = 0142be91e1ec4607aa398975c4e066ea07f9a610b412eaf53f9f2f9d86aa70fc
+	etag = 9035cfc96bc6340476e196699695b49a19066039e8774497659413f8a8cb8e2a
 	weak
 [file ".github/workflows/tag.yml"]
 	url = https://github.com/kzu/oss/blob/main/.github/workflows/tag.yml
@@ -67,15 +67,15 @@
 	weak
 [file "security.md"]
 	url = https://github.com/kzu/oss/blob/main/security.md
-	etag = 80070e3a380796b13d180b82f43694eac9e7a29d8d2f8549ccb2920fd5c88828
+	etag = fc8101fd914820db3e6b42d608dc46aefbc60c830ac721ed3917daead3727dbd
 	weak
 [file "src/Directory.Build.props"]
 	url = https://github.com/kzu/oss/blob/main/src/Directory.Build.props
-	etag = d0b93d7533832a4d62cff69c71540bad3284bf92a7d2096b1a91607d72099d2b
+	etag = 1ea71942b9ff7830612ceb3a2927c0d011c54891a7653b07ef01b914347e306f
 	weak
 [file "src/Directory.Build.targets"]
 	url = https://github.com/kzu/oss/blob/main/src/Directory.Build.targets
-	etag = a8ae94f091decde21c9f9b2d851647c1cb573746956c29448346d0ccb1478652
+	etag = 236390b1c5b2576d6d013656e24f6d74a0042a0e4071a19e8c626cf6b7005b54
 	weak
 [file "src/kzu.snk"]
 	url = https://github.com/kzu/oss/blob/main/src/kzu.snk
@@ -84,4 +84,8 @@
 [file ".github/ISSUE_TEMPLATE/config.yml"]
 	url = https://github.com/kzu/oss/blob/main/.github/ISSUE_TEMPLATE/config.yml
 	etag = b5ce64e6967276086eb89f86f57364da9c4deac988c7e0e04810a4f8caaa1400
+	weak
+[file "support.md"]
+	url = https://github.com/devlooped/oss/blob/main/support.md
+	etag = 2d47e2fc4fdfa3515203d452674566e3df507461f9938f451a06d79deb687d24
 	weak
