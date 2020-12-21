@@ -16,8 +16,7 @@ namespace VisualStudio
     class WorkloadOptions : OptionSet<ImmutableArray<string>>
     {
         readonly string argument;
-        private readonly string prefix;
-        private readonly string outputArgumentPrefix;
+        readonly string[] prefixes;
 
         public WorkloadOptions() : base(ImmutableArray.Create<string>())
         { }
@@ -40,26 +39,28 @@ namespace VisualStudio
             { "vsx", "Microsoft.VisualStudio.Workload.VisualStudioExtension" },
         };
 
-        public WorkloadOptions(string argument, string aliasPrefix = "--", string outputArgumentPrefix = "--") : base(ImmutableArray.Create<string>())
+        public WorkloadOptions(string argument, string aliasPrefix = "--") : base(ImmutableArray.Create<string>())
         {
             this.argument = argument;
-            this.prefix = aliasPrefix;
-            this.outputArgumentPrefix = outputArgumentPrefix;
+            prefixes = aliasPrefix.Split('|', StringSplitOptions.RemoveEmptyEntries);
 
             Add("\n");
-            Add($"{argument}:", "A workload ID", id => Value = Value.Add(outputArgumentPrefix + argument).Add(id));
+            Add($"{argument}:", "A workload ID", id => Value = Value.Add("-" + argument).Add(id));
 
             Add("\n\tWorkload ID aliases:");
             foreach (var aliasPair in aliases)
-                Add($"\t{(aliasPrefix + aliasPair.Key).GetNormalizedString()}{outputArgumentPrefix}{argument} {aliasPair.Value}");
+                Add($"\t{(prefixes[0] + aliasPair.Key).GetNormalizedString()} -{argument} {aliasPair.Value}");
         }
 
         protected override bool Parse(string argument, OptionContext c)
         {
-            if (aliases.Keys.Any(alias => argument.StartsWith(prefix + alias)))
-                argument = "--" + this.argument + "=" + GetWorkloadId(argument.Substring(prefix.Length));
-            else if (argument.StartsWith(prefix))
-                argument = "--" + this.argument + "=" + argument.Substring(1);
+            foreach (var prefix in prefixes)
+            {
+                if (aliases.Keys.Any(alias => argument.StartsWith(prefix + alias)))
+                    return base.Parse("--" + this.argument + "=" + GetWorkloadId(argument.Substring(prefix.Length)), c);
+                else if (argument.StartsWith(prefix))
+                    return base.Parse("--" + this.argument + "=" + argument.Substring(prefix.Length), c);
+            }
 
             return base.Parse(argument, c);
         }

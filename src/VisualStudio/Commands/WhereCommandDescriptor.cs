@@ -7,7 +7,8 @@ namespace VisualStudio
         readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("show").WithFirst();
         readonly SelectPropertyOption propOption = new SelectPropertyOption();
         readonly ListOption listOption = new ListOption();
-        readonly WorkloadOptions workloads = new WorkloadOptions("requires", "--", "-");
+        // For backwards compatibility, we also allow -- as a prefix, but don't show it anymore.
+        readonly WorkloadOptions workloads = new WorkloadOptions("requires", "+|--|-");
 
         readonly WhereService whereService;
 
