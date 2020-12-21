@@ -19,7 +19,7 @@
 	weak
 [file ".github/FUNDING.yml"]
 	url = https://github.com/kzu/oss/blob/main/.github/FUNDING.yml
-	etag = 175f855cce8867cc01b44fd7b0d9985f7280d7b545db9ec8e1b07eca8ef85f82
+	etag = f4d02805592d1f86c29acc9da3a40e817fb3611d6ff0f6409f547137f38f65df
 	weak
 [file ".github/ISSUE_TEMPLATE/bug.md"]
 	url = https://github.com/kzu/oss/blob/main/.github/ISSUE_TEMPLATE/bug.md
