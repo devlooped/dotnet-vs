@@ -9,6 +9,8 @@
     <PublicKeyToken />
 
     <RestoreSources Condition="Exists('$(MSBuildThisFileDirectory)..\..\ThisAssembly\bin\')">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\ThisAssembly\bin'));$(RestoreSources)</RestoreSources>
+
+    <PackageProjectUrl>https://clarius.org/dotnet-vs</PackageProjectUrl>
   </PropertyGroup>
 
 </Project>

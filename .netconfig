@@ -47,7 +47,7 @@
 	weak
 [file ".gitignore"]
 	url = https://github.com/kzu/oss/blob/main/.gitignore
-	etag = 4698b35abed1f3941de6bed08bc80278c30569de3ead5b878b27b4bb79f8718a
+	etag = 925782b685859e07040442303b411bebd1c75b4fe4e075f547e067f33f323814
 	weak
 [file "Directory.Build.rsp"]
 	url = https://github.com/kzu/oss/blob/main/Directory.Build.rsp
@@ -55,7 +55,7 @@
 	weak
 [file "_config.yml"]
 	url = https://github.com/kzu/oss/blob/main/_config.yml
-	etag = c7f2063ead734d0afc383a07c35da2864a221311da8e1c0c6fea8939e932d2ab
+	etag = 9139148f845adf503fd3c3c140eb64421fc476a1f9c027fc50825c0efb05f557
 	weak
 [file "code-of-conduct.md"]
 	url = https://github.com/kzu/oss/blob/main/code-of-conduct.md
@@ -88,4 +88,16 @@
 [file "support.md"]
 	url = https://github.com/devlooped/oss/blob/main/support.md
 	etag = 2d47e2fc4fdfa3515203d452674566e3df507461f9938f451a06d79deb687d24
+	weak
+[file ".github/workflows/pages.yml"]
+	url = https://github.com/devlooped/oss/blob/main/.github/workflows/pages.yml
+	etag = 3f1fb2481dcb41987d775eb6ed61c10adc00995f287636e7adda3ade5efc94b7
+	weak
+[file "Gemfile"]
+	url = https://github.com/devlooped/oss/blob/main/Gemfile
+	etag = d45832acd078778ffebf260000f6d25172a131f51684744d7e982da2a47170ce
+	weak
+[file "assets/css/style.scss"]
+	url = https://github.com/devlooped/oss/blob/main/assets/css/style.scss
+	etag = 2c86a074a6c8c2f6af806908a57215439fad563830b4af8fbed1a3aabaede0cf
 	weak
