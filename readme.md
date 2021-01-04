@@ -297,29 +297,30 @@ Examples:
 For commands that receive workload ID switches (i.e. `vs where -requires [WORKLOAD_ID]` or 
 `vs install --add [WORKLOAD_ID]`), the following aliases are available:
 
-|  Switch     | Workload ID |
-|-------------|----------------------------|
-| `--mobile`  | Microsoft.VisualStudio.Workload.NetCrossPlat |
-| `--core`    | Microsoft.VisualStudio.Workload.NetCoreTools |
-| `--azure`   | Microsoft.VisualStudio.Workload.Azure |
-| `--data`    | Microsoft.VisualStudio.Workload.Data |
-| `--desktop` | Microsoft.VisualStudio.Workload.ManagedDesktop |
-| `--unity`   | Microsoft.VisualStudio.Workload.ManagedGame |
-| `--native`  | Microsoft.VisualStudio.Workload.NativeDesktop |
-| `--xamarin` | Microsoft.VisualStudio.Workload.NetCrossPlat |
-| `--web`     | Microsoft.VisualStudio.Workload.NetWeb |
-| `--node`    | Microsoft.VisualStudio.Workload.Node |
-| `--office`  | Microsoft.VisualStudio.Workload.Office |
-| `--py`      | Microsoft.VisualStudio.Workload.Python |
-| `--python`  | Microsoft.VisualStudio.Workload.Python |
-| `--uwp`     | Microsoft.VisualStudio.Workload.Universal |
-| `--vsx`     | Microsoft.VisualStudio.Workload.VisualStudioExtension |
+|  Alias    | Workload ID |
+|-----------|----------------------------|
+| `mobile`  | Microsoft.VisualStudio.Workload.NetCrossPlat |
+| `core`    | Microsoft.VisualStudio.Workload.NetCoreTools |
+| `azure`   | Microsoft.VisualStudio.Workload.Azure |
+| `data`    | Microsoft.VisualStudio.Workload.Data |
+| `desktop` | Microsoft.VisualStudio.Workload.ManagedDesktop |
+| `unity`   | Microsoft.VisualStudio.Workload.ManagedGame |
+| `native`  | Microsoft.VisualStudio.Workload.NativeDesktop |
+| `xamarin` | Microsoft.VisualStudio.Workload.NetCrossPlat |
+| `web`     | Microsoft.VisualStudio.Workload.NetWeb |
+| `node`    | Microsoft.VisualStudio.Workload.Node |
+| `office`  | Microsoft.VisualStudio.Workload.Office |
+| `py`      | Microsoft.VisualStudio.Workload.Python |
+| `python`  | Microsoft.VisualStudio.Workload.Python |
+| `uwp`     | Microsoft.VisualStudio.Workload.Universal |
+| `vsx`     | Microsoft.VisualStudio.Workload.VisualStudioExtension |
 
-The switches are converted to the appropriate argument automatically, such as into 
-`-requires [ID]` or `--add [ID]`. Additionally, the switches can also be specified 
-with a `+` (like `+mobile`), which might make for a more intuitive command line, 
-such as `vs install +mobile -sku:enterprise` or `vs +mobile` (runs the VS with the 
-mobile workload installed).
+The aliases are converted to the appropriate switch automatically, such as into 
+`-requires [ID]` or `--add [ID]`. Additionally, depending on the command being run, 
+the aliases might use a `+` prefix (like `+mobile`), which might make for a more 
+intuitive command line, such as `vs install +mobile -sku:enterprise` or `vs +mobile` 
+(runs the VS with the mobile workload installed). The *modify* command uses `+` and `-` 
+prefix to add or remove workloads respectively, for example.
 
 
 ## Sponsors
