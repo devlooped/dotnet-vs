@@ -7,7 +7,7 @@ namespace VisualStudio
     class RunCommandDescriptor : CommandDescriptor
     {
         readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default().WithExperimental();
-        readonly WorkloadOptions workloads = new WorkloadOptions("requires", "+|--|-");
+        readonly WorkloadOptions workloads = new WorkloadOptions("requires", "+|--|-", "-");
 
         public RunCommandDescriptor()
         {
