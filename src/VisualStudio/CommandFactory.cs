@@ -115,8 +115,14 @@ namespace VisualStudio
             // Create the descriptor
             var commandDescriptor = factory.CreateDescriptor();
 
+            // Parse out help arg up-front to avoid unnecessary extra parsing for args.
+            var help = new HelpOption();
+            var finalArgs = help.Parse(args);
+            if (help.Value)
+                throw new ShowUsageException(commandDescriptor);
+
             // Parse the arguments
-            commandDescriptor.Parse(args);
+            commandDescriptor.Parse(finalArgs);
 
             // And create the command
             return Task.FromResult(factory.CreateCommand(commandDescriptor));

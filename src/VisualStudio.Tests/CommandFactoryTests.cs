@@ -29,6 +29,14 @@ namespace VisualStudio.Tests
             await Assert.ThrowsAsync<ShowUsageException>(async () => await commandFactory.CreateCommandAsync("test", ImmutableArray.Create("/h")));
         }
 
+        [Fact]
+        public async Task when_creating_builtin_command_with_help_argument_then_throws_show_usage()
+        {
+            var commandFactory = new CommandFactory();
+
+            await Assert.ThrowsAsync<ShowUsageException>(async () => await commandFactory.CreateCommandAsync("modify", ImmutableArray.Create("-?")));
+        }
+
         [Theory]
         [InlineData(Commands.Install, typeof(InstallCommand))]
         [InlineData(Commands.Run, typeof(RunCommand))]
