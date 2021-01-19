@@ -2,7 +2,7 @@
 using System.IO;
 using Mono.Options;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class DefaultTextWriter : ITextWriter
     {

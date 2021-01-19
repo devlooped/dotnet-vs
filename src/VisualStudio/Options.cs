@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Mono.Options;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class Options : IOptions
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace VisualStudio.Tests
+namespace Devlooped.Tests
 {
     public class VisualStudioOptionsTests
     {

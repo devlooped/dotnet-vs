@@ -2,7 +2,7 @@
 using System.Linq;
 using Mono.Options;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class ExperimentalOption : OptionSet<bool>
     {

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class LogCommand : Command<LogCommandDescriptor>
     {

@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace VisualStudio.Tests
+namespace Devlooped.Tests
 {
     public class CommandFactoryTests
     {

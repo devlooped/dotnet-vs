@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class ShowUsageException : Exception
     {

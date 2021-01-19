@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using VisualStudio;
+using Devlooped;
 
 namespace vswhere
 {

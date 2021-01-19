@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Mono.Options;
 
-namespace VisualStudio
+namespace Devlooped
 {
     interface ITextWriter
     {

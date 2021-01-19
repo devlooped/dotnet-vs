@@ -7,7 +7,7 @@ using Mono.Options;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace VisualStudio.Tests
+namespace Devlooped.Tests
 {
     public class GenerateReadmeCommandTests
     {
@@ -73,7 +73,7 @@ namespace VisualStudio.Tests
             {
                 Description = "test command description";
 
-                Options = VisualStudio.Options.Empty.With(
+                Options = Devlooped.Options.Empty.With(
                     new OptionSet
                     {
                             { "headers should not be included in the markdown" },

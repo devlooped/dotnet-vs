@@ -2,7 +2,7 @@
 using System.Linq;
 using Mono.Options;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class SkuOption : OptionSet<Sku?>
     {
@@ -32,15 +32,15 @@ namespace VisualStudio
         Sku ParseSku(string sku)
         {
             if (sku.StartsWith("e", StringComparison.OrdinalIgnoreCase))
-                return VisualStudio.Sku.Enterprise;
+                return Devlooped.Sku.Enterprise;
             else if (sku.StartsWith("p", StringComparison.OrdinalIgnoreCase))
-                return VisualStudio.Sku.Professional;
+                return Devlooped.Sku.Professional;
             else if (sku.StartsWith("c", StringComparison.OrdinalIgnoreCase))
-                return VisualStudio.Sku.Community;
+                return Devlooped.Sku.Community;
             else if (sku.StartsWith("b", StringComparison.OrdinalIgnoreCase))
-                return VisualStudio.Sku.BuildTools;
+                return Devlooped.Sku.BuildTools;
             else if (sku.StartsWith("t", StringComparison.OrdinalIgnoreCase))
-                return VisualStudio.Sku.TestAgent;
+                return Devlooped.Sku.TestAgent;
             else
                 throw new OptionException($"Invalid SKU {sku}. Must be one of {string.Join(", ", Enum.GetNames(typeof(Sku)).Select(x => x.ToLowerInvariant()))}.", "sku");
         }

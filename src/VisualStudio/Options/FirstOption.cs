@@ -1,7 +1,7 @@
 ﻿using System;
 using Mono.Options;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class FirstOption : OptionSet<bool>
     {

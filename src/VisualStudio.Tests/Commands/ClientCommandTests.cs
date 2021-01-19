@@ -8,7 +8,7 @@ using Xunit;
 using Xunit.Abstractions;
 using DevEnv = vswhere.VisualStudioInstance;
 
-namespace VisualStudio.Tests
+namespace Devlooped.Tests
 {
     public class ClientCommandTests
     {
@@ -112,7 +112,7 @@ namespace VisualStudio.Tests
                 {
                     yield return "Start Live Share Session command enabled: True";
                     yield return "Start Live Share Session command succeeded: True";
-                    yield return $"Invitation link:https://prod.liveshare.vsengsaas.visualstudio.com/join?{GeneratedServerWorkspaceId}";
+                    yield return $"Invitation link:https://prod.liveshare.vsengsaas.VisualStudio.com/join?{GeneratedServerWorkspaceId}";
                 }
             }
 

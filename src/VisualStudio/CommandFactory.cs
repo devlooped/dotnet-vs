@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DotNetConfig;
 
-namespace VisualStudio
+namespace Devlooped
 {
     sealed class CommandFactory
     {

@@ -1,4 +1,4 @@
-﻿namespace VisualStudio
+﻿namespace Devlooped
 {
     class HelpOption : OptionSet<bool>
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Mono.Options;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class SelfOption : OptionSet<bool>
     {

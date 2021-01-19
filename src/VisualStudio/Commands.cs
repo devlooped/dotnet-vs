@@ -1,6 +1,6 @@
 ﻿using DotNetConfig;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class Commands
     {

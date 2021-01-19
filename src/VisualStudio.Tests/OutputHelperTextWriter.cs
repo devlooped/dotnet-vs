@@ -2,7 +2,7 @@
 using System.Text;
 using Xunit.Abstractions;
 
-namespace VisualStudio.Tests
+namespace Devlooped.Tests
 {
     internal class OutputHelperTextWriter : TextWriter
     {

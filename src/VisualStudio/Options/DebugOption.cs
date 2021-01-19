@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class DebugOption : OptionSet<bool>
     {

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
-namespace VisualStudio
+namespace Devlooped
 {
     public class ToolSettings
     {

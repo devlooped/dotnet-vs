@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using Mono.Options;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class MarkdownOptionsTextWriter : ITextWriter
     {

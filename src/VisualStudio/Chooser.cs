@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using vswhere;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class Chooser
     {

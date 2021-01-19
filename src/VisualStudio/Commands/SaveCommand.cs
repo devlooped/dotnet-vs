@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using DotNetConfig;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class SaveCommand : Command<SaveCommandDescriptor>
     {

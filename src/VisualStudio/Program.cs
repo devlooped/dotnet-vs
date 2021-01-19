@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class Program
     {
@@ -122,8 +122,9 @@ namespace VisualStudio
 
                         showLine = true;
                     }
-                    else if (showLine)
+                    else if (showLine && !line.Trim().StartsWith("```"))
                     {
+                        // Don't render the code formatting block
                         output.WriteLine(line);
                     }
                 }
