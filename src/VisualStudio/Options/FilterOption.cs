@@ -1,6 +1,6 @@
 ﻿using Mono.Options;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class FilterOption : OptionSet<string>
     {

@@ -1,4 +1,4 @@
-﻿namespace VisualStudio
+﻿namespace Devlooped
 {
     public enum Sku
     {

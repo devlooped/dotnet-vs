@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class UpdateSelfCommand : Command<UpdateSelfCommandDescriptor>
     {

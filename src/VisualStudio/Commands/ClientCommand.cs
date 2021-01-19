@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DevEnv = vswhere.VisualStudioInstance;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class ClientCommand : Command<ClientCommandDescriptor>, IDisposable
     {

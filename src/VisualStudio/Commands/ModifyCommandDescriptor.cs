@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class ModifyCommandDescriptor : CommandDescriptor
     {

@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using vswhere;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class WhereService
     {

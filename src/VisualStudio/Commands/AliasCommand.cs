@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class AliasCommand : Command<AliasCommandDescriptor>
     {

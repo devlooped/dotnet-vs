@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using vswhere;
 using Xunit;
 
-namespace VisualStudio.Tests
+namespace Devlooped.Tests
 {
     public class VisualStudioPredicateBuilderTests
     {

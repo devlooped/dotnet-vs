@@ -1,4 +1,4 @@
-﻿namespace VisualStudio
+﻿namespace Devlooped
 {
     class SelectPropertyOption : OptionSet<string>
     {

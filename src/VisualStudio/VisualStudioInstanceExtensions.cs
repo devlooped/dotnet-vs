@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using VisualStudio;
+using Devlooped;
 
 namespace vswhere
 {

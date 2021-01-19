@@ -4,7 +4,7 @@ using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace VisualStudio.Tests
+namespace Devlooped.Tests
 {
     public class ChooserTests
     {

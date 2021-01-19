@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Mono.Options;
 
-namespace VisualStudio
+namespace Devlooped
 {
     /// <summary>
     /// Provides shorthand notation for workload identifiers.

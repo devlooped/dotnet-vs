@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace VisualStudio
+namespace Devlooped
 {
     abstract class Command
     {

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using vswhere;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class RunCommand : Command<RunCommandDescriptor>
     {

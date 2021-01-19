@@ -6,12 +6,12 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Mono.Options;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class GenerateReadmeCommandDescriptor : CommandDescriptor
     {
         const string ResourcePrefix = "VisualStudio.Docs.";
-        const string ReadmeResource = ResourcePrefix + "README.md";
+        const string ReadmeResource = ResourcePrefix + "readme.md";
 
         public GenerateReadmeCommandDescriptor(Dictionary<string, CommandDescriptor> commands)
         {

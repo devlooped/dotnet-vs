@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 
-namespace VisualStudio
+namespace Devlooped
 {
     abstract class CommandDescriptor
     {
-        public IOptions Options { get; protected set; } = VisualStudio.Options.Empty;
+        public IOptions Options { get; protected set; } = Devlooped.Options.Empty;
 
         public string Description { get; protected set; } = string.Empty;
 

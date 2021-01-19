@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using vswhere;
 
-namespace VisualStudio
+namespace Devlooped
 {
     class VisualStudioPredicateBuilder
     {
