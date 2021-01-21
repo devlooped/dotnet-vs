@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
@@ -40,19 +40,20 @@ namespace Devlooped
 
         public async Task<int> RunAsync()
         {
-            if (args.Length == 0 || new[] { "?", "-?", "/?", "-h", "/h", "--help", "/help" }.Contains(args[0]))
+            if (args.Length != 0 && new[] { "?", "-?", "/?", "-h", "/h", "--help", "/help" }.Contains(args[0]))
             {
                 ShowUsage();
                 return 0;
             }
-            //else if (VersionOption.IsDefined(args))
-            //{
-            //    ShowVersion();
-            //    return 0;
-            //}
+            if (args.Length != 0 && VersionOption.IsDefined(new[] { args[0] }))
+            {
+                // Only consider --version if it's the *first* argument defined.
+                ShowVersion();
+                return 0;
+            }
 
-            var commandName = args[0];
-            var commandArgs = ImmutableArray.Create(args.Skip(1).ToArray());
+            var commandName = args.Length == 0 ? Commands.Run : args[0];
+            var commandArgs = ImmutableArray.Create(args.Length == 0 ? args : args.Skip(1).ToArray());
             try
             {
                 executingCommand = await commandFactory.CreateCommandAsync(commandName, commandArgs);

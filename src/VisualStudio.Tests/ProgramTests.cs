@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -17,12 +17,11 @@ namespace Devlooped.Tests
 
 
         [Theory]
-        [InlineData(null)]
         [InlineData("/help")]
         [InlineData("/?")]
         [InlineData("-?")]
         [InlineData("/h")]
-        public async Task when_running_without_args_or_with_help_arg_then_usage_is_shown(params string[] args)
+        public async Task when_running_with_help_arg_then_usage_is_shown(params string[] args)
         {
             var program = new ProgramTest(output, new CommandFactory(), args ?? new string[0]);
 
@@ -32,7 +31,7 @@ namespace Devlooped.Tests
             Assert.True(program.UsageShown);
         }
 
-        [Fact(Skip = "--version disabled pending a redesign")]
+        [Fact]
         public async Task when_running_with_version_arg_then_version_is_shown()
         {
             var program = new ProgramTest(output, new CommandFactory(), "--version");
@@ -41,6 +40,21 @@ namespace Devlooped.Tests
 
             Assert.Equal(0, exitCode);
             Assert.True(program.VersionShown);
+        }
+
+        [Fact]
+        public async Task when_running_where_command_with_version_arg_then_version_is_not_shown()
+        {
+            var command = Mock.Of<Command>();
+            var commandFactory = new CommandFactory();
+            commandFactory.RegisterCommand("test", () => Mock.Of<CommandDescriptor>(), x => command);
+            var program = new ProgramTest(output, commandFactory, "test", "--version");
+
+            var exitCode = await program.RunAsync();
+
+            Assert.Equal(0, exitCode);
+            Assert.False(program.VersionShown);
+            Mock.Get(command).Verify(x => x.ExecuteAsync(output));
         }
 
         [Fact]
