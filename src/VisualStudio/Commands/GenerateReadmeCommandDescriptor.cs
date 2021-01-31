@@ -21,11 +21,11 @@ namespace Devlooped
                 new OptionSet
                 {
                     { "template:", "The readme template file", x => TemplateFile = x },
-                    { "output:", "The output file", x => OutputFile = x },
+                    { "o|output:", "The output file", x => OutputFile = x },
                 });
         }
 
-        public string TemplateFile { get; set; } = @"Docs\README.md";
+        public string TemplateFile { get; set; } = @"Docs\readme.md";
 
         public string OutputFile { get; set; }
 

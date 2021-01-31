@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>A global tool for managing Visual Studio installations</Description>
@@ -30,6 +30,11 @@
   <ItemGroup>
     <None Condition="'$(TargetFramework)' != ''" Include="$(VSWhereDir)vswhere.exe" Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="tools\$(TargetFramework)\any\%(Filename)%(Extension)" />
     <EmbeddedResource Include="Docs\*.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Docs\alias.md" />
+    <None Remove="Docs\client.md" />
   </ItemGroup>
 
   <ItemGroup>

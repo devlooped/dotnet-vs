@@ -18,7 +18,7 @@ namespace Devlooped
         {
             Value = defaultValue;
 
-            Add("sku:", "Edition, one of [e|ent|enterprise], [p|pro|professional], [c|com|community], [b|bld|buildtools] or [t|tsa|testagent]", s => Value = ParseSku(s));
+            Add("sku:", "Edition, one of [e|ent|enterprise], [p|pro|professional], [c|com|community], [b|build|buildtools] or [t|test|testagent]", s => Value = ParseSku(s));
         }
 
         protected override bool Parse(string argument, OptionContext c)
