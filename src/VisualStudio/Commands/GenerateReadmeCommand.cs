@@ -1,4 +1,6 @@
 ﻿using System.IO;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,7 +13,7 @@ namespace Devlooped
         public override async Task ExecuteAsync(TextWriter output)
         {
             var commandsBuilder = new StringBuilder();
-            foreach (var command in Descriptor.Commands)
+            foreach (var command in Descriptor.Commands.OrderBy(x => x.Key))
             {
                 try
                 {
@@ -38,12 +40,14 @@ namespace Devlooped
             var readmeContent = (await Descriptor.ReadReadmeTemplateContentAsync())
                 .Replace("{Commands}", commandsBuilder.ToString());
 
-            if (!string.IsNullOrEmpty(Descriptor.OutputFile))
-            {
-                if (!Directory.Exists(Path.GetDirectoryName(Descriptor.OutputFile)))
-                    Directory.CreateDirectory(Path.GetDirectoryName(Descriptor.OutputFile));
+            var outputFile = Descriptor.OutputFile?.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 
-                await File.WriteAllTextAsync(Descriptor.OutputFile, readmeContent);
+            if (!string.IsNullOrEmpty(outputFile))
+            {
+                if (!Directory.Exists(Path.GetDirectoryName(outputFile)))
+                    Directory.CreateDirectory(Path.GetDirectoryName(outputFile));
+
+                await File.WriteAllTextAsync(outputFile, readmeContent);
             }
             else
             {

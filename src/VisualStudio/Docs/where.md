@@ -53,6 +53,6 @@ Formats:
 ```
 
 A shorthand notation is available for `-requires [workload ID]` via the supported 
-workload ID switches (see below).
+workload ID switches, using the `+` prefix (see below).
 
 See also [vswhere on GitHub](https://github.com/microsoft/vswhere).

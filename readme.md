@@ -1,10 +1,10 @@
-<h1 id="dotnet-vs"><img src="https://raw.githubusercontent.com/kzu/dotnet-vs/main/docs/img/icon.svg" alt="icon" height="32" width="32" style="vertical-align: text-top; border: 0px; padding: 0px; margin: 0px">  dotnet-vs</h1>
+<h1 id="dotnet-vs"><img src="https://raw.githubusercontent.com/devlooped/dotnet-vs/main/docs/img/icon.svg" alt="icon" height="32" width="32" style="vertical-align: text-top; border: 0px; padding: 0px; margin: 0px">  dotnet-vs</h1>
 
 A global tool for running, managing and querying Visual Studio installations
 
 [![Version](https://img.shields.io/nuget/v/dotnet-vs.svg?color=royalblue)](https://www.nuget.org/packages/dotnet-vs)
 [![Downloads](https://img.shields.io/nuget/dt/dotnet-vs.svg?color=darkmagenta)](https://www.nuget.org/packages/dotnet-vs)
-[![License](https://img.shields.io/github/license/kzu/dotnet-vs.svg?color=blue)](https://github.com/devlooped/dotnet-vs/blob/master/license.txt)
+[![License](https://img.shields.io/github/license/devlooped/dotnet-vs.svg?color=blue)](https://github.com/devlooped/dotnet-vs/blob/master/license.txt)
 [![CI Status](https://github.com/devlooped/dotnet-vs/workflows/build/badge.svg?branch=main)](https://github.com/devlooped/dotnet-vs/actions?query=branch%3Amain+workflow%3Abuild+)
 [![CI Version](https://img.shields.io/endpoint?url=https://shields.kzu.io/vpre/dotnet-vs/main&label=nuget.ci&color=brightgreen)](https://pkg.kzu.io/index.json)
 
@@ -27,9 +27,73 @@ all the following variants for arguments are supported: `-flag`, `--flag`, `/fla
 Supported commands:
 
 
+## alias
+
+Shows the list of saved aliases
+
+```
+Usage: vs alias [options]
+```
+
+All built-in commands support a `-save:[alias]` option that will cause 
+the command to be saved with that alias. From that point on, it's possible 
+to just run the command (including all saved arguments) by just running 
+the alias instead.
+
+Examples:
+
+<!-- EXAMPLES_BEGIN -->
+```
+# Save the first VS enterprise with the Xamarin/Mobile workload as the "mobile" alias
+> vs -sku:ent -first +mobile -save:mobile
+
+# Runs the saved alias with all the original arguments
+> vs mobile
+```
+<!-- EXAMPLES_END -->
+
+## client
+
+Launches Visual Studio in client mode
+
+```
+Usage: vs client [options]
+```
+
+|Option|Description|
+|-|-|
+| `rel\|release` | Run release version |
+| `pre\|preview` | Run preview version |
+| `int\|internal` | Run internal (aka 'dogfood') version |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community`, `b\|build\|buildtools` or `t\|test\|testagent` |
+| `filter:` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `first` | Run first matching instance. |
+| `exp\|experimental` | Run experimental instance instead of regular. |
+| `w\|workspaceId:` | The workspace ID to connect to |
+
+
+## config
+
+Opens the config folder.
+
+```
+Usage: vs config [options]
+```
+
+|Option|Description|
+|-|-|
+| `rel\|release` | open release version |
+| `pre\|preview` | open preview version |
+| `int\|internal` | open internal (aka 'dogfood') version |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community`, `b\|build\|buildtools` or `t\|test\|testagent` |
+| `filter:` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `first` | open first matching instance. |
+| `exp\|experimental` | open experimental instance instead of regular. |
+
+
 ## install
 
-Installs a specific edition of Visual Studio
+Installs a specific edition of Visual Studio.
 
 ```
 Usage: vs install [options]
@@ -37,14 +101,16 @@ Usage: vs install [options]
 
 |Option|Description|
 |-|-|
+| `rel\|release` | install release version |
 | `pre\|preview` | install preview version |
 | `int\|internal` | install internal (aka 'dogfood') version |
-| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
-| `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community`, `b\|build\|buildtools` or `t\|test\|testagent` |
+| `filter:` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
 | `add:` | A workload ID |
 
 
-You can add specific workload IDs by using the supported [workload switches](#workload-id-switches).
+You can add specific workload IDs by using the supported [workload switches](#workload-id-switches) 
+using the `+` prefix.
 
 See the [documentation for the Visual Studio installer command line options](https://docs.microsoft.com/en-us/visualstudio/install/use-command-line-parameters-to-install-visual-studio?view=vs-2019#install-options) 
 for the full list of arguments that can be provided.
@@ -53,14 +119,97 @@ Common options are `--passive`, `quiet` and `--wait`, for example.
 
 Examples:
 
+<!-- EXAMPLES_BEGIN -->
 ```
-// Installs VS enterprise with the Xamarin/Mobile workload
-vs install -sku:enterprise +mobile
+# Installs VS enterprise with the Xamarin/Mobile workload
+# Note the -sku: switch/prefix is optional
+> vs install Enterprise +mobile
 
-// Install VS community with the .NET Core, ASP.NET and Azure workloads, 
-// shows installation progress and waits for it to finish before returning
-vs install +core +web +azure
+# Install VS community with the .NET Core, ASP.NET and Azure workloads, 
+# shows installation progress and waits for it to finish before returning
+> vs install +core +web +azure
 ```
+<!-- EXAMPLES_END -->
+
+## kill
+
+Kills running devenv processes.
+
+```
+Usage: vs kill [options]
+```
+
+|Option|Description|
+|-|-|
+| `rel\|release` | kill release version |
+| `pre\|preview` | kill preview version |
+| `int\|internal` | kill internal (aka 'dogfood') version |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community`, `b\|build\|buildtools` or `t\|test\|testagent` |
+| `filter:` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `exp\|experimental` | kill experimental instance instead of regular. |
+| `first` | kill first matching instance. |
+| `all` | kill all instances. |
+
+
+Examples:
+
+<!-- EXAMPLES_BEGIN -->
+```
+# Kill all running instances of Visual Studio
+> vs kill all
+```
+<!-- EXAMPLES_END -->
+
+## log
+
+Opens the folder containing the Activity.log file.
+
+```
+Usage: vs log [options]
+```
+
+|Option|Description|
+|-|-|
+| `rel\|release` | open release version |
+| `pre\|preview` | open preview version |
+| `int\|internal` | open internal (aka 'dogfood') version |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community`, `b\|build\|buildtools` or `t\|test\|testagent` |
+| `filter:` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `first` | open first matching instance. |
+| `exp\|experimental` | open experimental instance instead of regular. |
+
+
+## modify
+
+Modifies an installation of Visual Studio.
+
+```
+Usage: vs modify [options]
+```
+
+|Option|Description|
+|-|-|
+| `rel\|release` | modify release version |
+| `pre\|preview` | modify preview version |
+| `int\|internal` | modify internal (aka 'dogfood') version |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community`, `b\|build\|buildtools` or `t\|test\|testagent` |
+| `filter:` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `first` | modify first matching instance. |
+| `add:` | A workload ID |
+| `remove:` | A workload ID |
+
+
+A shorthand notation is available for `add|remove [workload ID]` via the supported 
+workload ID switches/aliases, using the `+` (for `add`) and `-` (for `remove`) prefixes.
+
+Examples:
+
+<!-- EXAMPLES_BEGIN -->
+```
+# Add .NET Core Workload to installed Visual Studio Preview
+> vs modify preview +core
+```
+<!-- EXAMPLES_END -->
 
 ## run
 
@@ -72,10 +221,11 @@ Usage: vs run [options]
 
 |Option|Description|
 |-|-|
+| `rel\|release` | run release version |
 | `pre\|preview` | run preview version |
 | `int\|internal` | run internal (aka 'dogfood') version |
-| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
-| `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community`, `b\|build\|buildtools` or `t\|test\|testagent` |
+| `filter:` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
 | `exp\|experimental` | run experimental instance instead of regular. |
 | `id:` | Run a specific instance by its ID |
 | `f\|first` | If more than one instance matches the criteria, run the first one sorted by descending build version. |
@@ -86,7 +236,8 @@ Usage: vs run [options]
 | `requires:` | A workload ID |
 
 
-All [workload switches](#workload-id-switches) are available too to filter the instance to run.
+All [workload switches](#workload-id-switches) are available too to filter the 
+instance to run, including using the `+` prefix/alias syntax.
 
 This command will remember the last VS that was located and run. So the next time you 
 can just run the same instance by simply using `vs` (since `run` is the default command 
@@ -94,19 +245,40 @@ and can be omitted).
 
 Examples:
 
+<!-- EXAMPLES_BEGIN -->
 ```
-// Runs the first VS enterprise with the Xamarin/Mobile workload
-vs -sku:ent -first +mobile
+# Runs the first VS enterprise with the Xamarin/Mobile workload
+> vs -sku:ent -first +mobile
 
-// Runs VS 16.4
-vs -v:16.4
+# Runs VS 16.8
+> vs -v:16.8
 
-// Runs VS 16.5 preview
-vs -v:16.4 -pre
+# Runs VS 16.9 preview
+> vs -v:16.9 -pre
 
-// Runs the last VS that was run
-vs
+# Runs the last VS that was run
+> vs
 ```
+<!-- EXAMPLES_END -->
+
+## update
+
+Updates an installation of Visual Studio.
+
+```
+Usage: vs update [options]
+```
+
+|Option|Description|
+|-|-|
+| `rel\|release` | Update release version |
+| `pre\|preview` | Update preview version |
+| `int\|internal` | Update internal (aka 'dogfood') version |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community`, `b\|build\|buildtools` or `t\|test\|testagent` |
+| `filter:` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `first` | Update first matching instance. |
+| `all` | Update all instances. |
+
 
 ## where
 
@@ -118,13 +290,14 @@ Usage: vs where [options]
 
 |Option|Description|
 |-|-|
+| `rel\|release` | show release version |
 | `pre\|preview` | show preview version |
 | `int\|internal` | show internal (aka 'dogfood') version |
-| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
-| `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
+| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community`, `b\|build\|buildtools` or `t\|test\|testagent` |
+| `filter:` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
 | `first` | show first matching instance. |
-| `all` | show all instances. |
 | `prop\|property:` | The name of a property to return |
+| `list` | Shows result as a list |
 | `requires:` | A workload ID |
 
 
@@ -173,125 +346,9 @@ Formats:
 ```
 
 A shorthand notation is available for `-requires [workload ID]` via the supported 
-workload ID switches (see below).
+workload ID switches, using the `+` prefix (see below).
 
 See also [vswhere on GitHub](https://github.com/microsoft/vswhere).
-
-## update
-
-Updates an installation of Visual Studio
-
-```
-Usage: vs update [options]
-```
-
-|Option|Description|
-|-|-|
-| `pre\|preview` | Update preview version |
-| `int\|internal` | Update internal (aka 'dogfood') version |
-| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
-| `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
-| `first` | Update first matching instance. |
-
-
-Examples:
-
-```
-```
-
-## modify
-
-Modifies an installation of Visual Studio
-
-```
-Usage: vs modify [options]
-```
-
-|Option|Description|
-|-|-|
-| `pre\|preview` | modify preview version |
-| `int\|internal` | modify internal (aka 'dogfood') version |
-| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
-| `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
-| `first` | Modify first matching instance. |
-| `add:` | A workload ID |
-| `remove:` | A workload ID |
-
-
-Examples:
-
-```
-```
-
-## config
-
-Opens the config folder
-
-```
-Usage: vs config [options]
-```
-
-|Option|Description|
-|-|-|
-| `pre\|preview` | open preview version |
-| `int\|internal` | open internal (aka 'dogfood') version |
-| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
-| `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
-| `first` | Use first matching VS instance. |
-| `exp\|experimental` | open experimental instance instead of regular. |
-
-
-Examples:
-
-```
-```
-
-## log
-
-Opens the folder containing the Activity.log file
-
-```
-Usage: vs log [options]
-```
-
-|Option|Description|
-|-|-|
-| `pre\|preview` | open preview version |
-| `int\|internal` | open internal (aka 'dogfood') version |
-| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
-| `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
-| `first` | Use first matching VS instance. |
-| `exp\|experimental` | open experimental instance instead of regular. |
-
-
-Examples:
-
-```
-```
-
-## kill
-
-Kills running devenv processes
-
-```
-Usage: vs kill [options]
-```
-
-|Option|Description|
-|-|-|
-| `pre\|preview` | kill preview version |
-| `int\|internal` | kill internal (aka 'dogfood') version |
-| `sku:` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community` `b\|build\|buildtools` or `t\|test\|testagent`  |
-| `filter:` | An expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
-| `exp\|experimental` | kill experimental instance instead of regular. |
-| `first` | kill first matching instance. |
-| `all` | kill all instances. |
-
-
-Examples:
-
-```
-```
 
 
 ## Workload ID switches

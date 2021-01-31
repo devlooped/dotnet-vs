@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Devlooped
 {
@@ -14,7 +14,7 @@ namespace Devlooped
 
         public WhereCommandDescriptor(WhereService whereService)
         {
-            Description = "Locates the installed version(s) of Visual Studio that satisfy the requested requirements.";
+            Description = "Locates the installed version(s) of Visual Studio that satisfy the requested requirements, optionally retrieving installation properties from it.";
 
             Options = vsOptions
                 .With(propOption)
