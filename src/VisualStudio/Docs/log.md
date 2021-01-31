@@ -7,8 +7,3 @@
 ```
 
 {Options}
-
-Examples:
-
-```
-```

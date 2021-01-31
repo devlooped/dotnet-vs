@@ -10,5 +10,7 @@
 
 Examples:
 
+<!-- EXAMPLES_BEGIN -->
 ```
 ```
+<!-- EXAMPLES_END -->
