@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -85,7 +85,6 @@ namespace Devlooped.Tests
 
             var exitCode = await program.RunAsync();
 
-            Assert.Equal(ErrorCodes.ShowUsage, exitCode);
             commandDescriptor.Verify(x => x.ShowUsage(It.IsAny<ITextWriter>()));
             Assert.True(program.ExamplesShown);
         }
@@ -207,9 +206,9 @@ namespace Devlooped.Tests
                 UsageShown = true;
             }
 
-            protected override void ShowVersion()
+            protected override async Task ShowVersion()
             {
-                base.ShowVersion();
+                await base.ShowVersion();
 
                 VersionShown = true;
             }

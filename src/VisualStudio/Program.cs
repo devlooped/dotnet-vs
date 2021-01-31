@@ -75,7 +75,7 @@ namespace Devlooped
                 ex.CommandDescriptor.ShowUsage(writer);
                 ShowExamples(commandName);
 
-                return ErrorCodes.ShowUsage;
+                return 0;
             }
             catch (Exception ex) when (!DebugOption.IsDefined(args))
             {
