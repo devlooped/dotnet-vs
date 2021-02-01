@@ -100,7 +100,7 @@
 	weak
 [file ".github/workflows/release-notes.yml"]
 	url = https://github.com/devlooped/oss/blob/main/.github/workflows/release-notes.yml
-	etag = e997e6e7bfd4d850a3554d4232562075a89cf7713a8cec4aef483f2bd6f3c10a
+	etag = c987e5b93b002c5a2a63304f677eb969b7b6e274b77ef4392aeef4d9ca7e10dd
 	weak
 [file "assets/images/sponsors.png"]
 	url = https://github.com/devlooped/oss/blob/main/assets/images/sponsors.png
