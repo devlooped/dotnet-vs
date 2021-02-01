@@ -16,7 +16,8 @@ namespace Devlooped
     class WorkloadOptions : OptionSet<ImmutableArray<string>>
     {
         readonly string argument;
-        readonly string[] prefixes;
+        readonly string argumentPrefix;
+        readonly string[] aliasPrefixes;
 
         public WorkloadOptions() : base(ImmutableArray.Create<string>())
         { }
@@ -39,22 +40,27 @@ namespace Devlooped
             { "vsx", "Microsoft.VisualStudio.Workload.VisualStudioExtension" },
         };
 
-        public WorkloadOptions(string argument, string aliasPrefix = "--", string argumentPrefix = "--") : base(ImmutableArray.Create<string>())
+        public WorkloadOptions(string argument, string aliasPrefix = "-", string argumentPrefix = "--") : base(ImmutableArray.Create<string>())
         {
             this.argument = argument;
-            prefixes = aliasPrefix.Split('|', StringSplitOptions.RemoveEmptyEntries);
+            this.argumentPrefix = argumentPrefix;
+
+            aliasPrefixes = aliasPrefix.Split('|', StringSplitOptions.RemoveEmptyEntries);
 
             Add("\n");
             Add($"{argument}:", "A workload ID", id => Value = Value.Add(argumentPrefix + argument).Add(id));
 
             Add("\n\tWorkload ID aliases:");
             foreach (var aliasPair in aliases)
-                Add($"\t{(prefixes[0] + aliasPair.Key).GetNormalizedString()} {argumentPrefix}{argument} {aliasPair.Value}");
+                Add($"\t{(aliasPrefixes[0] + aliasPair.Key).GetNormalizedString()} {argumentPrefix}{argument} {aliasPair.Value}");
         }
 
         protected override bool Parse(string argument, OptionContext c)
         {
-            foreach (var prefix in prefixes)
+            if (argument.StartsWith(argumentPrefix))
+                return base.Parse(argument, c);
+
+            foreach (var prefix in aliasPrefixes)
             {
                 if (aliases.Keys.Any(alias => argument.StartsWith(prefix + alias)))
                     return base.Parse("--" + this.argument + "=" + GetWorkloadId(argument.Substring(prefix.Length)), c);
