@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>A global tool for managing Visual Studio installations</Description>
@@ -14,6 +14,8 @@
     <PackAsTool>true</PackAsTool>
 
     <NoWarn>$(NoWarn);NU5118</NoWarn>
+
+    <DateTime>$([System.DateTime]::UtcNow.ToString("yyyy-MM-dd"))</DateTime>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,7 +26,7 @@
     <PackageReference Include="ThisAssembly" Version="1.0.3" PrivateAssets="all" />
     <PackageReference Include="System.Management" Version="5.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.8.0" />
-    <PackageReference Include="dotnet-config-lib" Version="1.0.0-beta" />
+    <PackageReference Include="DotNetConfig" Version="1.0.0-rc.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +42,8 @@
   <ItemGroup>
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
     <InternalsVisibleTo Include="VisualStudio.Tests" />
+    <ProjectProperty Include="DateTime" />
+    <ProjectProperty Include="RepositoryUrl" />
   </ItemGroup>
 
 </Project>

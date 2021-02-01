@@ -191,6 +191,7 @@ namespace Devlooped.Tests
             public ProgramTest(TextWriter output, CommandFactory commandFactory, params string[] args)
                 : base(output, commandFactory, args)
             {
+                NoVersionChecks = true;
             }
 
             public bool UsageShown { get; private set; }
