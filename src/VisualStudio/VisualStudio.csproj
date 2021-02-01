@@ -1,7 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>A global tool for managing Visual Studio installations</Description>
+    <Description>A global tool for managing Visual Studio installations
+
+Usage: vs [command] [options|-?|-h|--help] [--save=ALIAS [--global]]
+
+Supported commands:
+  alias       Shows the list of saved aliases
+  client      Launches Visual Studio in client mode
+  config      Opens the config folder.
+  install     Installs a specific edition of Visual Studio.
+  kill        Kills running devenv processes.
+  log         Opens the folder containing the Activity.log file.
+  modify      Modifies an installation of Visual Studio.
+  run         This is default command, so typically it does not 
+              need to be provided as an argument.
+  update      Updates an installation of Visual Studio.
+  where       Locates the installed version(s) of Visual Studio 
+              that satisfy the requested requirements, optionally 
+              retrieving installation properties from it.
+
+See full documentation at $(PackageProjectUrl).
+</Description>
 
     <OutputType>Exe</OutputType>
     <TargetFrameworks>netcoreapp2.1;netcoreapp3.1;net5.0</TargetFrameworks>
