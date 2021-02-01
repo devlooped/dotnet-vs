@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
@@ -9,6 +9,8 @@ namespace Devlooped
 {
     class Program
     {
+        static readonly VersionChecker versionChecker = new VersionChecker();
+
         readonly CommandFactory commandFactory;
         readonly TextWriter output;
         readonly string[] args;
@@ -48,7 +50,7 @@ namespace Devlooped
             if (args.Length != 0 && VersionOption.IsDefined(new[] { args[0] }))
             {
                 // Only consider --version if it's the *first* argument defined.
-                ShowVersion();
+                await ShowVersion();
                 return 0;
             }
 
@@ -84,14 +86,18 @@ namespace Devlooped
                 return ErrorCodes.Error;
             }
 
+            await versionChecker.ShowUpdateAsync(output);
+
             return 0;
         }
 
-        protected virtual void ShowVersion()
+        protected bool NoVersionChecks
         {
-            output.WriteLine($"{ThisAssembly.Project.AssemblyName} {ThisAssembly.Info.InformationalVersion}");
-            output.WriteLine();
+            get => versionChecker.NoOp;
+            set => versionChecker.NoOp = value;
         }
+
+        protected virtual async Task ShowVersion() => await versionChecker.ShowVersionAsync(output);
 
         protected virtual void ShowUsage()
         {
