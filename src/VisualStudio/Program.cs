@@ -107,7 +107,7 @@ namespace Devlooped
             output.WriteLine("Supported commands:");
 
             var maxWidth = commandFactory.GetRegisteredCommands().Select(x => x.Key.Length).Max() + 5;
-            foreach (var command in commandFactory.GetRegisteredCommands())
+            foreach (var command in commandFactory.GetRegisteredCommands().OrderBy(x => x.Key))
                 output.WriteLine($"  {command.Key.GetNormalizedString(maxWidth)}{command.Value.Description}");
         }
 
