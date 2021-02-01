@@ -6,7 +6,7 @@ A global tool for running, managing and querying Visual Studio installations
 [![Downloads](https://img.shields.io/nuget/dt/dotnet-vs.svg?color=darkmagenta)](https://www.nuget.org/packages/dotnet-vs)
 [![License](https://img.shields.io/github/license/devlooped/dotnet-vs.svg?color=blue)](https://github.com/devlooped/dotnet-vs/blob/master/license.txt)
 [![CI Status](https://github.com/devlooped/dotnet-vs/workflows/build/badge.svg?branch=main)](https://github.com/devlooped/dotnet-vs/actions?query=branch%3Amain+workflow%3Abuild+)
-[![CI Version](https://img.shields.io/endpoint?url=https://shields.kzu.io/vpre/dotnet-vs/main&label=nuget.ci&color=brightgreen)](https://pkg.kzu.io/index.json)
+[![CI Version](https://img.shields.io/endpoint?label=nuget.ci&color=brightgreen&url=https://shields.kzu.io/vpre/dotnet-vs/main)](https://pkg.kzu.io/index.json)
 
 Installing or updating (same command for both):
 
