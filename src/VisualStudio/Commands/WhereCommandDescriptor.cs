@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Devlooped
 {
@@ -7,8 +7,7 @@ namespace Devlooped
         readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default("show").WithFirst();
         readonly SelectPropertyOption propOption = new SelectPropertyOption();
         readonly ListOption listOption = new ListOption();
-        // For backwards compatibility, we also allow -- as a prefix, but don't show it anymore.
-        readonly WorkloadOptions workloads = new WorkloadOptions("requires", "+|--|-", "-");
+        readonly WorkloadOptions workloads = new WorkloadOptions("requires", "+", "-");
 
         readonly WhereService whereService;
 

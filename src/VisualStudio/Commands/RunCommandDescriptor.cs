@@ -7,7 +7,7 @@ namespace Devlooped
     class RunCommandDescriptor : CommandDescriptor
     {
         readonly VisualStudioOptions vsOptions = VisualStudioOptions.Default().WithExperimental();
-        readonly WorkloadOptions workloads = new WorkloadOptions("requires", "+|--|-", "-");
+        readonly WorkloadOptions workloads = new WorkloadOptions("requires", "+", "-");
 
         public RunCommandDescriptor()
         {
@@ -18,7 +18,7 @@ namespace Devlooped
                     {
                         { "id:", "Run a specific instance by its ID", i => Id = i },
                         { "f|first", "If more than one instance matches the criteria, run the first one sorted by descending build version.", f => First = f != null },
-                        { "v|version:", "Run specific (semantic) version, such as 16.4 or 16.5.3.", v => Version = v },
+                        { "v|version:", "Run specific (semantic) version, such as 16.8 or 16.9.2", v => Version = v },
                         { "w|wait", "Wait for the started Visual Studio to exit.", w => Wait = w != null },
                         { "nr|nodereuse", "Disable MSBuild node reuse. Useful when testing analyzers, tasks and targets. Defaults to true when running experimental instance.", nr => DisableNodeReuse = nr != null },
                         { "default", "Set as the default version to run when no arguments are provided, or remove the current default (with --default-).", d => SetDefault = d != null },
