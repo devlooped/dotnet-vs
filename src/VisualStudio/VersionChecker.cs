@@ -54,7 +54,7 @@ namespace Devlooped
             // Showing version explicitly checks upstream, so we'll clear the last checked date.
             configuration.Unset("checked");
 
-            var latestVersion = await getLatest.ConfigureAwait(false);
+            var latestVersion = await getLatest;
 
             if (latestVersion == developmentVersion)
                 // Couldn't check latest version for some reason
@@ -72,7 +72,7 @@ namespace Devlooped
             if (NoOp)
                 return;
 
-            var latestVersion = await getLatest.ConfigureAwait(false);
+            var latestVersion = await getLatest;
 
             // We expect a redirect from /latest to the actual latest tag URL
             if (currentVersion != developmentVersion &&
