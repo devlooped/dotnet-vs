@@ -138,9 +138,9 @@
 	sha = f2dc1370469bec1b2d32d82faf659b050cdc7e2a
 [file ".github/workflows/sponsors.ps1"]
 	url = https://github.com/devlooped/.github/blob/main/.github/workflows/sponsors.ps1
-	etag = 5e29155d35ab142150e900df391363e03e5a15a8be46e4adeeb4c6fd34013289
+	etag = 57a303125f3367b68ad0700d89ff4ba57cb29b33b303903488c9c8638d0bf735
 	weak
-	sha = ffde0b030405ef9925309cf69467570c75b6edea
+	sha = 11f5c27cfdb304436ef0b7ee27ff333cda31ef65
 [file ".github/workflows/sponsors.yml"]
 	url = https://github.com/devlooped/.github/blob/main/.github/workflows/sponsors.yml
 	etag = 0142be767cd24215b54631593cfab08d711001b71ba4fc358e412f27c434a227
@@ -153,6 +153,6 @@
 	sha = f2dc1370469bec1b2d32d82faf659b050cdc7e2a
 [file ".github/workflows/dotnet-file.yml"]
 	url = https://github.com/devlooped/oss/blob/main/.github/workflows/dotnet-file.yml
-	sha = 3e864109790fc5c4a42edc106d9dd3ad4b204973
-	etag = 209e73911e3ae74c2ead29a17854398f0802023bbb8d83e91bbb303e254ac1e3
+	sha = 094043587f7e7313a0a77dece1532fbcb1ce8555
+	etag = 15333d15756257ec2d7975ea3ba5a22d1e3fae98aab35d83d67a728628e90cea
 	weak
