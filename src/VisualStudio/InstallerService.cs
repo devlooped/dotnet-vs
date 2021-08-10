@@ -26,7 +26,10 @@ namespace Devlooped
             => RunAsync("modify", channelUri, sku, args, output);
 
         Task RunAsync(string command, Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
-            => RunAsync(command, "https://aka.ms/vs/16/" + MapChannel(channel), sku, args, output);
+        {
+            var vs = channel == null || channel == Channel.Release ? "16" : "17";
+            return RunAsync(command, $"https://aka.ms/vs/{vs}/{MapChannel(channel)}", sku, args, output);
+        }
 
         async Task RunAsync(string command, string channelUri, Sku? sku, IEnumerable<string> args, TextWriter output)
         {
