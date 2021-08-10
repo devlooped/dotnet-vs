@@ -16,10 +16,10 @@ namespace Devlooped
         static readonly Version developmentVersion = new Version(42, 42, 42, 0);
 
         readonly Version currentVersion;
-        readonly ConfigSection configuration;
         readonly ConfigLevel saveLevel;
         readonly string repositoryUrl;
         readonly Task<Version> getLatest;
+        ConfigSection configuration;
 
         public VersionChecker()
             : this(new Version(ThisAssembly.Info.Version), Config.Build(ConfigLevel.Global), saveLevel: ConfigLevel.Global)
@@ -100,9 +100,10 @@ namespace Devlooped
                 {
                     var latestTagUrl = response.Headers.Location.ToString();
                     latestVersion = new Version(latestTagUrl.Split('/').Last().Trim('v'));
-                    configuration.SetString("latest", latestVersion.ToString(3), saveLevel);
-                    // NOTE: we only save checked date if we succeeded at checking latest.
-                    configuration.SetDateTime("checked", DateTime.Now, saveLevel);
+                    configuration = configuration
+                        .SetString("latest", latestVersion.ToString(3), saveLevel)
+                        // NOTE: we only save checked date if we succeeded at checking latest.
+                        .SetDateTime("checked", DateTime.Now, saveLevel);
                 }
             }
 
