@@ -99,7 +99,7 @@ namespace Devlooped.Tests
         public async Task when_saved_command_is_specified_then_saved_command_is_created()
         {
             var config = DotNetConfig.Config.Build(Path.GetTempFileName());
-            config.SetString(Commands.DotNetConfig.Section, Commands.DotNetConfig.SubSection, "foo", "update|main", null);
+            config = config.SetString(Commands.DotNetConfig.Section, Commands.DotNetConfig.SubSection, "foo", "update|main", null);
 
             var commandFactory = new CommandFactory(config);
 
