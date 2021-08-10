@@ -59,8 +59,9 @@ namespace Devlooped.Tests
         public async Task when_showing_version_after_week_from_last_check_then_updates_to_latest()
         {
             var config = Config.Build(Path.GetTempFileName());
-            config.SetString("vs", "latest", "0.1.5");
-            config.SetDateTime("vs", "checked", DateTime.Now - TimeSpan.FromDays(10));
+            config = config
+                .SetString("vs", "latest", "0.1.5", ConfigLevel.Local)
+                .SetDateTime("vs", "checked", DateTime.Now - TimeSpan.FromDays(10), ConfigLevel.Local);
 
             var checker = new VersionChecker(new Version(0, 1, 1), config);
 
@@ -79,8 +80,9 @@ namespace Devlooped.Tests
         public async Task when_showing_update_same_week_then_returns_last_checked()
         {
             var config = Config.Build(Path.GetTempFileName());
-            config.SetString("vs", "latest", "99.99.99");
-            config.SetDateTime("vs", "checked", (DateTime.Now - TimeSpan.FromDays(3)));
+            config = config
+                .SetString("vs", "latest", "99.99.99", ConfigLevel.Local)
+                .SetDateTime("vs", "checked", (DateTime.Now - TimeSpan.FromDays(3)), ConfigLevel.Local);
 
             var checker = new VersionChecker(new Version(0, 1, 1), config);
 
