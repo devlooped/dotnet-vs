@@ -115,16 +115,14 @@
 	etag = ad8681ee3f191f796944135772b74565c470e349464e793aa664c888f7784b7a
 	weak
 	sha = 55c0b32601e94e1eed35028a0cad510c6bcbb265
-[file ".github/workflows/release-artifacts.yml"]
-	url = https://github.com/devlooped/oss/blob/main/.github/workflows/release-artifacts.yml
-	etag = 53f2dd2465fd15a065828468139544449ab7ccc0ba40f9074d7ac92426bfd07b
-	weak
-	sha = 55c0b32601e94e1eed35028a0cad510c6bcbb265
 [file ".github/workflows/release-notes.yml"]
 	url = https://github.com/devlooped/oss/blob/main/.github/workflows/release-notes.yml
 	etag = c987e5b93b002c5a2a63304f677eb969b7b6e274b77ef4392aeef4d9ca7e10dd
 	weak
 	sha = 70bc909d2ce6924385a8bcc3a9fb1cff338a3fb7
+[file ".github/workflows/release-artifacts.yml"]
+	url = https://github.com/devlooped/oss/blob/main/.github/workflows/release-artifacts.yml
+	skip
 [file "assets/images/sponsors.png"]
 	url = https://github.com/devlooped/oss/blob/main/assets/images/sponsors.png
 	skip
