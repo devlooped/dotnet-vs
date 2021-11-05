@@ -28,6 +28,11 @@ namespace Devlooped
         Task RunAsync(string command, Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
         {
             var vs = channel == null || channel == Channel.Release ? "16" : "17";
+
+            // Microsoft.VisualStudio.Workload.NetCoreTools > Microsoft.NetCore.Component.DevelopmentTools
+            if (vs == "17")
+                args = args.Select(arg => arg == "Microsoft.VisualStudio.Workload.NetCoreTools" ? "Microsoft.NetCore.Component.DevelopmentTools" : arg);
+
             return RunAsync(command, $"https://aka.ms/vs/{vs}/{MapChannel(channel)}", sku, args, output);
         }
 
