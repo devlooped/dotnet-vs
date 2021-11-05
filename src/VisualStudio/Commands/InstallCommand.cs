@@ -30,8 +30,13 @@ namespace Devlooped
 
             args.AddRange(Descriptor.ExtraArguments);
 
+            // See also InstallerService.RunAsync where we do this mapping too.
+            var vs = Descriptor.Channel == null || Descriptor.Channel == Channel.Release ? "16" : "17";
+
             // TODO: for now, we assume we're always doing an install.
-            var installBase = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Microsoft Visual Studio", "2019");
+            var installBase = vs == "16" ?
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Microsoft Visual Studio", "2019") :
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Microsoft Visual Studio", "2022");
 
             // There is at least one install already, so use nicknames for the new one.
             if (Directory.Exists(installBase) && !args.Contains("--nickname"))
