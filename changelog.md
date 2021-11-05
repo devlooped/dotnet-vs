@@ -1,23 +1,12 @@
 # Changelog
 
-## [v1.1.2-beta](https://github.com/devlooped/dotnet-vs/tree/v1.1.2-beta) (2021-11-05)
-
-[Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v1.1.1...v1.1.2-beta)
-
-:sparkles: Implemented enhancements:
-
-- Include readme in package for better discoverability [\#116](https://github.com/devlooped/dotnet-vs/issues/116)
-
-:bug: Fixed bugs:
-
-- Installer uses bad command when modifying [\#111](https://github.com/devlooped/dotnet-vs/issues/111)
-
 ## [v1.1.1](https://github.com/devlooped/dotnet-vs/tree/v1.1.1) (2021-11-05)
 
 [Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v1.1.0...v1.1.1)
 
 :sparkles: Implemented enhancements:
 
+- Include readme in package for better discoverability [\#116](https://github.com/devlooped/dotnet-vs/issues/116)
 - Decrease package size by building 3.1 and using rollForward [\#114](https://github.com/devlooped/dotnet-vs/issues/114)
 
 :bug: Fixed bugs:
