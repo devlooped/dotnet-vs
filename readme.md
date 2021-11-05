@@ -1,4 +1,5 @@
-<h1 id="dotnet-vs"><img src="https://raw.githubusercontent.com/devlooped/dotnet-vs/main/docs/img/icon.svg" alt="icon" height="32" width="32" style="vertical-align: text-top; border: 0px; padding: 0px; margin: 0px">  dotnet-vs</h1>
+![Icon](https://raw.githubusercontent.com/devlooped/dotnet-vs/main/docs/img/icon-32.png) dotnet-vs
+============
 
 A global tool for running, managing and querying Visual Studio installations
 
@@ -384,8 +385,6 @@ prefix to add or remove workloads respectively, for example.
 
 ## Sponsors
 
-<h3 style="vertical-align: text-top" id="by-clarius">
-<img src="https://raw.githubusercontent.com/devlooped/oss/main/assets/images/sponsors.svg" alt="sponsors" height="36" width="36" style="vertical-align: text-top; border: 0px; padding: 0px; margin: 0px">&nbsp;&nbsp;by&nbsp;<a href="https://github.com/clarius">@clarius</a>&nbsp;<img src="https://raw.githubusercontent.com/clarius/branding/main/logo/logo.svg" alt="sponsors" height="36" width="36" style="vertical-align: text-top; border: 0px; padding: 0px; margin: 0px">
-</h3>
+[![sponsored](https://raw.githubusercontent.com/devlooped/oss/main/assets/images/sponsors.svg)](https://github.com/sponsors/devlooped) [![clarius](https://raw.githubusercontent.com/clarius/branding/main/logo/byclarius.svg)](https://github.com/clarius)[![clarius](https://raw.githubusercontent.com/clarius/branding/main/logo/logo.svg)](https://github.com/clarius)
 
 *[get mentioned here too](https://github.com/sponsors/devlooped)!*

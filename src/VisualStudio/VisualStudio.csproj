@@ -31,6 +31,8 @@ See full documentation at $(PackageProjectUrl).
     <RootNamespace>VisualStudio</RootNamespace>
 
     <PackageId>dotnet-vs</PackageId>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+
     <ToolCommandName>vs</ToolCommandName> 
     <PackAsTool>true</PackAsTool>
 
@@ -58,6 +60,7 @@ See full documentation at $(PackageProjectUrl).
   <ItemGroup>
     <None Remove="Docs\alias.md" />
     <None Remove="Docs\client.md" />
+    <None Include="..\..\readme.md" PackagePath="readme.md" Pack="true" />
   </ItemGroup>
 
   <ItemGroup>
