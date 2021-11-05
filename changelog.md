@@ -1,4 +1,20 @@
+# Changelog
 
+## [v1.1.1](https://github.com/devlooped/dotnet-vs/tree/v1.1.1) (2021-11-05)
+
+[Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v1.1.0...v1.1.1)
+
+:sparkles: Implemented enhancements:
+
+- Decrease package size by building 3.1 and using rollForward [\#114](https://github.com/devlooped/dotnet-vs/issues/114)
+
+:bug: Fixed bugs:
+
+- +core workload alias doesn't work for VS2022 [\#106](https://github.com/devlooped/dotnet-vs/issues/106)
+
+:twisted_rightwards_arrows: Merged:
+
+- Fix renamed/removed .NETCore workload for 2022 [\#115](https://github.com/devlooped/dotnet-vs/pull/115) (@kzu)
 
 ## [v1.1.0](https://github.com/devlooped/dotnet-vs/tree/v1.1.0) (2021-08-10)
 
@@ -8,15 +24,11 @@
 
 - When installing non-stable channels, dev17/vs2022 should be picked [\#104](https://github.com/devlooped/dotnet-vs/issues/104)
 - Visual Studio 2022 is not considered when using channel aliases [\#102](https://github.com/devlooped/dotnet-vs/issues/102)
-- Consider Visual Studio 2022 when filtering by channel alias [\#103](https://github.com/devlooped/dotnet-vs/pull/103) (@kzu)
 
 :twisted_rightwards_arrows: Merged:
 
-- Bump files with dotnet-file sync [\#95](https://github.com/devlooped/dotnet-vs/pull/95) (@kzu)
-- Bump files with dotnet-file sync [\#93](https://github.com/devlooped/dotnet-vs/pull/93) (@kzu)
-- Bump files with dotnet-file sync [\#91](https://github.com/devlooped/dotnet-vs/pull/91) (@kzu)
-- 🔄 dotnet-file sync [\#88](https://github.com/devlooped/dotnet-vs/pull/88) (@kzu)
-- 🔄 dotnet-file sync [\#86](https://github.com/devlooped/dotnet-vs/pull/86) (@kzu)
+- When installing non-stable channel, pick dev17/vs2022 [\#105](https://github.com/devlooped/dotnet-vs/pull/105) (@kzu)
+- Consider Visual Studio 2022 when filtering by channel alias [\#103](https://github.com/devlooped/dotnet-vs/pull/103) (@kzu)
 
 ## [v1.0.0](https://github.com/devlooped/dotnet-vs/tree/v1.0.0) (2021-02-01)
 
