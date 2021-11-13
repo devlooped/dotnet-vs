@@ -72,14 +72,14 @@
 	sha = a0f58a6d63e48ae6e55944c556d0bc94476dc8df
 [file "src/Directory.Build.props"]
 	url = https://github.com/devlooped/oss/blob/main/src/Directory.Build.props
-	etag = a44fa4e71022b1c5f9684ec65815f69b47d51d0289e58bd9396606bd88e4244a
+	etag = 743fd7845e40d9aef662f858a2d48dbfec9a10977e15394f45e331841a3c0dfd
 	weak
-	sha = e2606657b68d2980cc3cae181c59baa3d847ab75
+	sha = cc6922f63e2bd520a75f46592cfb38cec02aaccd
 [file "src/Directory.Build.targets"]
 	url = https://github.com/devlooped/oss/blob/main/src/Directory.Build.targets
-	etag = 46287392cb21e28595b1ea658236b8afa15f985c9f75dc08ed85e81a2c465755
+	etag = 7b62ae495bdfb2dcca473709323ab0d5cf2bb7637e7bff3250ae9267839069ef
 	weak
-	sha = bfe0f2a2a668878931f43b7280f0406a2171ff0c
+	sha = 83d73781f82a05b805c98b70219c32a47c096fbe
 [file "src/kzu.snk"]
 	url = https://github.com/devlooped/oss/blob/main/src/kzu.snk
 	etag = b8d789b5b6bea017cdcc8badcea888ad78de3e34298efca922054e9fb0e7b6b9
@@ -146,8 +146,8 @@
 	sha = f2dc1370469bec1b2d32d82faf659b050cdc7e2a
 [file ".github/workflows/dotnet-file.yml"]
 	url = https://github.com/devlooped/oss/blob/main/.github/workflows/dotnet-file.yml
-	sha = 084aa7c36ee1c262ea2f9e83931068366a7b4312
-	etag = 501f8bf58287fdd7467701342f7251a015bc29664b494e7d81a71c0c55bee61f
+	sha = 2a39a426f66402e47c80818f92748a1bfd7d736c
+	etag = c424e4f9159bd5d4ccb3b65646a65eed5ad153f57111e3b56900ebce10194f3f
 	weak
 [file ".github/.github_changelog_generator"]
 	url = https://github.com/devlooped/oss/blob/main/.github/.github_changelog_generator
