@@ -109,6 +109,7 @@
 
   <ItemGroup>
     <!-- Make these available via ThisAssembly.Project -->
+    <ProjectProperty Include="RepositoryBranch" />
     <ProjectProperty Include="RepositorySha" />
     <ProjectProperty Include="RepositoryCommit" />
   </ItemGroup>
