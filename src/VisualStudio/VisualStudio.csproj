@@ -47,7 +47,7 @@ See full documentation at $(PackageProjectUrl).
     <PackageReference Include="vswhere" Version="2.8.4" PrivateAssets="all" />
     <PackageReference Include="Mono.Options" Version="6.12.0.148" />
     <PackageReference Include="ThisAssembly" Version="1.0.9" PrivateAssets="all" />
-    <PackageReference Include="System.Management" Version="5.0.0" />
+    <PackageReference Include="System.Management" Version="6.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.11.0" />
     <PackageReference Include="DotNetConfig" Version="1.0.6" />
   </ItemGroup>
