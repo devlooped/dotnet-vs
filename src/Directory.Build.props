@@ -130,6 +130,8 @@
   </PropertyGroup>
 
   <ItemGroup Label="ThisAssembly.Project">
+    <ProjectProperty Include="CI" />
+  
     <ProjectProperty Include="Version" />
     <ProjectProperty Include="VersionPrefix" />
     <ProjectProperty Include="VersionSuffix" />
