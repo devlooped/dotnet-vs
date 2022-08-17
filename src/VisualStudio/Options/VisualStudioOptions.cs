@@ -13,11 +13,11 @@ namespace Devlooped
         readonly IOptions options;
         readonly string verb;
 
-        private VisualStudioOptions(string verb)
+        VisualStudioOptions(string verb)
             : this(verb, Options.Empty)
         { }
 
-        private VisualStudioOptions(string verb, IOptions options)
+        VisualStudioOptions(string verb, IOptions options)
         {
             this.verb = verb;
             this.options = options;

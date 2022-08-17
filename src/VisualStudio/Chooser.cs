@@ -10,7 +10,7 @@ namespace Devlooped
     class Chooser
     {
         readonly string verb;
-        private readonly Func<string> inputProvider;
+        readonly Func<string> inputProvider;
 
         public Chooser(string verb = "run") : this(verb, () => Console.ReadLine()) { }
 
@@ -66,7 +66,7 @@ namespace Devlooped
         string GetItemDescription(object value)
         {
             if (value is VisualStudioInstance visualStudioInstance)
-                return $"{ visualStudioInstance.DisplayName} - Version { visualStudioInstance.Catalog.ProductDisplayVersion}";
+                return $"{visualStudioInstance.DisplayName} - Version {visualStudioInstance.Catalog.ProductDisplayVersion}";
             else if (value is Process process)
                 return $"{process.MainWindowTitle} ({process.Id})";
 

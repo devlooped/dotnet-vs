@@ -4,7 +4,7 @@ using Xunit.Abstractions;
 
 namespace Devlooped.Tests
 {
-    internal class OutputHelperTextWriter : TextWriter
+    class OutputHelperTextWriter : TextWriter
     {
         readonly ITestOutputHelper output;
 
