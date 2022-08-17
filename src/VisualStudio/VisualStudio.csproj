@@ -24,7 +24,7 @@ See full documentation at $(PackageProjectUrl).
 </Description>
 
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
     <RollForward>Major</RollForward>
 
     <AssemblyName>vs</AssemblyName>
