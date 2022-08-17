@@ -15,7 +15,7 @@ Examples:
 
 <!-- EXAMPLES_BEGIN -->
 ```
-# Save the first VS enterprise with the Xamarin/Mobile workload as the "mobile" alias
+# Save the first VS enterprise with the Maui/Mobile workload as the "mobile" alias
 > vs -sku:ent -first +mobile -save:mobile
 
 # Runs the saved alias with all the original arguments

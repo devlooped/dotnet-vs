@@ -19,7 +19,7 @@ Examples:
 
 <!-- EXAMPLES_BEGIN -->
 ```
-# Runs the first VS enterprise with the Xamarin/Mobile workload
+# Runs the first VS enterprise with the Maui/Mobile workload
 > vs -sku:ent -first +mobile
 
 # Runs VS 16.8

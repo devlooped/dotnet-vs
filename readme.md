@@ -122,7 +122,7 @@ Examples:
 
 <!-- EXAMPLES_BEGIN -->
 ```
-# Installs VS enterprise with the Xamarin/Mobile workload
+# Installs VS enterprise with the Maui/Mobile workload
 # Note the -sku: switch/prefix is optional
 > vs install Enterprise +mobile
 
@@ -248,8 +248,8 @@ Examples:
 
 <!-- EXAMPLES_BEGIN -->
 ```
-# Runs the first VS enterprise with the Xamarin/Mobile workload
-> vs -sku:ent -first +mobile
+# Runs the first VS enterprise with the Maui workload
+> vs -sku:ent -first +maui
 
 # Runs VS 16.8
 > vs -v:16.8
@@ -360,13 +360,14 @@ For commands that receive workload ID switches (i.e. `vs where -requires [WORKLO
 |  Alias    | Workload ID |
 |-----------|----------------------------|
 | `mobile`  | Microsoft.VisualStudio.Workload.NetCrossPlat |
-| `core`    | Microsoft.VisualStudio.Workload.NetCoreTools |
+| `xamarin` | Microsoft.VisualStudio.Workload.NetCrossPlat |
+| `maui`    | Microsoft.VisualStudio.Workload.NetCrossPlat |
+| `core`    | Microsoft.NetCore.Component.DevelopmentTools |
 | `azure`   | Microsoft.VisualStudio.Workload.Azure |
 | `data`    | Microsoft.VisualStudio.Workload.Data |
 | `desktop` | Microsoft.VisualStudio.Workload.ManagedDesktop |
 | `unity`   | Microsoft.VisualStudio.Workload.ManagedGame |
 | `native`  | Microsoft.VisualStudio.Workload.NativeDesktop |
-| `xamarin` | Microsoft.VisualStudio.Workload.NetCrossPlat |
 | `web`     | Microsoft.VisualStudio.Workload.NetWeb |
 | `node`    | Microsoft.VisualStudio.Workload.Node |
 | `office`  | Microsoft.VisualStudio.Workload.Office |
