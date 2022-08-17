@@ -26,6 +26,7 @@ namespace Devlooped
         {
             { "mobile", "Microsoft.VisualStudio.Workload.NetCrossPlat" },
             { "xamarin", "Microsoft.VisualStudio.Workload.NetCrossPlat" },
+            { "maui", "Microsoft.VisualStudio.Workload.NetCrossPlat" },
             { "core", "Microsoft.VisualStudio.Workload.NetCoreTools" },
             { "azure", "Microsoft.VisualStudio.Workload.Azure" },
             { "data", "Microsoft.VisualStudio.Workload.Data" },

@@ -20,7 +20,7 @@ Examples:
 
 <!-- EXAMPLES_BEGIN -->
 ```
-# Installs VS enterprise with the Xamarin/Mobile workload
+# Installs VS enterprise with the Maui/Mobile workload
 # Note the -sku: switch/prefix is optional
 > vs install Enterprise +mobile
 
