@@ -26,7 +26,7 @@ namespace Devlooped
 
                 if (string.IsNullOrEmpty(Descriptor.Property))
                 {
-                    output.WriteLine($"{ instance.DisplayName} - Version { instance.Catalog.ProductDisplayVersion}");
+                    output.WriteLine($"{instance.DisplayName} - Version {instance.Catalog.ProductDisplayVersion}");
 
                     if (!Descriptor.ShowList)
                     {

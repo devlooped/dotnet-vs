@@ -60,7 +60,7 @@ namespace vswhere
         public string SetupEngineFilePath { get; set; }
     }
 
-    internal sealed class JsonConverterVersion : JsonConverter<Version>
+    sealed class JsonConverterVersion : JsonConverter<Version>
     {
         public override Version Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -73,7 +73,7 @@ namespace vswhere
         }
     }
 
-    internal sealed class JsonConverterBooleanString : JsonConverter<bool>
+    sealed class JsonConverterBooleanString : JsonConverter<bool>
     {
         public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -89,7 +89,7 @@ namespace vswhere
         }
     }
 
-    internal sealed class JsonConverterInt32String : JsonConverter<int>
+    sealed class JsonConverterInt32String : JsonConverter<int>
     {
         public override int Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
