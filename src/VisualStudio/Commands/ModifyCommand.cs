@@ -42,7 +42,7 @@ namespace Devlooped
                 // If the channel is not a built-in one, use the existing Uri for updates.
                 var channel = instance.GetChannel();
                 if (channel != null)
-                    await installerService.ModifyAsync(instance.GetChannel(), instance.GetSku(), args, output);
+                    await installerService.ModifyAsync(instance.InstallationVersion.Major.ToString(), channel, instance.GetSku(), args, output);
                 else
                     await installerService.ModifyAsync(instance.ChannelUri.Replace("/channel", ""), instance.GetSku(), args, output);
             }
