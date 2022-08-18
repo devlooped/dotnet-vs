@@ -8,6 +8,7 @@ on:
 jobs:
   sponsor:
     runs-on: ubuntu-latest
+    if: ${{ !endsWith(github.event.sender.login, '[bot]') && !endsWith(github.event.sender.login, 'bot') }}      
     steps:
       - name: 🤘 checkout
         uses: actions/checkout@v2
