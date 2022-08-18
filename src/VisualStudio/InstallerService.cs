@@ -4,20 +4,32 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Devlooped.Web;
 
 namespace Devlooped
 {
     class InstallerService
     {
         public Task InstallAsync(Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
-            => RunAsync(string.Empty, channel, sku, args, output);
+        {
+            // determine what's the latest & greatest VS from the docs site
+            // TODO: if the channel is preview, there' no easy way to get the major version from the web.
+            var html = HtmlDocument.Load("https://docs.microsoft.com/en-us/visualstudio/install/use-command-line-parameters-to-install-visual-studio");
+            var vs = html.CssSelectElements("a[href^=https://aka.ms/vs/][href$=/vs_enterprise.exe]")
+                .Select(e => Regex.Match(e.Attribute("href").Value!, "/(\\d\\d)/").Groups[1].Value)
+                .OrderByDescending(x => x)
+                .FirstOrDefault() ?? "17";
 
-        public Task UpdateAsync(Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
-            => RunAsync("update", channel, sku, args, output);
+            return RunAsync(string.Empty, vs, channel, sku, args, output);
+        }
 
-        public Task ModifyAsync(Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
-            => RunAsync("modify", channel, sku, args, output);
+        public Task UpdateAsync(string vs, Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
+            => RunAsync("update", vs, channel, sku, args, output);
+
+        public Task ModifyAsync(string vs, Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
+            => RunAsync("modify", vs, channel, sku, args, output);
 
         public Task UpdateAsync(string channelUri, Sku? sku, IEnumerable<string> args, TextWriter output)
             => RunAsync("update", channelUri, sku, args, output);
@@ -25,12 +37,10 @@ namespace Devlooped
         public Task ModifyAsync(string channelUri, Sku? sku, IEnumerable<string> args, TextWriter output)
             => RunAsync("modify", channelUri, sku, args, output);
 
-        Task RunAsync(string command, Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
+        Task RunAsync(string command, string vs, Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
         {
-            var vs = channel == null || channel == Channel.Release ? "16" : "17";
-
             // Microsoft.VisualStudio.Workload.NetCoreTools > Microsoft.NetCore.Component.DevelopmentTools
-            if (vs == "17")
+            if (int.TryParse(vs, out var major) && major >= 17)
                 args = args.Select(arg => arg == "Microsoft.VisualStudio.Workload.NetCoreTools" ? "Microsoft.NetCore.Component.DevelopmentTools" : arg);
 
             return RunAsync(command, $"https://aka.ms/vs/{vs}/{MapChannel(channel)}", sku, args, output);
