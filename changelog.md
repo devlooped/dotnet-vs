@@ -1,5 +1,23 @@
 # Changelog
 
+## [v1.2.0](https://github.com/devlooped/dotnet-vs/tree/v1.2.0) (2022-08-18)
+
+[Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v1.1.1...v1.2.0)
+
+:sparkles: Implemented enhancements:
+
+- Update workload mappings for 2022 [\#143](https://github.com/devlooped/dotnet-vs/issues/143)
+
+:bug: Fixed bugs:
+
+- Failing to update VS 2022 \(Current channel\) installations [\#123](https://github.com/devlooped/dotnet-vs/issues/123)
+- If --filter is specified but not value is provided, NRE failure happens [\#122](https://github.com/devlooped/dotnet-vs/issues/122)
+
+:twisted_rightwards_arrows: Merged:
+
+- Update workload mappings for 2022 [\#144](https://github.com/devlooped/dotnet-vs/pull/144) (@kzu)
+- +Mᐁ includes [\#142](https://github.com/devlooped/dotnet-vs/pull/142) (@devlooped-bot)
+
 ## [v1.1.1](https://github.com/devlooped/dotnet-vs/tree/v1.1.1) (2021-11-05)
 
 [Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v1.1.0...v1.1.1)
