@@ -44,7 +44,7 @@ See full documentation at $(PackageProjectUrl).
   <ItemGroup>
     <PackageReference Include="Devlooped.Web" Version="1.0.1" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
-    <PackageReference Include="System.Text.Json" Version="6.0.5" />
+    <PackageReference Include="System.Text.Json" Version="7.0.2" />
     <PackageReference Include="vswhere" Version="3.0.3" PrivateAssets="all" />
     <PackageReference Include="Mono.Options" Version="6.12.0.148" />
     <PackageReference Include="ThisAssembly" Version="1.0.9" PrivateAssets="all" />
