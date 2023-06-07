@@ -365,9 +365,6 @@ For commands that receive workload ID switches (i.e. `vs where -requires [WORKLO
 | `core`    | Microsoft.NetCore.Component.DevelopmentTools |
 | `azure`   | Microsoft.VisualStudio.Workload.Azure |
 | `data`    | Microsoft.VisualStudio.Workload.Data |
-| `desktop` | Microsoft.VisualStudio.Workload.ManagedDesktop |
-| `unity`   | Microsoft.VisualStudio.Workload.ManagedGame |
-| `native`  | Microsoft.VisualStudio.Workload.NativeDesktop |
 | `web`     | Microsoft.VisualStudio.Workload.NetWeb |
 | `node`    | Microsoft.VisualStudio.Workload.Node |
 | `office`  | Microsoft.VisualStudio.Workload.Office |
