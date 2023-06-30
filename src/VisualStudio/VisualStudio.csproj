@@ -42,7 +42,7 @@ See full documentation at $(PackageProjectUrl).
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Devlooped.Web" Version="1.1.0" />
+    <PackageReference Include="Devlooped.Web" Version="1.1.1" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
     <PackageReference Include="System.Text.Json" Version="6.0.5" />
     <PackageReference Include="vswhere" Version="3.0.3" PrivateAssets="all" />
