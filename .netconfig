@@ -27,9 +27,9 @@
 	sha = 39f4c591716ff50dd035d2fade35e5822489ab7f
 [file ".github/dependabot.yml"]
 	url = https://github.com/devlooped/oss/blob/main/.github/dependabot.yml
-	etag = 35f2134fff3b0235ff8dac8618a76198c8ef533ad2f29628bbb435cd1134d638
+	etag = fc84e2bb7a348609b75bb20145333306e2030083c6929edcc4f675907b8c52ad
 	weak
-	sha = 4f070a477b4162a280f02722ae666376ae4fcc71
+	sha = cba10bbf7bb08d841d2ddc990b67bc3f2c58fba0
 [file ".github/workflows/build.yml"]
 	url = https://github.com/devlooped/oss/blob/main/.github/workflows/build.yml
 	weak
@@ -148,4 +148,19 @@
 	url = https://github.com/devlooped/.github/blob/main/.github/SUPPORT.md
 	sha = c97cdeb04769df3f397d9e70b345d4549628c388
 	etag = 2d47e2fc4fdfa3515203d452674566e3df507461f9938f451a06d79deb687d24
+	weak
+[file ".github/workflows/sponsor.yml"]
+	url = https://github.com/devlooped/oss/blob/main/.github/workflows/sponsor.yml
+	sha = 8990ebb36199046e0b8098bad9e46dcef739c56e
+	etag = e1dc114d2e8b57d50649989d32dbf0c9080ec77da3738a4cc79e9256d6ca5d3e
+	weak
+[file ".github/ISSUE_TEMPLATE/bug.md"]
+	url = https://github.com/devlooped/.github/blob/main/.github/ISSUE_TEMPLATE/bug.md
+	sha = 50faf1212e849f3ebd675be93a6c2d9917faa6d0
+	etag = 6d3c88228649aa36431b5a8017baa46cd5d1584542fbc87e0d907b17dd882899
+	weak
+[file "profile/readme.md"]
+	url = https://github.com/devlooped/.github/blob/main/profile/readme.md
+	sha = 7676dd2cb4bc284b699dfd7e0888c4c8fe28de9a
+	etag = d055b4cb45f2c3a5c553869d317cdb90de91c4bccb2b967ce4a59e50ba2e8335
 	weak
