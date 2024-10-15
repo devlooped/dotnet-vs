@@ -6,5 +6,6 @@
         Preview,
         IntPreview,
         Main,
+        Foo
     }
 }
