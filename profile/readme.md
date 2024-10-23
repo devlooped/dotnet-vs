@@ -86,7 +86,7 @@ Contributing your valuable time to other projects is great too.
 ### AutoSync
 
 Sponsorships are renewed monthly (even if paid anually), so your dev machine manifest needs monthly renewal too.
-You can simplify this process by enabling [autosync](https://www.devlooped.com/SponsorLink/github.html#auto-sync) 
+You can simplify this process by enabling [autosync](https://www.devlooped.com/SponsorLink/github/#auto-sync) 
 so that the IDE tooling can automatically do this for you by checking at most once a day for expiration and running 
 the same command you'd have to run manually: `sponsor sync devlooped`.
 
