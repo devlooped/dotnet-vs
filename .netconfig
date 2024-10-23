@@ -140,9 +140,10 @@
 	weak
 [file "profile/readme.md"]
 	url = https://github.com/devlooped/.github/blob/main/profile/readme.md
-	sha = db3612cae32f5e91ace407583a165bdbad916818
+	sha = e8ece8fce8b22aa649984149b9418ba2739e8c53
 
-	etag = ef3fb8c4879a515b5c8bcd3988e17ed009813be2af5469a165dfa0506edba211
+
+	etag = 5c7b850675daacdc2ff8ec0f364b947cc83369a8f9511c13045c0766b8b0611d
 	weak
 [file ".github/workflows/triage.yml"]
 	url = https://github.com/devlooped/oss/blob/main/.github/workflows/triage.yml
