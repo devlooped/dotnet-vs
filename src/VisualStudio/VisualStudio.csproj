@@ -49,7 +49,7 @@ See full documentation at $(PackageProjectUrl).
     <PackageReference Include="Mono.Options" Version="6.12.0.148" />
     <PackageReference Include="ThisAssembly" Version="1.0.9" PrivateAssets="all" />
     <PackageReference Include="System.Management" Version="8.0.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.6.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.12.0" />
     <PackageReference Include="DotNetConfig" Version="1.0.6" />
   </ItemGroup>
 
