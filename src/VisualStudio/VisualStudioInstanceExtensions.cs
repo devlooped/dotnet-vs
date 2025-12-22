@@ -28,6 +28,10 @@ namespace vswhere
                 "VisualStudio.17.Preview" => Channel.Preview,
                 "VisualStudio.17.IntPreview" => Channel.IntPreview,
                 "VisualStudio.17.int.main" => Channel.Main,
+                "VisualStudio.18.Release" => Channel.Release,
+                "VisualStudio.18.Preview" => Channel.Preview,
+                "VisualStudio.18.IntPreview" => Channel.IntPreview,
+                "VisualStudio.18.int.main" => Channel.Main,
                 _ => null,
             };
     }
