@@ -1,5 +1,18 @@
 # Changelog
 
+## [v1.3.0](https://github.com/devlooped/dotnet-vs/tree/v1.3.0) (2026-05-08)
+
+[Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v1.2.0...v1.3.0)
+
+:hammer: Other:
+
+- Don't wrap usage to 80 columns [\#3](https://github.com/devlooped/dotnet-vs/issues/3)
+
+:twisted_rightwards_arrows: Merged:
+
+- Add support for Visual Studio 18 channel identifiers [\#235](https://github.com/devlooped/dotnet-vs/pull/235) (@paulomorgado)
+- Drop older dotnet core 3.1 [\#178](https://github.com/devlooped/dotnet-vs/pull/178) (@kzu)
+
 ## [v1.2.0](https://github.com/devlooped/dotnet-vs/tree/v1.2.0) (2022-08-18)
 
 [Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v1.1.1...v1.2.0)
@@ -16,7 +29,6 @@
 :twisted_rightwards_arrows: Merged:
 
 - Update workload mappings for 2022 [\#144](https://github.com/devlooped/dotnet-vs/pull/144) (@kzu)
-- +Mᐁ includes [\#142](https://github.com/devlooped/dotnet-vs/pull/142) (@devlooped-bot)
 
 ## [v1.1.1](https://github.com/devlooped/dotnet-vs/tree/v1.1.1) (2021-11-05)
 
