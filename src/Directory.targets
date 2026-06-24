@@ -2,7 +2,8 @@
   <!-- Extend the Directory.Build.targets -->
 
   <ItemGroup Condition="Exists('$(MSBuildThisFileDirectory)..\..\ThisAssembly\bin\')">
-    <PackageReference Update="ThisAssembly" Version="1.0.9" />
+    <PackageReference Update="ThisAssembly.Project" Version="2.1.2" />
+    <PackageReference Update="ThisAssembly.AssemblyInfo" Version="2.1.2" />
   </ItemGroup>
 
 </Project>
