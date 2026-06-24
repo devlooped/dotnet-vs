@@ -1,15 +1,17 @@
 # Changelog
 
-## [v1.3.0](https://github.com/devlooped/dotnet-vs/tree/v1.3.0) (2026-05-08)
+## [v1.3.0](https://github.com/devlooped/dotnet-vs/tree/v1.3.0) (2026-06-24)
 
 [Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v1.2.0...v1.3.0)
 
 :hammer: Other:
 
+- Add support for insiders build [\#234](https://github.com/devlooped/dotnet-vs/issues/234)
 - Don't wrap usage to 80 columns [\#3](https://github.com/devlooped/dotnet-vs/issues/3)
 
 :twisted_rightwards_arrows: Merged:
 
+- chore\(deps\): bump Microsoft.CodeAnalysis.CSharp.Scripting to 5.3.0 [\#252](https://github.com/devlooped/dotnet-vs/pull/252) (@kzu)
 - Add support for Visual Studio 18 channel identifiers [\#235](https://github.com/devlooped/dotnet-vs/pull/235) (@paulomorgado)
 - Drop older dotnet core 3.1 [\#178](https://github.com/devlooped/dotnet-vs/pull/178) (@kzu)
 
