@@ -62,9 +62,9 @@
 
 [file "src/Directory.Build.targets"]
 	url = https://github.com/devlooped/oss/blob/main/src/Directory.Build.targets
-	etag = cb83faed0cc8b930a7b6bdc61bea03a54059858cf04353e55fee94d9e3ae0fad
+	etag = 2cca66d8a1adbae24dc2efee53a55fa09949242eb35b86c5fd66425da18c6107
 	weak
-	sha = c67952501337303eda0fb8b340cb7606666abd8f
+	sha = dcd5f0a9a00a5b0c23d41a71dcc66ea41dc5f75d
 
 [file "src/kzu.snk"]
 	url = https://github.com/devlooped/oss/blob/main/src/kzu.snk
@@ -84,9 +84,9 @@
 
 [file ".github/workflows/publish.yml"]
 	url = https://github.com/devlooped/oss/blob/main/.github/workflows/publish.yml
-	etag = c60411d1aa4e98e7f69e2d34cbccb8eb7e387ec11f6f8e78ee8d8b92122d7025
+	etag = ac46ffdcef820bbc6bd32378aef25ff79713196e0a5696791abb3a804e06e4d8
 	weak
-	sha = 7f5f9ee9f362f7e8f951d618f8f799033550e687
+	sha = 0ca5fd11125cd10c51b4433a86917c06ff1ae839
 
 [file ".github/workflows/release-artifacts.yml"]
 	url = https://github.com/devlooped/oss/blob/main/.github/workflows/release-artifacts.yml
@@ -126,9 +126,9 @@
 	skip
 [file ".github/workflows/triage.yml"]
 	url = https://github.com/devlooped/oss/blob/main/.github/workflows/triage.yml
-	sha = 61a602fc61eedbdae235f01e93657a6219ac2427
+	sha = 5ee8c91c8d9e8c0ee739fe1ec877f36c15a4aff0
 
-	etag = 152cd3a559c08da14d1da12a5262ba1d2e0ed6bed6d2eabf5bd209b0c35d8a75
+	etag = b19dc36058fc7d385cb5795c9e0860c11b9d027c57cb2a5e6a112e692c6884c1
 	weak
 [file ".github/workflows/dotnet-file-core.yml"]
 	url = https://github.com/devlooped/oss/blob/main/.github/workflows/dotnet-file-core.yml
