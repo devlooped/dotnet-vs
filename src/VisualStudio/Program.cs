@@ -110,7 +110,7 @@ class Program
     protected virtual void ShowUsage()
     {
         output.WriteLine();
-        output.WriteLine($"Usage: {ThisAssembly.Project.AssemblyName} [command] [options|-?|-h|--help] [--save=ALIAS[--global]]");
+        output.WriteLine($"Usage: dnx {ThisAssembly.Project.AssemblyName} -- [command] [options|-?|-h|--help] [--save=ALIAS[--global]]");
         output.WriteLine();
         output.WriteLine("Supported commands:");
 

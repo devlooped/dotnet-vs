@@ -62,7 +62,7 @@ namespace Devlooped.Tests
             var actual = File.ReadAllText(outputFile);
             Assert.Contains("## test", actual);
             Assert.Contains("test command description", actual);
-            Assert.Contains("Usage: vs test [options]", actual);
+            Assert.Contains("Usage: dnx vs -- test [options]", actual);
             Assert.Contains("|Option|Description|", actual);
             Assert.Contains("arg", actual);
             Assert.Contains("any of `x \\| y \\| z`", actual);

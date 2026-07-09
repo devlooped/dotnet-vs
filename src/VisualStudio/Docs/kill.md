@@ -1,4 +1,4 @@
-﻿## kill
+## kill
 
 {Description}
 
@@ -13,6 +13,6 @@ Examples:
 <!-- EXAMPLES_BEGIN -->
 ```
 # Kill all running instances of Visual Studio
-> vs kill all
+> dnx vs -- kill all
 ```
 <!-- EXAMPLES_END -->

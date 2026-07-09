@@ -1,23 +1,23 @@
-<h1 id="dotnet-vs"><img src="https://raw.githubusercontent.com/devlooped/dotnet-vs/main/docs/img/icon.svg" alt="icon" height="32" width="32" style="vertical-align: text-top; border: 0px; padding: 0px; margin: 0px">  dotnet-vs</h1>
+<h1 id="vs"><img src="https://raw.githubusercontent.com/devlooped/dotnet-vs/main/docs/img/icon.svg" alt="icon" height="32" width="32" style="vertical-align: text-top; border: 0px; padding: 0px; margin: 0px">  vs</h1>
 
 A global tool for running, managing and querying Visual Studio installations
 
-[![Version](https://img.shields.io/nuget/v/dotnet-vs.svg?color=royalblue)](https://www.nuget.org/packages/dotnet-vs)
-[![Downloads](https://img.shields.io/nuget/dt/dotnet-vs.svg?color=darkmagenta)](https://www.nuget.org/packages/dotnet-vs)
+[![Version](https://img.shields.io/nuget/v/vs.svg?color=royalblue)](https://www.nuget.org/packages/vs)
+[![Downloads](https://img.shields.io/nuget/dt/vs.svg?color=darkmagenta)](https://www.nuget.org/packages/vs)
 [![License](https://img.shields.io/github/license/devlooped/dotnet-vs.svg?color=blue)](https://github.com/devlooped/dotnet-vs/blob/master/license.txt)
 [![CI Status](https://github.com/devlooped/dotnet-vs/workflows/build/badge.svg?branch=main)](https://github.com/devlooped/dotnet-vs/actions?query=branch%3Amain+workflow%3Abuild+)
-[![CI Version](https://img.shields.io/endpoint?label=nuget.ci&color=brightgreen&url=https://shields.kzu.app/vpre/dotnet-vs/main)](https://pkg.kzu.app/index.json)
+[![CI Version](https://img.shields.io/endpoint?label=nuget.ci&color=brightgreen&url=https://shields.kzu.app/vpre/vs/main)](https://pkg.kzu.app/index.json)
 
-Installing or updating (same command for both):
+Run with:
 
 ```
-dotnet tool update -g dotnet-vs
+dnx vs -- [command] [options]
 ```
 
 To get the CI version:
 
 ```
-dotnet tool update -g dotnet-vs --no-cache --add-source https://pkg.kzu.app/index.json
+dnx vs --prerelease --add-source https://pkg.kzu.app/index.json -- [command] [options]
 ```
 
 Command line parsing is done with [System.CommandLine](https://www.nuget.org/packages/System.CommandLine),
@@ -30,8 +30,8 @@ Supported commands:
 
 ## Workload ID switches
 
-For commands that receive workload ID switches (i.e. `vs where -requires [WORKLOAD_ID]` or 
-`vs install --add [WORKLOAD_ID]`), the following aliases are available:
+For commands that receive workload ID switches (i.e. `dnx vs -- where -requires [WORKLOAD_ID]` or 
+`dnx vs -- install --add [WORKLOAD_ID]`), the following aliases are available:
 
 |  Alias    | Workload ID |
 |-----------|----------------------------|
@@ -55,7 +55,7 @@ For commands that receive workload ID switches (i.e. `vs where -requires [WORKLO
 The aliases are converted to the appropriate switch automatically, such as into 
 `-requires [ID]` or `--add [ID]`. Additionally, depending on the command being run, 
 the aliases might use a `+` prefix (like `+mobile`), which might make for a more 
-intuitive command line, such as `vs install +mobile -sku:enterprise` or `vs +mobile` 
+intuitive command line, such as `dnx vs -- install +mobile -sku:enterprise` or `dnx vs -- +mobile` 
 (runs the VS with the mobile workload installed). The *modify* command uses `+` and `-` 
 prefix to add or remove workloads respectively, for example.
 

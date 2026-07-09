@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>A global tool for managing Visual Studio installations
 
-Usage: vs [command] [options|-?|-h|--help] [--save=ALIAS [--global]]
+Usage: dnx vs -- [command] [options|-?|-h|--help] [--save=ALIAS [--global]]
 
 Supported commands:
   alias       Shows the list of saved aliases
@@ -30,7 +30,7 @@ See full documentation at $(PackageProjectUrl).
     <AssemblyName>vs</AssemblyName>
     <RootNamespace>VisualStudio</RootNamespace>
 
-    <PackageId>dotnet-vs</PackageId>
+    <PackageId>vs</PackageId>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
 
     <ToolCommandName>vs</ToolCommandName> 
