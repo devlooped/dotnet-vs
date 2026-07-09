@@ -1,4 +1,4 @@
-![Icon](https://raw.githubusercontent.com/devlooped/dotnet-vs/main/docs/img/icon-32.png) vs
+![Icon](https://raw.githubusercontent.com/devlooped/dotnet-vs/main/docs/img/icon-32.png) dnx vs
 ============
 
 [![Version](https://img.shields.io/nuget/v/vs.svg?color=royalblue)](https://www.nuget.org/packages/vs)
