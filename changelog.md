@@ -1,5 +1,9 @@
 # Changelog
 
+## [v2.0.0-rc](https://github.com/devlooped/dotnet-vs/tree/v2.0.0-rc) (2026-07-09)
+
+[Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v2.0.0-beta...v2.0.0-rc)
+
 ## [v2.0.0-beta](https://github.com/devlooped/dotnet-vs/tree/v2.0.0-beta) (2026-07-09)
 
 [Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v2.0.0-alpha...v2.0.0-beta)
