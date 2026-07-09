@@ -17,19 +17,16 @@ namespace vswhere
                 _ => throw new ArgumentException($"Invalid SKU {vsInstance.ProductId}. Must be one of {string.Join(", ", Enum.GetNames(typeof(Sku)).Select(x => x.ToLowerInvariant()))}.", "sku"),
             };
 
+        /// <summary>
+        /// Maps installed channel IDs to CLI channels.
+        /// Note: VS still uses VisualStudio.18.Release / .Preview channel IDs
+        /// even though marketing/bootstrapper paths use Stable / Insiders.
+        /// </summary>
         public static Channel? GetChannel(this VisualStudioInstance vsInstance)
             => vsInstance.ChannelId switch
             {
-                "VisualStudio.16.Release" => Channel.Release,
-                "VisualStudio.16.Preview" => Channel.Preview,
-                "VisualStudio.16.IntPreview" => Channel.IntPreview,
-                "VisualStudio.16.int.main" => Channel.Main,
-                "VisualStudio.17.Release" => Channel.Release,
-                "VisualStudio.17.Preview" => Channel.Preview,
-                "VisualStudio.17.IntPreview" => Channel.IntPreview,
-                "VisualStudio.17.int.main" => Channel.Main,
-                "VisualStudio.18.Release" => Channel.Release,
-                "VisualStudio.18.Preview" => Channel.Preview,
+                "VisualStudio.18.Release" => Channel.Stable,
+                "VisualStudio.18.Preview" => Channel.Insiders,
                 "VisualStudio.18.IntPreview" => Channel.IntPreview,
                 "VisualStudio.18.int.main" => Channel.Main,
                 _ => null,

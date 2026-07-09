@@ -9,16 +9,22 @@ namespace Devlooped.Tests
     {
         [Theory]
         [InlineData("", default)]
-        [InlineData("rel", Channel.Release)]
-        [InlineData("release", Channel.Release)]
-        [InlineData("Release", Channel.Release)]
-        [InlineData("--rel", Channel.Release)]
-        [InlineData("--release", Channel.Release)]
-        [InlineData("pre", Channel.Preview)]
-        [InlineData("preview", Channel.Preview)]
-        [InlineData("Preview", Channel.Preview)]
-        [InlineData("--pre", Channel.Preview)]
-        [InlineData("--preview", Channel.Preview)]
+        [InlineData("stable", Channel.Stable)]
+        [InlineData("Stable", Channel.Stable)]
+        [InlineData("--stable", Channel.Stable)]
+        [InlineData("rel", Channel.Stable)]
+        [InlineData("release", Channel.Stable)]
+        [InlineData("Release", Channel.Stable)]
+        [InlineData("--rel", Channel.Stable)]
+        [InlineData("--release", Channel.Stable)]
+        [InlineData("insiders", Channel.Insiders)]
+        [InlineData("Insiders", Channel.Insiders)]
+        [InlineData("--insiders", Channel.Insiders)]
+        [InlineData("pre", Channel.Insiders)]
+        [InlineData("preview", Channel.Insiders)]
+        [InlineData("Preview", Channel.Insiders)]
+        [InlineData("--pre", Channel.Insiders)]
+        [InlineData("--preview", Channel.Insiders)]
         [InlineData("int", Channel.IntPreview)]
         [InlineData("internal", Channel.IntPreview)]
         [InlineData("--int", Channel.IntPreview)]
@@ -164,14 +170,14 @@ namespace Devlooped.Tests
         static (string[] Arguments, Func<VisualStudioOptions, bool> VerifyResult)[] TestCases =>
             new (string[] Arguments, Func<VisualStudioOptions, bool> VerifyResult)[]
             {
-                (new [] { "enterprise" , "preview" }, x => x.Sku == Sku.Enterprise && x.Channel == Channel.Preview),
+                (new [] { "enterprise" , "insiders" }, x => x.Sku == Sku.Enterprise && x.Channel == Channel.Insiders),
                 (new [] { "main" , "exp" }, x => x.Channel == Channel.Main && x.IsExperimental),
                 (new [] { "all", "exp" }, x => x.All && x.IsExperimental),
                 (new [] { "ent", "main" }, x => x.Sku == Sku.Enterprise && x.Channel == Channel.Main),
                 (new [] { "main", "x => x.InstanceId == '123'" }, x => x.Channel == Channel.Main && x.Expression == "x => x.InstanceId == \"123\""),
-                (new [] { "pro" , "release", "--nick=foo" }, x => x.Sku == Sku.Professional && x.Channel == Channel.Release && x.Nickname == "foo"),
-                (new [] { "build", "release" }, x => x.Sku == Sku.BuildTools && x.Channel == Channel.Release),
-                (new [] { "test", "release" }, x => x.Sku == Sku.TestAgent && x.Channel == Channel.Release)
+                (new [] { "pro" , "stable", "--nick=foo" }, x => x.Sku == Sku.Professional && x.Channel == Channel.Stable && x.Nickname == "foo"),
+                (new [] { "build", "release" }, x => x.Sku == Sku.BuildTools && x.Channel == Channel.Stable),
+                (new [] { "test", "stable" }, x => x.Sku == Sku.TestAgent && x.Channel == Channel.Stable)
             };
 
         // Hack to use typed func and avoid to make VisualStudioOptions type public

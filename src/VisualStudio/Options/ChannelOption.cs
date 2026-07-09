@@ -6,13 +6,24 @@ namespace Devlooped
 {
     class ChannelOption : OptionSet<Channel?>
     {
-        readonly static string[] shortcuts = new[] { "pre", "preview", "int", "internal", "main", "rel", "release" };
+        readonly static string[] shortcuts = new[]
+        {
+            "stable",
+            "rel", "release",
+            "insiders",
+            "pre", "preview",
+            "int", "internal",
+            "main",
+        };
 
         public ChannelOption(string verb, Channel? defaultValue = default) : base(defaultValue)
         {
-            // This is the default, that's why it's hidden
-            Add("rel|release", verb + " release version", _ => Value = Channel.Release);
-            Add("pre|preview", verb + " preview version", _ => Value = Channel.Preview);
+            Add("stable", verb + " stable version", _ => Value = Channel.Stable);
+            // Hidden alias kept for minimal backwards-compat with older CLI usage.
+            Add("rel|release", verb + " stable version", _ => Value = Channel.Stable, hidden: true);
+            Add("insiders", verb + " insiders version", _ => Value = Channel.Insiders);
+            // Hidden aliases for the old preview channel name.
+            Add("pre|preview", verb + " insiders version", _ => Value = Channel.Insiders, hidden: true);
             Add("int|internal", verb + " internal (aka 'dogfood') version", _ => Value = Channel.IntPreview);
             Add("main", verb + " main version", _ => Value = Channel.Main, hidden: true);
         }
