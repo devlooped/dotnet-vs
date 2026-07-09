@@ -382,12 +382,5 @@ intuitive command line, such as `vs install +mobile -sku:enterprise` or `vs +mob
 (runs the VS with the mobile workload installed). The *modify* command uses `+` and `-` 
 prefix to add or remove workloads respectively, for example.
 
-
-## Sponsors
-
-<h3 style="vertical-align: text-top" id="by-clarius">
-<img src="https://raw.githubusercontent.com/devlooped/oss/main/assets/images/sponsors.svg" alt="sponsors" height="36" width="36" style="vertical-align: text-top; border: 0px; padding: 0px; margin: 0px">&nbsp;&nbsp;by&nbsp;<a href="https://github.com/clarius">@clarius</a>&nbsp;<img src="https://raw.githubusercontent.com/clarius/branding/main/logo/logo.svg" alt="sponsors" height="36" width="36" style="vertical-align: text-top; border: 0px; padding: 0px; margin: 0px">
-</h3>
-
-*[get mentioned here too](https://github.com/sponsors/devlooped)!*
-
+---
+<!-- include https://github.com/devlooped/sponsors/raw/main/footer.md -->
