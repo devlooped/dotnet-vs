@@ -32,6 +32,7 @@ See full documentation at $(PackageProjectUrl).
     <!-- Avoid clashing with the main VisualStudio project intermediate/output under the same assembly name -->
     <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
     <BaseOutputPath>bin\</BaseOutputPath>
+    <PackageVersion>2.0.1</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
