@@ -6,8 +6,7 @@
 <!-- #content -->
 A global tool for running, managing and querying Visual Studio installations
 
-Command line parsing is done with [System.CommandLine](https://www.nuget.org/packages/System.CommandLine),
-with a compatibility layer that still accepts common legacy forms such as `-flag`, `--flag`, `/flag`,
+Supports switches in all the following forms: `-flag`, `--flag`, `/flag`,
 `-flag=value`, `--flag=value`, `-flag:value`, `--flag:value`, and bare channel/SKU/workload shortcuts.
 
 Supported commands:
