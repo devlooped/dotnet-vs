@@ -1,36 +1,64 @@
-﻿using System;
+using System;
+using System.CommandLine;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Devlooped
+namespace Devlooped;
+
+class ConfigCommand : Command
 {
-    class ConfigCommand : Command<ConfigCommandDescriptor>
+    readonly WhereService whereService;
+    readonly SharedOptions.ChannelOptions channelOptions;
+    readonly Option<string> skuOption;
+    readonly Option<string> filterOption;
+    readonly Option<bool> experimentalOption;
+    readonly Option<bool> firstOption;
+
+    public ConfigCommand(WhereService whereService)
+        : base(Commands.Config, "Opens the config folder.")
     {
-        readonly WhereService whereService;
+        this.whereService = whereService;
 
-        public ConfigCommand(ConfigCommandDescriptor descriptor, WhereService whereService) : base(descriptor) =>
-            this.whereService = whereService;
+        channelOptions = SharedOptions.AddChannelOptions(this, "open");
+        skuOption = SharedOptions.SkuOption();
+        filterOption = SharedOptions.FilterOption();
+        experimentalOption = SharedOptions.ExperimentalOption("open");
+        firstOption = SharedOptions.FirstOption("open");
 
-        public override async Task ExecuteAsync(TextWriter output)
+        Options.Add(skuOption);
+        Options.Add(filterOption);
+        Options.Add(experimentalOption);
+        Options.Add(firstOption);
+
+        SetAction(async (parseResult, _) =>
         {
-            var instances = await whereService.GetAllInstancesAsync(Descriptor.Options);
-            var instance = new Chooser("open").Choose(instances, output);
+            await ExecuteAsync(parseResult, parseResult.InvocationConfiguration.Output);
+            return 0;
+        });
+    }
 
-            if (instance != null)
-            {
-                var instanceDir = instance.InstallationVersion.Major + ".0_" + instance.InstanceId;
-                if (Descriptor.Experimental)
-                    instanceDir += "Exp";
+    async Task ExecuteAsync(ParseResult parse, TextWriter output)
+    {
+        var filter = CommandHelpers.GetFilter(parse, channelOptions, skuOption, filterOption, firstOption);
+        var experimental = parse.GetValue(experimentalOption);
 
-                var path = Path.Combine(
-                    Environment.ExpandEnvironmentVariables("%LocalAppData%"),
-                    @"Microsoft\VisualStudio",
-                    instanceDir);
+        var instances = await whereService.GetAllInstancesAsync(filter);
+        var instance = new Chooser("open").Choose(instances, output);
 
-                if (Directory.Exists(path))
-                    Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
-            }
+        if (instance != null)
+        {
+            var instanceDir = instance.InstallationVersion.Major + ".0_" + instance.InstanceId;
+            if (experimental)
+                instanceDir += "Exp";
+
+            var path = Path.Combine(
+                Environment.ExpandEnvironmentVariables("%LocalAppData%"),
+                @"Microsoft\VisualStudio",
+                instanceDir);
+
+            if (Directory.Exists(path))
+                Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
         }
     }
 }

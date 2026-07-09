@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
+using System.CommandLine;
 using System.Linq;
 using Xunit;
 
@@ -7,6 +7,51 @@ namespace Devlooped.Tests
 {
     public class VisualStudioOptionsTests
     {
+        static ParseResult ParseSelection(params string[] args)
+        {
+            var rewritten = TokenRewriter.RewriteVisualStudioSelection(args.Where(a => !string.IsNullOrEmpty(a)));
+            var cmd = new Command("test");
+            var channel = SharedOptions.AddChannelOptions(cmd, "test");
+            var sku = SharedOptions.SkuOption();
+            var filter = SharedOptions.FilterOption();
+            var first = SharedOptions.FirstOption("test");
+            var all = SharedOptions.AllOption("test");
+            var nick = SharedOptions.NicknameOption();
+            var exp = SharedOptions.ExperimentalOption("test");
+            cmd.Options.Add(sku);
+            cmd.Options.Add(filter);
+            cmd.Options.Add(first);
+            cmd.Options.Add(all);
+            cmd.Options.Add(nick);
+            cmd.Options.Add(exp);
+            cmd.TreatUnmatchedTokensAsErrors = false;
+
+            var root = new RootCommand();
+            root.Subcommands.Add(cmd);
+            return root.Parse(new[] { "test" }.Concat(rewritten).ToArray());
+        }
+
+        static VisualStudioFilter GetFilter(ParseResult parse)
+        {
+            var cmd = parse.CommandResult.Command;
+            // Rebuild option refs from command
+            var channel = new SharedOptions.ChannelOptions(
+                cmd.Options.OfType<Option<bool>>().First(o => o.Name == "--stable"),
+                cmd.Options.OfType<Option<bool>>().First(o => o.Name == "--rel"),
+                cmd.Options.OfType<Option<bool>>().First(o => o.Name == "--insiders"),
+                cmd.Options.OfType<Option<bool>>().First(o => o.Name == "--pre"),
+                cmd.Options.OfType<Option<bool>>().First(o => o.Name == "--int"),
+                cmd.Options.OfType<Option<bool>>().First(o => o.Name == "--main"));
+
+            return CommandHelpers.GetFilter(
+                parse,
+                channel,
+                cmd.Options.OfType<Option<string>>().First(o => o.Name == "--sku"),
+                cmd.Options.OfType<Option<string>>().First(o => o.Name == "--filter"),
+                cmd.Options.OfType<Option<bool>>().First(o => o.Name == "--first"),
+                cmd.Options.OfType<Option<bool>>().First(o => o.Name == "--all"));
+        }
+
         [Theory]
         [InlineData("", default)]
         [InlineData("stable", Channel.Stable)]
@@ -33,11 +78,9 @@ namespace Devlooped.Tests
         [InlineData("--main", Channel.Main)]
         public void when_parsing_channel_argument_then_channel_is_set(string argument, Channel? expectedValue)
         {
-            var options = VisualStudioOptions.Empty().WithChannel();
-
-            options.Parse(new[] { argument });
-
-            Assert.Equal(expectedValue, options.Channel);
+            var args = string.IsNullOrEmpty(argument) ? Array.Empty<string>() : new[] { argument };
+            var filter = GetFilter(ParseSelection(args));
+            Assert.Equal(expectedValue, filter.Channel);
         }
 
         [Theory]
@@ -87,14 +130,11 @@ namespace Devlooped.Tests
         [InlineData("--sku=test", Sku.TestAgent)]
         [InlineData("--sku=testagent", Sku.TestAgent)]
         [InlineData("--sku=TestAgent", Sku.TestAgent)]
-
         public void when_parsing_sku_argument_then_sku_is_set(string argument, Sku? expectedValue)
         {
-            var options = VisualStudioOptions.Empty().WithSku();
-
-            options.Parse(new[] { argument });
-
-            Assert.Equal(expectedValue, options.Sku);
+            var args = string.IsNullOrEmpty(argument) ? Array.Empty<string>() : new[] { argument };
+            var filter = GetFilter(ParseSelection(args));
+            Assert.Equal(expectedValue, filter.Sku);
         }
 
         [Theory]
@@ -103,11 +143,10 @@ namespace Devlooped.Tests
         [InlineData("--nickname=nick2", "nick2")]
         public void when_parsing_nickname_argument_then_nickname_is_set(string argument, string expectedValue)
         {
-            var options = VisualStudioOptions.Empty().WithNickname();
-
-            options.Parse(new[] { argument });
-
-            Assert.Equal(expectedValue, options.Nickname);
+            var args = string.IsNullOrEmpty(argument) ? Array.Empty<string>() : new[] { argument };
+            var parse = ParseSelection(args);
+            var nick = parse.CommandResult.Command.Options.OfType<Option<string>>().First(o => o.Name == "--nick");
+            Assert.Equal(expectedValue, parse.GetValue(nick));
         }
 
         [Theory]
@@ -118,11 +157,10 @@ namespace Devlooped.Tests
         [InlineData("--experimental", true)]
         public void when_parsing_experimental_then_experimental_is_set(string argument, bool expectedValue)
         {
-            var options = VisualStudioOptions.Empty().WithExperimental();
-
-            options.Parse(new[] { argument });
-
-            Assert.Equal(expectedValue, options.IsExperimental);
+            var args = string.IsNullOrEmpty(argument) ? Array.Empty<string>() : new[] { argument };
+            var parse = ParseSelection(args);
+            var exp = parse.CommandResult.Command.Options.OfType<Option<bool>>().First(o => o.Name == "--exp");
+            Assert.Equal(expectedValue, parse.GetValue(exp));
         }
 
         [Theory]
@@ -132,11 +170,9 @@ namespace Devlooped.Tests
         [InlineData("/filter: x => x.Prop == 'value'", "x => x.Prop == \"value\"")]
         public void when_parsing_expression_then_exppression_is_set(string argument, string expectedValue)
         {
-            var options = VisualStudioOptions.Empty().WithFilter();
-
-            options.Parse(new[] { argument });
-
-            Assert.Equal(expectedValue, options.Expression);
+            var args = string.IsNullOrEmpty(argument) ? Array.Empty<string>() : new[] { argument };
+            var filter = GetFilter(ParseSelection(args));
+            Assert.Equal(expectedValue, filter.Expression);
         }
 
         [Theory]
@@ -146,11 +182,9 @@ namespace Devlooped.Tests
         [InlineData("--all", true)]
         public void when_parsing_all_argument_then_all_is_set(string argument, bool expectedValue)
         {
-            var options = VisualStudioOptions.Empty().WithSelectAll();
-
-            options.Parse(new[] { argument });
-
-            Assert.Equal(expectedValue, options.All);
+            var args = string.IsNullOrEmpty(argument) ? Array.Empty<string>() : new[] { argument };
+            var filter = GetFilter(ParseSelection(args));
+            Assert.Equal(expectedValue, filter.All);
         }
 
         [Theory]
@@ -160,39 +194,40 @@ namespace Devlooped.Tests
         [InlineData("--first", true)]
         public void when_parsing_first_argument_then_first_is_set(string argument, bool expectedValue)
         {
-            var options = VisualStudioOptions.Empty().WithFirst();
-
-            options.Parse(new[] { argument });
-
-            Assert.Equal(expectedValue, options.First);
+            var args = string.IsNullOrEmpty(argument) ? Array.Empty<string>() : new[] { argument };
+            var filter = GetFilter(ParseSelection(args));
+            Assert.Equal(expectedValue, filter.First);
         }
 
-        static (string[] Arguments, Func<VisualStudioOptions, bool> VerifyResult)[] TestCases =>
-            new (string[] Arguments, Func<VisualStudioOptions, bool> VerifyResult)[]
-            {
-                (new [] { "enterprise" , "insiders" }, x => x.Sku == Sku.Enterprise && x.Channel == Channel.Insiders),
-                (new [] { "main" , "exp" }, x => x.Channel == Channel.Main && x.IsExperimental),
-                (new [] { "all", "exp" }, x => x.All && x.IsExperimental),
-                (new [] { "ent", "main" }, x => x.Sku == Sku.Enterprise && x.Channel == Channel.Main),
-                (new [] { "main", "x => x.InstanceId == '123'" }, x => x.Channel == Channel.Main && x.Expression == "x => x.InstanceId == \"123\""),
-                (new [] { "pro" , "stable", "--nick=foo" }, x => x.Sku == Sku.Professional && x.Channel == Channel.Stable && x.Nickname == "foo"),
-                (new [] { "build", "release" }, x => x.Sku == Sku.BuildTools && x.Channel == Channel.Stable),
-                (new [] { "test", "stable" }, x => x.Sku == Sku.TestAgent && x.Channel == Channel.Stable)
-            };
-
-        // Hack to use typed func and avoid to make VisualStudioOptions type public
-        public static IEnumerable<object[]> TestCasesData =>
-            TestCases.Select(x => new object[] { x.Arguments, (Func<object, bool>)(options => x.VerifyResult((VisualStudioOptions)options)) });
-
         [Theory]
-        [MemberData(nameof(TestCasesData))]
-        public void when_parsing_arguments_then_arguments_are_set(string[] args, Func<object, bool> verify)
+        [InlineData(new[] { "enterprise", "insiders" }, Sku.Enterprise, Channel.Insiders, false, null, null)]
+        [InlineData(new[] { "main", "exp" }, null, Channel.Main, true, null, null)]
+        [InlineData(new[] { "all", "exp" }, null, null, true, true, null)]
+        [InlineData(new[] { "ent", "main" }, Sku.Enterprise, Channel.Main, false, null, null)]
+        [InlineData(new[] { "main", "x => x.InstanceId == '123'" }, null, Channel.Main, false, null, "x => x.InstanceId == \"123\"")]
+        [InlineData(new[] { "pro", "stable", "--nick=foo" }, Sku.Professional, Channel.Stable, false, null, null)]
+        [InlineData(new[] { "build", "release" }, Sku.BuildTools, Channel.Stable, false, null, null)]
+        [InlineData(new[] { "test", "stable" }, Sku.TestAgent, Channel.Stable, false, null, null)]
+        public void when_parsing_arguments_then_arguments_are_set(
+            string[] args, Sku? sku, Channel? channel, bool experimental, bool? all, string expression)
         {
-            var options = VisualStudioOptions.Full();
+            var parse = ParseSelection(args);
+            var filter = GetFilter(parse);
+            var exp = parse.CommandResult.Command.Options.OfType<Option<bool>>().First(o => o.Name == "--exp");
 
-            options.Parse(args);
+            Assert.Equal(sku, filter.Sku);
+            Assert.Equal(channel, filter.Channel);
+            Assert.Equal(experimental, parse.GetValue(exp));
+            if (all.HasValue)
+                Assert.Equal(all.Value, filter.All);
+            if (expression != null)
+                Assert.Equal(expression, filter.Expression);
 
-            Assert.True(verify(options));
+            if (args.Any(a => a.StartsWith("--nick=")))
+            {
+                var nick = parse.CommandResult.Command.Options.OfType<Option<string>>().First(o => o.Name == "--nick");
+                Assert.Equal("foo", parse.GetValue(nick));
+            }
         }
     }
 }

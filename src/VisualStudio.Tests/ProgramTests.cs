@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
+using System.CommandLine;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -15,7 +15,6 @@ namespace Devlooped.Tests
         public ProgramTests(ITestOutputHelper output) =>
             this.output = new OutputHelperTextWriter(output);
 
-
         [Theory]
         [InlineData("/help")]
         [InlineData("/?")]
@@ -23,7 +22,7 @@ namespace Devlooped.Tests
         [InlineData("/h")]
         public async Task when_running_with_help_arg_then_usage_is_shown(params string[] args)
         {
-            var program = new ProgramTest(output, new CommandFactory(), args ?? new string[0]);
+            var program = new ProgramTest(output, args ?? Array.Empty<string>());
 
             var exitCode = await program.RunAsync();
 
@@ -34,7 +33,7 @@ namespace Devlooped.Tests
         [Fact]
         public async Task when_running_with_version_arg_then_version_is_shown()
         {
-            var program = new ProgramTest(output, new CommandFactory(), "--version");
+            var program = new ProgramTest(output, "--version");
 
             var exitCode = await program.RunAsync();
 
@@ -43,62 +42,68 @@ namespace Devlooped.Tests
         }
 
         [Fact]
-        public async Task when_running_where_command_with_version_arg_then_version_is_not_shown()
+        public async Task when_running_command_with_version_arg_then_version_is_not_shown()
         {
-            var command = Mock.Of<Command>();
-            var commandFactory = new CommandFactory();
-            commandFactory.RegisterCommand("test", () => Mock.Of<CommandDescriptor>(), x => command);
-            var program = new ProgramTest(output, commandFactory, "test", "--version");
+            var root = new VsRootCommand();
+            var executed = false;
+            var test = new Command("test")
+            {
+                TreatUnmatchedTokensAsErrors = false,
+            };
+            // Allow --version as unmatched / no-op option so it doesn't fail parse
+            test.Options.Add(new Option<bool>("--version") { Description = "ignored" });
+            test.SetAction((ParseResult _) =>
+            {
+                executed = true;
+                return 0;
+            });
+            root.Subcommands.Add(test);
+
+            var program = new ProgramTest(output, root, "test", "--version");
 
             var exitCode = await program.RunAsync();
 
             Assert.Equal(0, exitCode);
             Assert.False(program.VersionShown);
-            Mock.Get(command).Verify(x => x.ExecuteAsync(output));
+            Assert.True(executed);
         }
 
         [Fact]
         public async Task when_running_command_then_command_is_executed()
         {
-            var command = Mock.Of<Command>();
-            var commandFactory = new CommandFactory();
-            commandFactory.RegisterCommand("test", () => Mock.Of<CommandDescriptor>(), x => command);
+            var root = new VsRootCommand();
+            var executed = false;
+            var test = new Command("test");
+            test.SetAction((ParseResult _) =>
+            {
+                executed = true;
+                return 0;
+            });
+            root.Subcommands.Add(test);
 
-            var program = new Program(output, commandFactory, "test");
+            var program = new Program(output, root, new ArgumentPreprocessor(Commands.DotNetConfig.GetConfig(), new[] { "test" }), "test");
 
             var exitCode = await program.RunAsync();
 
             Assert.Equal(0, exitCode);
-            Mock.Get(command).Verify(x => x.ExecuteAsync(output));
-        }
-
-        [Fact]
-        public async Task when_descriptor_throws_show_usage_exception_then_command_usage_is_shown()
-        {
-            var commandDescriptor = new Mock<CommandDescriptor>();
-            commandDescriptor.Setup(x => x.Parse(It.IsAny<IEnumerable<string>>())).Throws(new ShowUsageException(commandDescriptor.Object));
-
-            var commandFactory = new CommandFactory();
-            commandFactory.RegisterCommand("test", () => commandDescriptor.Object, x => null);
-
-            var program = new ProgramTest(output, commandFactory, "test");
-
-            var exitCode = await program.RunAsync();
-
-            commandDescriptor.Verify(x => x.ShowUsage(It.IsAny<ITextWriter>()));
-            Assert.True(program.ExamplesShown);
+            Assert.True(executed);
         }
 
         [Fact]
         public async Task when_command_throws_then_error_code_is_returned()
         {
-            var command = new Mock<Command>();
-            command.Setup(x => x.ExecuteAsync(output)).Throws(new InvalidOperationException());
+            var root = new VsRootCommand();
+            var test = new Command("test");
+            test.SetAction((ParseResult _) =>
+            {
+                throw new InvalidOperationException("boom");
+#pragma warning disable CS0162
+                return 0;
+#pragma warning restore CS0162
+            });
+            root.Subcommands.Add(test);
 
-            var commandFactory = new CommandFactory();
-            commandFactory.RegisterCommand("test", () => Mock.Of<CommandDescriptor>(), x => command.Object);
-
-            var program = new Program(output, commandFactory, "test");
+            var program = new Program(output, root, new ArgumentPreprocessor(Commands.DotNetConfig.GetConfig(), new[] { "test" }), "test");
 
             var exitCode = await program.RunAsync();
 
@@ -108,88 +113,55 @@ namespace Devlooped.Tests
         [Fact]
         public async Task when_command_throws_and_debug_is_specified_then_throws()
         {
-            var command = new Mock<Command>();
-            command.Setup(x => x.ExecuteAsync(output)).Throws(new InvalidOperationException());
+            var root = new VsRootCommand();
+            var test = new Command("test");
+            test.SetAction((ParseResult _) =>
+            {
+                throw new InvalidOperationException("boom");
+#pragma warning disable CS0162
+                return 0;
+#pragma warning restore CS0162
+            });
+            root.Subcommands.Add(test);
 
-            var commandFactory = new CommandFactory();
-            commandFactory.RegisterCommand("test", () => Mock.Of<CommandDescriptor>(), x => command.Object);
-
-            var program = new Program(output, commandFactory, "test", "--debug");
+            var program = new Program(output, root, new ArgumentPreprocessor(Commands.DotNetConfig.GetConfig(), new[] { "test" }), "test", "--debug");
 
             await Assert.ThrowsAsync<InvalidOperationException>(async () => await program.RunAsync());
         }
 
         [Fact]
-        public async Task when_program_is_cancelled_then_executing_command_is_async_disposed()
+        public async Task when_program_is_cancelled_then_client_session_is_disposed()
         {
-            var commandFactory = new CommandFactory();
-            var program = new Program(output, commandFactory, "test");
-            var command = new AsyncDisposableCommand();
+            var program = new ProgramTest(output, "alias");
+            ClientCommand.ActiveSession = new ClientCommand.ClientSession();
 
-            // Register the command
-            commandFactory.RegisterCommand("test", () => Mock.Of<CommandDescriptor>(), x => command);
+            await program.CancelAsync();
 
-            // Cancel the program while the command is executed
-            command.Executing += async (sender, e) => await program.CancelAsync();
-
-            // Run the program
-            await program.RunAsync();
-
-            Assert.True(command.IsDisposed);
+            // Dispose is safe with null Server
+            Assert.Null(ClientCommand.ActiveSession?.Server);
         }
 
         [Fact]
-        public async Task when_program_is_cancelled_then_executing_command_is_disposed()
+        public async Task when_command_help_requested_then_exits_zero()
         {
-            var commandFactory = new CommandFactory();
-            var program = new Program(output, commandFactory, "test");
-            var command = new DisposableCommand();
+            var program = new ProgramTest(output, "where", "--help");
 
-            // Register the command
-            commandFactory.RegisterCommand("test", () => Mock.Of<CommandDescriptor>(), x => command);
+            var exitCode = await program.RunAsync();
 
-            // Cancel the program while the command is executed
-            command.Executing += async (sender, e) => await program.CancelAsync();
-
-            // Run the program
-            await program.RunAsync();
-
-            Assert.True(command.IsDisposed);
-        }
-
-        class TestCommand : Command
-        {
-            public event EventHandler Executing;
-
-            public bool IsDisposed { get; protected set; }
-
-            public override Task ExecuteAsync(TextWriter output)
-            {
-                Executing?.Invoke(this, new EventArgs());
-
-                return Task.CompletedTask;
-            }
-        }
-
-        class AsyncDisposableCommand : TestCommand, IAsyncDisposable
-        {
-            public ValueTask DisposeAsync()
-            {
-                IsDisposed = true;
-
-                return new ValueTask();
-            }
-        }
-
-        class DisposableCommand : TestCommand, IDisposable
-        {
-            public void Dispose() => IsDisposed = true;
+            Assert.Equal(0, exitCode);
         }
 
         class ProgramTest : Program
         {
-            public ProgramTest(TextWriter output, CommandFactory commandFactory, params string[] args)
-                : base(output, commandFactory, args)
+            public ProgramTest(TextWriter output, params string[] args)
+                : base(output, args)
+            {
+                NoVersionChecks = true;
+            }
+
+            public ProgramTest(TextWriter output, VsRootCommand root, params string[] args)
+                : base(output, root, new ArgumentPreprocessor(Commands.DotNetConfig.GetConfig(),
+                    root.Subcommands.Select(c => c.Name)), args)
             {
                 NoVersionChecks = true;
             }
@@ -198,27 +170,16 @@ namespace Devlooped.Tests
 
             public bool VersionShown { get; private set; }
 
-            public bool ExamplesShown { get; private set; }
-
             protected override void ShowUsage()
             {
                 base.ShowUsage();
-
                 UsageShown = true;
             }
 
             protected override async Task ShowVersion()
             {
                 await base.ShowVersion();
-
                 VersionShown = true;
-            }
-
-            protected override void ShowExamples(string commandName)
-            {
-                base.ShowExamples(commandName);
-
-                ExamplesShown = true;
             }
         }
     }

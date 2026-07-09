@@ -2,6 +2,7 @@
   <!-- Extends Directory.Build.props -->
 
   <PropertyGroup Label="Build">
+    <Product>dotnet-vs</Product>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     
     <!-- Until we can fix the large number of warnings -->

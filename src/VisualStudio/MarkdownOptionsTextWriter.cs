@@ -1,39 +1,53 @@
-﻿using System.Collections.Immutable;
+using System.CommandLine;
 using System.Linq;
 using System.Text;
-using Mono.Options;
 
-namespace Devlooped
+namespace Devlooped;
+
+/// <summary>
+/// Writes command options as a markdown table for readme generation.
+/// </summary>
+static class MarkdownOptionsTextWriter
 {
-    class MarkdownOptionsTextWriter : ITextWriter
+    public static void WriteOptions(StringBuilder builder, Command command)
     {
-        readonly StringBuilder builder;
+        var options = command.Options
+            .Where(o => !o.Hidden && o is not System.CommandLine.Help.HelpOption)
+            .ToList();
 
-        public MarkdownOptionsTextWriter(StringBuilder builder)
+        if (options.Count == 0)
+            return;
+
+        builder.AppendLine("|Option|Description|");
+        builder.AppendLine("|-|-|");
+
+        foreach (var option in options)
         {
-            this.builder = builder;
+            // Prefer shorter aliases first (e.g. w|workspaceId), matching historical Mono.Options tables.
+            var names = new[] { option.Name }.Concat(option.Aliases)
+                .Select(StripDash)
+                .Where(n => !string.IsNullOrEmpty(n))
+                .Distinct()
+                .OrderBy(n => n.Length)
+                .ThenBy(n => n)
+                .ToList();
+
+            var display = string.Join("|", names);
+            builder.AppendLine($"| `{Escape(display)}` | {GetEscapedDescription(option.Description)} |");
         }
-
-        public void WriteLine()
-        { }
-
-        public void WriteLine(string line)
-        { }
-
-        public void WriteOptions(ImmutableArray<OptionSet> options)
-        {
-            if (options.Any())
-            {
-                builder.AppendLine("|Option|Description|");
-                builder.AppendLine("|-|-|");
-
-                foreach (var optionSet in options)
-                    foreach (var option in optionSet.Where(x => !x.Hidden && x.GetType().Name.EndsWith("ActionOption")))
-                        builder.AppendLine($"| `{option.Prototype.Replace("|", "\\|")}` | {GetEscapedDescription(option.Description)} |");
-            }
-        }
-
-        string GetEscapedDescription(string desciption) =>
-            desciption.Replace('[', '`').Replace(']', '`').Replace("|", "\\|");
     }
+
+    static string StripDash(string name)
+    {
+        if (name.StartsWith("--"))
+            return name[2..];
+        if (name.StartsWith('-'))
+            return name[1..];
+        return name;
+    }
+
+    static string Escape(string value) => value.Replace("|", "\\|");
+
+    static string GetEscapedDescription(string description) =>
+        (description ?? string.Empty).Replace('[', '`').Replace(']', '`').Replace("|", "\\|");
 }

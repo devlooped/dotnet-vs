@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -24,33 +23,35 @@ namespace Devlooped.Tests
         [InlineData(false, @"c:\src\foo.sln")]
         public async Task when_workspace_id_is_not_specified_then_server_and_client_are_started(bool isExperimental, string solutionPath)
         {
-            var command = new ClientCommandTest(default, isExperimental, solutionPath);
+            var command = new ClientCommandTest();
+            var session = new ClientCommand.ClientSession();
+            var extra = string.IsNullOrEmpty(solutionPath)
+                ? new List<string>()
+                : new List<string> { solutionPath };
 
-            await command.ExecuteAsync(new DevEnv(), output);
+            await command.RunServerAndClientAsync(session, new DevEnv(), extra, isExperimental, output);
 
-            Assert.NotNull(command.Server);
-            Assert.Contains("/server", command.Server.StartInfo.ArgumentList);
+            Assert.NotNull(session.Server);
+            Assert.Contains("/server", session.Server.StartInfo.ArgumentList);
 
             if (isExperimental)
             {
-                Assert.Contains("/rootSuffix", command.Server.StartInfo.ArgumentList);
-                Assert.Contains("Exp", command.Server.StartInfo.ArgumentList);
+                Assert.Contains("/rootSuffix", session.Server.StartInfo.ArgumentList);
+                Assert.Contains("Exp", session.Server.StartInfo.ArgumentList);
             }
 
             if (!string.IsNullOrEmpty(solutionPath))
-            {
-                Assert.Contains(solutionPath, command.Server.StartInfo.ArgumentList);
-            }
+                Assert.Contains(solutionPath, session.Server.StartInfo.ArgumentList);
 
-            Assert.NotNull(command.Client);
-            Assert.Contains("/client", command.Client.StartInfo.ArgumentList);
-            Assert.Contains("/joinworkspace", command.Client.StartInfo.ArgumentList);
-            Assert.Contains($"vsls:?workspaceId={command.GeneratedServerWorkspaceId}&remoteJoin=true", command.Client.StartInfo.ArgumentList);
+            Assert.NotNull(session.Client);
+            Assert.Contains("/client", session.Client.StartInfo.ArgumentList);
+            Assert.Contains("/joinworkspace", session.Client.StartInfo.ArgumentList);
+            Assert.Contains($"vsls:?workspaceId={command.GeneratedServerWorkspaceId}&remoteJoin=true", session.Client.StartInfo.ArgumentList);
 
             if (isExperimental)
             {
-                Assert.Contains("/rootSuffix", command.Client.StartInfo.ArgumentList);
-                Assert.Contains("Exp", command.Client.StartInfo.ArgumentList);
+                Assert.Contains("/rootSuffix", session.Client.StartInfo.ArgumentList);
+                Assert.Contains("Exp", session.Client.StartInfo.ArgumentList);
             }
         }
 
@@ -59,80 +60,69 @@ namespace Devlooped.Tests
         [InlineData(false)]
         public async Task when_workspace_id_is_specified_then_client_is_started(bool isExperimental)
         {
-            var command = new ClientCommandTest("123", isExperimental);
+            var command = new ClientCommandTest();
+            var session = new ClientCommand.ClientSession();
 
-            await command.ExecuteAsync(new DevEnv(), output);
+            command.RunClient(session, new DevEnv(), "123", isExperimental, output);
 
-            Assert.Null(command.Server);
-
-            Assert.NotNull(command.Client);
-            Assert.Contains("/client", command.Client.StartInfo.ArgumentList);
-            Assert.Contains("/joinworkspace", command.Client.StartInfo.ArgumentList);
-            Assert.Contains($"vsls:?workspaceId=123&remoteJoin=true", command.Client.StartInfo.ArgumentList);
+            Assert.Null(session.Server);
+            Assert.NotNull(session.Client);
+            Assert.Contains("/client", session.Client.StartInfo.ArgumentList);
+            Assert.Contains("/joinworkspace", session.Client.StartInfo.ArgumentList);
+            Assert.Contains("vsls:?workspaceId=123&remoteJoin=true", session.Client.StartInfo.ArgumentList);
 
             if (isExperimental)
             {
-                Assert.Contains("/rootSuffix", command.Client.StartInfo.ArgumentList);
-                Assert.Contains("Exp", command.Client.StartInfo.ArgumentList);
+                Assert.Contains("/rootSuffix", session.Client.StartInfo.ArgumentList);
+                Assert.Contains("Exp", session.Client.StartInfo.ArgumentList);
             }
         }
 
         [Fact]
         public async Task when_starting_server_and_client_then_arguments_are_defined_in_correct_order()
         {
-            var command = new ClientCommandTest(default, true, @"c:\src\foo.sln");
+            var command = new ClientCommandTest();
+            var session = new ClientCommand.ClientSession();
 
-            await command.ExecuteAsync(new DevEnv(), output);
+            await command.RunServerAndClientAsync(session, new DevEnv(), new List<string> { @"c:\src\foo.sln" }, true, output);
 
-            Assert.NotNull(command.Server);
+            Assert.NotNull(session.Server);
             Assert.Equal(
                 @"c:\src\foo.sln /rootSuffix Exp /server",
-                string.Join(" ", command.Server.StartInfo.ArgumentList));
+                string.Join(" ", session.Server.StartInfo.ArgumentList));
 
-            Assert.NotNull(command.Client);
+            Assert.NotNull(session.Client);
             Assert.Equal(
                 $"/rootSuffix Exp /client /joinworkspace vsls:?workspaceId={command.GeneratedServerWorkspaceId}&remoteJoin=true",
-                string.Join(" ", command.Client.StartInfo.ArgumentList));
+                string.Join(" ", session.Client.StartInfo.ArgumentList));
         }
 
+        /// <summary>
+        /// Testable surface over ClientCommand process creation / server output.
+        /// </summary>
         class ClientCommandTest : ClientCommand
         {
-            public ClientCommandTest(string workspaceId, bool isExperimental = false, string solutionPath = null)
-                : base(new ClientCommandDescriptorTest(workspaceId, isExperimental, solutionPath), default)
-            { }
+            public ClientCommandTest() : base(null) { }
 
             public string GeneratedServerWorkspaceId { get; } = Guid.NewGuid().ToString();
+
+            public Task RunServerAndClientAsync(ClientSession session, DevEnv devenv, List<string> extra, bool isExperimental, TextWriter output)
+            {
+                StartServerAndClientForTests(session, devenv, extra, isExperimental, output);
+                return Task.CompletedTask;
+            }
+
+            public void RunClient(ClientSession session, DevEnv devenv, string workspaceId, bool isExperimental, TextWriter output) =>
+                StartClientForTests(session, devenv, workspaceId, isExperimental, output);
 
             protected override Process CreateProcess(DevEnv devenv, IEnumerable<string> args, bool start = true) =>
                 base.CreateProcess(devenv, args, false);
 
             protected override IEnumerable<string> ReadOutputLines(Process process)
             {
-                if (process == Server)
-                {
-                    yield return "Start Live Share Session command enabled: True";
-                    yield return "Start Live Share Session command succeeded: True";
-                    yield return $"Invitation link:https://prod.liveshare.vsengsaas.VisualStudio.com/join?{GeneratedServerWorkspaceId}";
-                }
-            }
-
-            class ClientCommandDescriptorTest : ClientCommandDescriptor
-            {
-                readonly string workspaceId;
-                readonly bool isExperimental;
-
-                public ClientCommandDescriptorTest(string workspaceId, bool isExperimental, string solutionPath)
-                {
-                    this.workspaceId = workspaceId;
-                    this.isExperimental = isExperimental;
-
-                    if (!string.IsNullOrEmpty(solutionPath))
-                        ExtraArguments = ImmutableArray.Create(solutionPath);
-                }
-
-                public override bool IsExperimental => isExperimental;
-
-                public override string WorkspaceId => workspaceId;
+                yield return "Start Live Share Session command enabled: True";
+                yield return "Start Live Share Session command succeeded: True";
+                yield return $"Invitation link:https://prod.liveshare.vsengsaas.VisualStudio.com/join?{GeneratedServerWorkspaceId}";
             }
         }
     }

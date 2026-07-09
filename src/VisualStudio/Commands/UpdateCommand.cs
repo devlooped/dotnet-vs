@@ -1,51 +1,78 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using System.CommandLine;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using vswhere;
 
-namespace Devlooped
+namespace Devlooped;
+
+class UpdateCommand : Command
 {
-    class UpdateCommand : Command<UpdateCommandDescriptor>
+    readonly WhereService whereService;
+    readonly InstallerService installerService;
+    readonly SharedOptions.ChannelOptions channelOptions;
+    readonly Option<string> skuOption;
+    readonly Option<string> filterOption;
+    readonly Option<bool> firstOption;
+    readonly Option<bool> allOption;
+
+    public UpdateCommand(WhereService whereService, InstallerService installerService)
+        : base(Commands.Update, "Updates an installation of Visual Studio.")
     {
-        readonly WhereService whereService;
-        readonly InstallerService installerService;
+        this.whereService = whereService;
+        this.installerService = installerService;
 
-        public UpdateCommand(UpdateCommandDescriptor descriptor, WhereService whereService, InstallerService installerService)
-            : base(descriptor)
+        channelOptions = SharedOptions.AddChannelOptions(this, "Update");
+        skuOption = SharedOptions.SkuOption();
+        filterOption = SharedOptions.FilterOption();
+        firstOption = SharedOptions.FirstOption("Update");
+        allOption = SharedOptions.AllOption("Update");
+
+        Options.Add(skuOption);
+        Options.Add(filterOption);
+        Options.Add(firstOption);
+        Options.Add(allOption);
+
+        TreatUnmatchedTokensAsErrors = false;
+
+        SetAction(async (parseResult, _) =>
         {
-            this.whereService = whereService;
-            this.installerService = installerService;
-        }
+            await ExecuteAsync(parseResult, parseResult.InvocationConfiguration.Output);
+            return 0;
+        });
+    }
 
-        public override async Task ExecuteAsync(TextWriter output)
+    async Task ExecuteAsync(ParseResult parse, TextWriter output)
+    {
+        var filter = CommandHelpers.GetFilter(parse, channelOptions, skuOption, filterOption, firstOption, allOption);
+        var all = parse.GetValue(allOption);
+        var extraArgs = parse.UnmatchedTokens.ToList();
+
+        var instances = await whereService.GetAllInstancesAsync(filter);
+
+        if (!all)
+            instances = new Chooser().ChooseMany(instances, output);
+
+        var extra =
+            !extraArgs.Any(x => x.TrimStart('-') == "config") && File.Exists(".vsconfig") ?
+            extraArgs.Concat(new[] { "--config", ".vsconfig" }).ToList() :
+            extraArgs;
+
+        foreach (var instance in instances)
         {
-            var instances = await whereService.GetAllInstancesAsync(Descriptor.Options);
-
-            if (!Descriptor.All)
-                instances = new Chooser().ChooseMany(instances, output);
-
-            var extra =
-                !Descriptor.ExtraArguments.Any(x => x.TrimStart('-') == "config") && File.Exists(".vsconfig") ?
-                Descriptor.ExtraArguments.Add("--config").Add(".vsconfig") :
-                Descriptor.ExtraArguments;
-
-            foreach (var instance in instances)
+            var args = new List<string>(extra)
             {
-                var args = new List<string>(extra)
-                {
-                    "--passive",
-                    "--installPath",
-                    instance.InstallationPath
-                };
+                "--passive",
+                "--installPath",
+                instance.InstallationPath
+            };
 
-                // If the channel is not a built-in one, use the existing Uri for updates.
-                var channel = instance.GetChannel();
-                if (channel != null)
-                    await installerService.UpdateAsync(instance.InstallationVersion.Major.ToString(), channel, instance.GetSku(), args, output);
-                else
-                    await installerService.UpdateAsync(instance.ChannelUri.Replace("/channel", ""), instance.GetSku(), args, output);
-            }
+            var channel = instance.GetChannel();
+            if (channel != null)
+                await installerService.UpdateAsync(instance.InstallationVersion.Major.ToString(), channel, instance.GetSku(), args, output);
+            else
+                await installerService.UpdateAsync(instance.ChannelUri.Replace("/channel", ""), instance.GetSku(), args, output);
         }
     }
 }

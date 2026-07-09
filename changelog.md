@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+:hammer: Other:
+
+- Migrate CLI argument parsing from Mono.Options to System.CommandLine 2.0, preserving full backward-compatible command syntax (channel/SKU shortcuts, workload `+/-` aliases, `--save`, default `run` command, and related routing)
+
 ## [v2.0.0](https://github.com/devlooped/dotnet-vs/tree/v2.0.0) (2026-07-09)
 
 [Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v1.3.0...v2.0.0)
@@ -11,6 +17,7 @@
 :bug: Fixed bugs:
 
 - dotnet-vs preemptively advertises new versions not available on nuget.org [\#246](https://github.com/devlooped/dotnet-vs/issues/246)
+
 
 ## [v1.3.0](https://github.com/devlooped/dotnet-vs/tree/v1.3.0) (2026-06-24)
 
