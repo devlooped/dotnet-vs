@@ -1,4 +1,4 @@
-﻿## modify
+## modify
 
 {Description}
 
@@ -16,6 +16,6 @@ Examples:
 <!-- EXAMPLES_BEGIN -->
 ```
 # Add .NET Core Workload to installed Visual Studio Preview
-> vs modify insiders +core
+> dnx vs -- modify insiders +core
 ```
 <!-- EXAMPLES_END -->

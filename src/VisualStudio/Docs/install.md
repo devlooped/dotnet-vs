@@ -1,4 +1,4 @@
-﻿## install
+## install
 
 {Description}
 
@@ -22,10 +22,10 @@ Examples:
 ```
 # Installs VS enterprise with the Maui/Mobile workload
 # Note the -sku: switch/prefix is optional
-> vs install Enterprise +mobile
+> dnx vs -- install Enterprise +mobile
 
 # Install VS community with the .NET Core, ASP.NET and Azure workloads, 
 # shows installation progress and waits for it to finish before returning
-> vs install +core +web +azure
+> dnx vs -- install +core +web +azure
 ```
 <!-- EXAMPLES_END -->

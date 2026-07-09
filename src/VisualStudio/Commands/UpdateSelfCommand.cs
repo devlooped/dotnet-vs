@@ -8,7 +8,7 @@ namespace Devlooped;
 class UpdateSelfCommand : Command
 {
     public UpdateSelfCommand()
-        : base(Commands.System.UpdateSelf, "Updates the dotnet-vs tool itself")
+        : base(Commands.System.UpdateSelf, "Updates the vs tool itself")
     {
         Hidden = true;
 
@@ -24,10 +24,10 @@ class UpdateSelfCommand : Command
         Process.Start(
             new ProcessStartInfo("dotnet")
             {
-                ArgumentList = { "tool", "update", "-g", "dotnet-vs" }
+                ArgumentList = { "tool", "update", "-g", "vs" }
             });
 
-        output.WriteLine("Running \"dotnet tool update -g dotnet-vs\"...");
+        output.WriteLine("Running \"dotnet tool update -g vs\"...");
         output.WriteLine("dotnet will continue running in background");
     }
 }

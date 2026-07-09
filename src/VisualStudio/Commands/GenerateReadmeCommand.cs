@@ -60,7 +60,7 @@ class GenerateReadmeCommand : Command
                 var content = (await ReadCommandTemplateContentAsync(command.Name))
                     .Replace("{CommandName}", command.Name)
                     .Replace("{Description}", command.Description)
-                    .Replace("{Usage}", $"Usage: {ThisAssembly.Project.AssemblyName} {command.Name} [options]")
+                    .Replace("{Usage}", $"Usage: dnx {ThisAssembly.Project.AssemblyName} -- {command.Name} [options]")
                     .Replace("{Options}", commandOptions.ToString());
 
                 commandsBuilder.AppendLine();

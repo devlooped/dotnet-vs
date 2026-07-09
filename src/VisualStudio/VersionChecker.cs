@@ -60,7 +60,7 @@ namespace Devlooped
                 // Couldn't check latest version for some reason
                 output.WriteLine($"Latest version at {repositoryUrl}/releases/latest");
             else if (latestVersion > currentVersion)
-                output.WriteLine($"New version {latestVersion} is available. Run '{ThisAssembly.Project.AssemblyName} update-self' to update. See {repositoryUrl}/releases/tag/v{latestVersion}");
+                output.WriteLine($"New version {latestVersion} is available. Run 'dnx {ThisAssembly.Project.AssemblyName} -- update-self' to update. See {repositoryUrl}/releases/tag/v{latestVersion}");
             else if (currentVersion == developmentVersion)
                 output.WriteLine($"Latest version {latestVersion} is available at {repositoryUrl}/releases/tag/v{latestVersion}");
 
@@ -79,7 +79,7 @@ namespace Devlooped
                 latestVersion != developmentVersion &&
                 latestVersion > currentVersion)
             {
-                output.WriteLine($"New version {latestVersion} is available. Run '{ThisAssembly.Project.AssemblyName} update-self' to update. See {repositoryUrl}/releases/tag/v{latestVersion}");
+                output.WriteLine($"New version {latestVersion} is available. Run 'dnx {ThisAssembly.Project.AssemblyName} -- update-self' to update. See {repositoryUrl}/releases/tag/v{latestVersion}");
             }
         }
 
