@@ -4,6 +4,10 @@
 
 [Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v2.0.0-alpha...v2.0.0-beta)
 
+:sparkles: Implemented enhancements:
+
+- Use NuGet.Versioning for SemVer-aware version checks [\#263](https://github.com/devlooped/dotnet-vs/pull/263) (@kzu)
+
 ## [v2.0.0-alpha](https://github.com/devlooped/dotnet-vs/tree/v2.0.0-alpha) (2026-07-09)
 
 [Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v2.0.0...v2.0.0-alpha)
