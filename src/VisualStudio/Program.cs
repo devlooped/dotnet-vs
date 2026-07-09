@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Devlooped;
 
-class Program
+partial class Program
 {
     static readonly VersionChecker versionChecker = new();
 
@@ -59,44 +59,51 @@ class Program
 
     public async Task<int> RunAsync()
     {
-        if (preprocessor.IsTopLevelHelp(args))
-        {
-            ShowUsage();
-            return 0;
-        }
-
-        if (preprocessor.IsTopLevelVersion(args))
-        {
-            await ShowVersion();
-            return 0;
-        }
-
         try
         {
-            var processed = preprocessor.Process(args);
-            var parseResult = rootCommand.Parse(processed);
-
-            var config = new InvocationConfiguration
+            if (preprocessor.IsTopLevelHelp(args))
             {
-                Output = output,
-                Error = output,
-                EnableDefaultExceptionHandler = false,
-            };
+                ShowUsage();
+                return 0;
+            }
 
-            var exitCode = await parseResult.InvokeAsync(config, cts.Token);
+            if (preprocessor.IsTopLevelVersion(args))
+            {
+                await ShowVersion();
+                return 0;
+            }
 
-            // Help / non-success: do not run version update check (matches prior behavior).
-            if (exitCode != 0 || parseResult.Action is HelpAction or ExamplesHelpAction)
-                return exitCode;
+            try
+            {
+                var processed = preprocessor.Process(args);
+                var parseResult = rootCommand.Parse(processed);
+
+                var config = new InvocationConfiguration
+                {
+                    Output = output,
+                    Error = output,
+                    EnableDefaultExceptionHandler = false,
+                };
+
+                var exitCode = await parseResult.InvokeAsync(config, cts.Token);
+
+                // Help / non-success: do not run version update check (matches prior behavior).
+                if (exitCode != 0 || parseResult.Action is HelpAction or ExamplesHelpAction)
+                    return exitCode;
+            }
+            catch (Exception ex) when (!SharedOptions.IsDebug(args))
+            {
+                output.WriteLine(ex.Message);
+                return ErrorCodes.Error;
+            }
+
+            await versionChecker.ShowUpdateAsync(output);
+            return 0;
         }
-        catch (Exception ex) when (!SharedOptions.IsDebug(args))
+        finally
         {
-            output.WriteLine(ex.Message);
-            return ErrorCodes.Error;
+            WriteLegacyMigrationNotice(output);
         }
-
-        await versionChecker.ShowUpdateAsync(output);
-        return 0;
     }
 
     protected bool NoVersionChecks
@@ -119,4 +126,9 @@ class Program
         foreach (var command in commands)
             output.WriteLine($"  {command.Name.GetNormalizedString(maxWidth)}{command.Description}");
     }
+
+    /// <summary>
+    /// Optional post-run hook implemented by the legacy <c>dotnet-vs</c> package only.
+    /// </summary>
+    partial void WriteLegacyMigrationNotice(TextWriter output);
 }
