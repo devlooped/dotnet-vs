@@ -17,7 +17,7 @@ Supported commands:
 Shows the list of saved aliases
 
 ```
-Usage: vs alias [options]
+Usage: dnx vs -- alias [options]
 ```
 
 All built-in commands support a `-save:[alias]` option that will cause 
@@ -30,10 +30,10 @@ Examples:
 <!-- EXAMPLES_BEGIN -->
 ```
 # Save the first VS enterprise with the Maui/Mobile workload as the "mobile" alias
-> vs -sku:ent -first +mobile -save:mobile
+> dnx vs -- -sku:ent -first +mobile -save:mobile
 
 # Runs the saved alias with all the original arguments
-> vs mobile
+> dnx vs -- mobile
 ```
 <!-- EXAMPLES_END -->
 
@@ -42,7 +42,7 @@ Examples:
 Launches Visual Studio in client mode
 
 ```
-Usage: vs client [options]
+Usage: dnx vs -- client [options]
 ```
 
 |Option|Description|
@@ -62,7 +62,7 @@ Usage: vs client [options]
 Opens the config folder.
 
 ```
-Usage: vs config [options]
+Usage: dnx vs -- config [options]
 ```
 
 |Option|Description|
@@ -81,7 +81,7 @@ Usage: vs config [options]
 Installs a specific edition of Visual Studio.
 
 ```
-Usage: vs install [options]
+Usage: dnx vs -- install [options]
 ```
 
 |Option|Description|
@@ -109,11 +109,11 @@ Examples:
 ```
 # Installs VS enterprise with the Maui/Mobile workload
 # Note the -sku: switch/prefix is optional
-> vs install Enterprise +mobile
+> dnx vs -- install Enterprise +mobile
 
 # Install VS community with the .NET Core, ASP.NET and Azure workloads, 
 # shows installation progress and waits for it to finish before returning
-> vs install +core +web +azure
+> dnx vs -- install +core +web +azure
 ```
 <!-- EXAMPLES_END -->
 
@@ -122,7 +122,7 @@ Examples:
 Kills running devenv processes.
 
 ```
-Usage: vs kill [options]
+Usage: dnx vs -- kill [options]
 ```
 
 |Option|Description|
@@ -142,7 +142,7 @@ Examples:
 <!-- EXAMPLES_BEGIN -->
 ```
 # Kill all running instances of Visual Studio
-> vs kill all
+> dnx vs -- kill all
 ```
 <!-- EXAMPLES_END -->
 
@@ -151,7 +151,7 @@ Examples:
 Opens the folder containing the Activity.log file.
 
 ```
-Usage: vs log [options]
+Usage: dnx vs -- log [options]
 ```
 
 |Option|Description|
@@ -170,7 +170,7 @@ Usage: vs log [options]
 Modifies an installation of Visual Studio.
 
 ```
-Usage: vs modify [options]
+Usage: dnx vs -- modify [options]
 ```
 
 |Option|Description|
@@ -193,7 +193,7 @@ Examples:
 <!-- EXAMPLES_BEGIN -->
 ```
 # Add .NET Core Workload to installed Visual Studio Preview
-> vs modify insiders +core
+> dnx vs -- modify insiders +core
 ```
 <!-- EXAMPLES_END -->
 
@@ -202,7 +202,7 @@ Examples:
 This is default command, so typically it does not need to be provided as an argument.
 
 ```
-Usage: vs run [options]
+Usage: dnx vs -- run [options]
 ```
 
 |Option|Description|
@@ -226,7 +226,7 @@ All [workload switches](#workload-id-switches) are available too to filter the
 instance to run, including using the `+` prefix/alias syntax.
 
 This command will remember the last VS that was located and run. So the next time you 
-can just run the same instance by simply using `vs` (since `run` is the default command 
+can just run the same instance by simply using `dnx vs` (since `run` is the default command 
 and can be omitted).
 
 Examples:
@@ -234,16 +234,16 @@ Examples:
 <!-- EXAMPLES_BEGIN -->
 ```
 # Runs the first VS enterprise with the Maui/Mobile workload
-> vs -sku:ent -first +mobile
+> dnx vs -- -sku:ent -first +mobile
 
 # Runs VS 18.7
-> vs -v:18.7
+> dnx vs -- -v:18.7
 
 # Runs VS 18 Insiders
-> vs -v:18 -insiders
+> dnx vs -- -v:18 -insiders
 
 # Runs the last VS that was run
-> vs
+> dnx vs
 ```
 <!-- EXAMPLES_END -->
 
@@ -252,7 +252,7 @@ Examples:
 Updates an installation of Visual Studio.
 
 ```
-Usage: vs update [options]
+Usage: dnx vs -- update [options]
 ```
 
 |Option|Description|
@@ -271,7 +271,7 @@ Usage: vs update [options]
 Locates the installed version(s) of Visual Studio that satisfy the requested requirements, optionally retrieving installation properties from it.
 
 ```
-Usage: vs where [options]
+Usage: dnx vs -- where [options]
 ```
 
 |Option|Description|
@@ -339,8 +339,8 @@ See also [vswhere on GitHub](https://github.com/microsoft/vswhere).
 
 ## Workload ID switches
 
-For commands that receive workload ID switches (i.e. `vs where -requires [WORKLOAD_ID]` or 
-`vs install --add [WORKLOAD_ID]`), the following aliases are available:
+For commands that receive workload ID switches (i.e. `dnx vs -- where -requires [WORKLOAD_ID]` or 
+`dnx vs -- install --add [WORKLOAD_ID]`), the following aliases are available:
 
 |  Alias    | Workload ID |
 |-----------|----------------------------|
@@ -364,7 +364,7 @@ For commands that receive workload ID switches (i.e. `vs where -requires [WORKLO
 The aliases are converted to the appropriate switch automatically, such as into 
 `-requires [ID]` or `--add [ID]`. Additionally, depending on the command being run, 
 the aliases might use a `+` prefix (like `+mobile`), which might make for a more 
-intuitive command line, such as `vs install +mobile -sku:enterprise` or `vs +mobile` 
+intuitive command line, such as `dnx vs -- install +mobile -sku:enterprise` or `dnx vs -- +mobile` 
 (runs the VS with the mobile workload installed). The *modify* command uses `+` and `-` 
 prefix to add or remove workloads respectively, for example.
 
