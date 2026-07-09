@@ -1,10 +1,17 @@
 # Changelog
 
-## Unreleased
+## [v2.0.0-alpha](https://github.com/devlooped/dotnet-vs/tree/v2.0.0-alpha) (2026-07-09)
 
-:hammer: Other:
+[Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v2.0.0...v2.0.0-alpha)
 
-- Migrate CLI argument parsing from Mono.Options to System.CommandLine 2.0, preserving full backward-compatible command syntax (channel/SKU shortcuts, workload `+/-` aliases, `--save`, default `run` command, and related routing)
+:sparkles: Implemented enhancements:
+
+- Migrate CLI from Mono.Options to System.CommandLine 2.0 [\#257](https://github.com/devlooped/dotnet-vs/pull/257) (@kzu)
+
+:twisted_rightwards_arrows: Merged:
+
+- Add legacy dotnet-vs package pointing users to dnx vs [\#261](https://github.com/devlooped/dotnet-vs/pull/261) (@kzu)
+- Rename package id to vs and document dnx usage [\#259](https://github.com/devlooped/dotnet-vs/pull/259) (@kzu)
 
 ## [v2.0.0](https://github.com/devlooped/dotnet-vs/tree/v2.0.0) (2026-07-09)
 
@@ -17,7 +24,6 @@
 :bug: Fixed bugs:
 
 - dotnet-vs preemptively advertises new versions not available on nuget.org [\#246](https://github.com/devlooped/dotnet-vs/issues/246)
-
 
 ## [v1.3.0](https://github.com/devlooped/dotnet-vs/tree/v1.3.0) (2026-06-24)
 
