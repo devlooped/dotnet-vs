@@ -1,41 +1,23 @@
 # Changelog
 
-## [v2.0.0-rc](https://github.com/devlooped/dotnet-vs/tree/v2.0.0-rc) (2026-07-09)
-
-[Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v2.0.0-beta...v2.0.0-rc)
-
-## [v2.0.0-beta](https://github.com/devlooped/dotnet-vs/tree/v2.0.0-beta) (2026-07-09)
-
-[Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v2.0.0-alpha...v2.0.0-beta)
-
-:sparkles: Implemented enhancements:
-
-- Use NuGet.Versioning for SemVer-aware version checks [\#263](https://github.com/devlooped/dotnet-vs/pull/263) (@kzu)
-
-## [v2.0.0-alpha](https://github.com/devlooped/dotnet-vs/tree/v2.0.0-alpha) (2026-07-09)
-
-[Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v2.0.0...v2.0.0-alpha)
-
-:sparkles: Implemented enhancements:
-
-- Migrate CLI from Mono.Options to System.CommandLine 2.0 [\#257](https://github.com/devlooped/dotnet-vs/pull/257) (@kzu)
-
-:twisted_rightwards_arrows: Merged:
-
-- Add legacy dotnet-vs package pointing users to dnx vs [\#261](https://github.com/devlooped/dotnet-vs/pull/261) (@kzu)
-- Rename package id to vs and document dnx usage [\#259](https://github.com/devlooped/dotnet-vs/pull/259) (@kzu)
-
 ## [v2.0.0](https://github.com/devlooped/dotnet-vs/tree/v2.0.0) (2026-07-09)
 
 [Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v1.3.0...v2.0.0)
 
 :sparkles: Implemented enhancements:
 
+- Use NuGet.Versioning for SemVer-aware version checks [\#263](https://github.com/devlooped/dotnet-vs/pull/263) (@kzu)
+- Rename package id to vs and document dnx usage [\#259](https://github.com/devlooped/dotnet-vs/pull/259) (@kzu)
+- Migrate CLI from Mono.Options to System.CommandLine 2.0 [\#257](https://github.com/devlooped/dotnet-vs/pull/257) (@kzu)
 - Target Visual Studio 2026 stable/18 install paths [\#255](https://github.com/devlooped/dotnet-vs/pull/255) (@kzu)
 
 :bug: Fixed bugs:
 
 - dotnet-vs preemptively advertises new versions not available on nuget.org [\#246](https://github.com/devlooped/dotnet-vs/issues/246)
+
+:twisted_rightwards_arrows: Merged:
+
+- Add legacy dotnet-vs package pointing users to dnx vs [\#261](https://github.com/devlooped/dotnet-vs/pull/261) (@kzu)
 
 ## [v1.3.0](https://github.com/devlooped/dotnet-vs/tree/v1.3.0) (2026-06-24)
 
