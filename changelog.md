@@ -1,5 +1,17 @@
 # Changelog
 
+## [v2.0.0](https://github.com/devlooped/dotnet-vs/tree/v2.0.0) (2026-07-09)
+
+[Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v1.3.0...v2.0.0)
+
+:sparkles: Implemented enhancements:
+
+- Target Visual Studio 2026 stable/18 install paths [\#255](https://github.com/devlooped/dotnet-vs/pull/255) (@kzu)
+
+:bug: Fixed bugs:
+
+- dotnet-vs preemptively advertises new versions not available on nuget.org [\#246](https://github.com/devlooped/dotnet-vs/issues/246)
+
 ## [v1.3.0](https://github.com/devlooped/dotnet-vs/tree/v1.3.0) (2026-06-24)
 
 [Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v1.2.0...v1.3.0)
