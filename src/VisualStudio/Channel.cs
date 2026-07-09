@@ -2,8 +2,8 @@
 {
     public enum Channel
     {
-        Release,
-        Preview,
+        Stable,
+        Insiders,
         IntPreview,
         Main,
     }

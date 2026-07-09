@@ -22,11 +22,11 @@ Examples:
 # Runs the first VS enterprise with the Maui/Mobile workload
 > vs -sku:ent -first +mobile
 
-# Runs VS 16.8
-> vs -v:16.8
+# Runs VS 18.7
+> vs -v:18.7
 
-# Runs VS 16.9 preview
-> vs -v:16.9 -pre
+# Runs VS 18 Insiders
+> vs -v:18 -insiders
 
 # Runs the last VS that was run
 > vs

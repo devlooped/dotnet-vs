@@ -26,11 +26,11 @@ namespace Devlooped.Tests
         {
             var builder = new VisualStudioPredicateBuilder();
 
-            var predicate = await builder.BuildPredicateAsync(GetOptions(channel: Channel.Preview));
+            var predicate = await builder.BuildPredicateAsync(GetOptions(channel: Channel.Insiders));
 
-            Assert.True(predicate(new vswhere.VisualStudioInstance().WithChannel(Channel.Preview)));
+            Assert.True(predicate(new vswhere.VisualStudioInstance().WithChannel(Channel.Insiders)));
             Assert.False(predicate(new vswhere.VisualStudioInstance().WithChannel(Channel.IntPreview)));
-            Assert.False(predicate(new vswhere.VisualStudioInstance().WithChannel(Channel.Release)));
+            Assert.False(predicate(new vswhere.VisualStudioInstance().WithChannel(Channel.Stable)));
             Assert.False(predicate(new vswhere.VisualStudioInstance().WithChannel(Channel.Main)));
         }
 
@@ -61,7 +61,7 @@ namespace Devlooped.Tests
             Assert.True(predicate(new vswhere.VisualStudioInstance() { InstanceId = "123" }.WithSku(Sku.Professional).WithChannel(Channel.IntPreview)));
             Assert.False(predicate(new vswhere.VisualStudioInstance() { InstanceId = "456" }.WithSku(Sku.Professional).WithChannel(Channel.IntPreview)));
             Assert.False(predicate(new vswhere.VisualStudioInstance() { InstanceId = "123" }.WithSku(Sku.Enterprise).WithChannel(Channel.IntPreview)));
-            Assert.False(predicate(new vswhere.VisualStudioInstance() { InstanceId = "123" }.WithSku(Sku.Professional).WithChannel(Channel.Release)));
+            Assert.False(predicate(new vswhere.VisualStudioInstance() { InstanceId = "123" }.WithSku(Sku.Professional).WithChannel(Channel.Stable)));
         }
 
         IOptions GetOptions(Sku? sku = null, Channel? channel = null, string expression = null) =>

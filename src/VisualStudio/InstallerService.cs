@@ -6,24 +6,48 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Devlooped.Web;
 
 namespace Devlooped
 {
     class InstallerService
     {
-        public Task InstallAsync(Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
+        /// <summary>
+        /// Resolves the latest Visual Studio major version by following the
+        /// unversioned stable bootstrapper redirect (e.g. /vs/stable/ → /vs/18/stable/).
+        /// </summary>
+        public async Task<string> GetLatestMajorAsync()
         {
-            // determine what's the latest & greatest VS from the docs site
-            // TODO: if the channel is preview, there' no easy way to get the major version from the web.
-            var html = HtmlDocument.Load("https://docs.microsoft.com/en-us/visualstudio/install/use-command-line-parameters-to-install-visual-studio");
-            var vs = html.CssSelectElements("a[href^=https://aka.ms/vs/][href$=/vs_enterprise.exe]")
-                .Select(e => Regex.Match(e.Attribute("href").Value!, "/(\\d\\d)/").Groups[1].Value)
-                .OrderByDescending(x => x)
-                .FirstOrDefault() ?? "17";
+            try
+            {
+                using var handler = new HttpClientHandler { AllowAutoRedirect = false };
+                using var client = new HttpClient(handler);
+                using var request = new HttpRequestMessage(HttpMethod.Head, "https://aka.ms/vs/stable/vs_enterprise.exe");
+                using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
 
-            return RunAsync(string.Empty, vs, channel, sku, args, output);
+                var location = response.Headers.Location?.ToString();
+                if (!string.IsNullOrEmpty(location))
+                {
+                    var match = Regex.Match(location, @"/vs/(\d+)/");
+                    if (match.Success)
+                        return match.Groups[1].Value;
+                }
+            }
+            catch
+            {
+                // Fall back below.
+            }
+
+            return "18";
         }
+
+        public async Task InstallAsync(Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
+        {
+            var vs = await GetLatestMajorAsync();
+            await RunAsync(string.Empty, vs, channel, sku, args, output);
+        }
+
+        public Task InstallAsync(string vs, Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
+            => RunAsync(string.Empty, vs, channel, sku, args, output);
 
         public Task UpdateAsync(string vs, Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
             => RunAsync("update", vs, channel, sku, args, output);
@@ -39,7 +63,7 @@ namespace Devlooped
 
         Task RunAsync(string command, string vs, Channel? channel, Sku? sku, IEnumerable<string> args, TextWriter output)
         {
-            // Microsoft.VisualStudio.Workload.NetCoreTools > Microsoft.NetCore.Component.DevelopmentTools
+            // Microsoft.VisualStudio.Workload.NetCoreTools was replaced starting with VS 17.
             if (int.TryParse(vs, out var major) && major >= 17)
                 args = args.Select(arg => arg == "Microsoft.VisualStudio.Workload.NetCoreTools" ? "Microsoft.NetCore.Component.DevelopmentTools" : arg);
 
@@ -75,10 +99,12 @@ namespace Devlooped
         string MapChannel(Channel? channel)
             => channel switch
             {
-                Channel.Preview => "pre",
+                Channel.Insiders => "insiders",
                 Channel.IntPreview => "intpreview",
                 Channel.Main => "int.main",
-                _ => "release"
+                // Stable is the default; Channel.Stable and null both map here.
+                // "release" is accepted on the CLI as a hidden alias for Stable.
+                _ => "stable"
             };
 
         string MapSku(Sku? sku)
@@ -101,7 +127,7 @@ namespace Devlooped
             response.EnsureSuccessStatusCode();
 
             var filePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString(), new Uri(bootstrapperUrl).Segments.Last());
-            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
             using var httpStream = await response.Content.ReadAsStreamAsync();
 
             using var fileStream = File.Create(filePath);

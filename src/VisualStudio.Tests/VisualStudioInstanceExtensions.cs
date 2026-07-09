@@ -15,12 +15,13 @@ namespace vswhere
             { Sku.TestAgent, "Microsoft.VisualStudio.Product.TestAgent" }
         };
 
+        // Channel IDs still use Release/Preview names even though CLI uses Stable/Insiders.
         static readonly Dictionary<Channel, string> productIdByChannel = new Dictionary<Channel, string>
         {
-            { Channel.Release, "VisualStudio.16.Release" },
-            { Channel.Preview, "VisualStudio.16.Preview" },
-            { Channel.IntPreview, "VisualStudio.16.IntPreview" },
-            { Channel.Main, "VisualStudio.16.int.main" },
+            { Channel.Stable, "VisualStudio.18.Release" },
+            { Channel.Insiders, "VisualStudio.18.Preview" },
+            { Channel.IntPreview, "VisualStudio.18.IntPreview" },
+            { Channel.Main, "VisualStudio.18.int.main" },
         };
 
         public static VisualStudioInstance WithSku(this VisualStudioInstance vsInstance, Sku sku)

@@ -30,36 +30,29 @@ namespace Devlooped
 
             args.AddRange(Descriptor.ExtraArguments);
 
-            // See also InstallerService.RunAsync where we do this mapping too.
-            var vs = Descriptor.Channel == null || Descriptor.Channel == Channel.Release ? "16" : "17";
-
-            // TODO: for now, we assume we're always doing an install.
-            var installBase = vs == "16" ?
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Microsoft Visual Studio", "2019") :
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Microsoft Visual Studio", "2022");
+            var vs = await installerService.GetLatestMajorAsync();
+            var installBase = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                "Microsoft Visual Studio",
+                vs);
 
             // There is at least one install already, so use nicknames for the new one.
             if (Directory.Exists(installBase) && !args.Contains("--nickname"))
             {
                 args.Add("--nickname");
-                if (Descriptor.Channel == Channel.Preview)
-                    args.Add("Preview");
-                else if (Descriptor.Channel == Channel.IntPreview)
-                    args.Add("IntPreview");
-                else if (Descriptor.Channel == Channel.Main)
-                    args.Add("main");
-                else
-                    args.Add(Descriptor.Sku.ToString().Substring(0, 3));
+                args.Add(ChannelFolderName(Descriptor.Channel) ?? Descriptor.Sku.ToString().Substring(0, 3));
             }
 
             var installPath = Path.Combine(installBase, Descriptor.Sku.ToString());
             var customPath = Directory.Exists(installPath);
             if (customPath)
             {
-                installPath = Path.Combine(installBase, Descriptor.Channel == Channel.Preview ? "Preview" : Descriptor.Channel == Channel.IntPreview ? "IntPreview" : Descriptor.Sku.ToString());
+                installPath = Path.Combine(installBase, ChannelFolderName(Descriptor.Channel) ?? Descriptor.Sku.ToString());
                 if (Directory.Exists(installPath))
                 {
-                    installPath = Path.Combine(installBase, Descriptor.Channel == Channel.Preview ? "Pre" + Descriptor.Sku.ToString() : Descriptor.Channel == Channel.IntPreview ? "Int" + Descriptor.Sku.ToString() : Descriptor.Sku.ToString());
+                    var prefix = Descriptor.Channel == Channel.Insiders ? "Pre" :
+                        Descriptor.Channel == Channel.IntPreview ? "Int" : string.Empty;
+                    installPath = Path.Combine(installBase, prefix + Descriptor.Sku.ToString());
                 }
             }
 
@@ -69,7 +62,16 @@ namespace Devlooped
                 args.Add(installPath);
             }
 
-            await installerService.InstallAsync(Descriptor.Channel, Descriptor.Sku, args, output);
+            await installerService.InstallAsync(vs, Descriptor.Channel, Descriptor.Sku, args, output);
         }
+
+        static string ChannelFolderName(Channel? channel)
+            => channel switch
+            {
+                Channel.Insiders => "Insiders",
+                Channel.IntPreview => "IntPreview",
+                Channel.Main => "main",
+                _ => null,
+            };
     }
 }
