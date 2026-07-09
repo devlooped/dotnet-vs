@@ -16,7 +16,7 @@ dnx vs -- [command] [options]
 To get the CI version:
 
 ```
-dnx vs --prerelease --add-source https://pkg.kzu.app/index.json -- [command] [options]
+dnx vs --prerelease --source https://pkg.kzu.app/index.json -- [command] [options]
 ```
 
 <!-- #content -->
