@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using DotNetConfig;
+using NuGet.Versioning;
 
 namespace Devlooped
 {
@@ -13,21 +14,23 @@ namespace Devlooped
     /// </summary>
     class VersionChecker
     {
-        static readonly Version developmentVersion = new Version(42, 42, 42, 0);
+        static readonly NuGetVersion developmentVersion = new(42, 42, 42);
 
-        readonly Version currentVersion;
+        readonly NuGetVersion currentVersion;
         readonly ConfigLevel saveLevel;
         readonly string repositoryUrl;
-        readonly Task<Version> getLatest;
+        readonly Task<NuGetVersion> getLatest;
         ConfigSection configuration;
 
         public VersionChecker()
-            : this(new Version(ThisAssembly.Info.Version), Config.Build(ConfigLevel.Global), saveLevel: ConfigLevel.Global)
+            : this(ParseVersion(ThisAssembly.Project.Version) ?? developmentVersion,
+                  Config.Build(ConfigLevel.Global),
+                  saveLevel: ConfigLevel.Global)
         {
         }
 
         // For testing
-        internal VersionChecker(Version currentVersion, Config configuration,
+        internal VersionChecker(NuGetVersion currentVersion, Config configuration,
             string section = ThisAssembly.Project.AssemblyName,
             string repositoryUrl = ThisAssembly.Project.RepositoryUrl,
             ConfigLevel saveLevel = ConfigLevel.Local)
@@ -46,7 +49,7 @@ namespace Devlooped
 
         public async Task ShowVersionAsync(TextWriter output)
         {
-            output.WriteLine($"{ThisAssembly.Project.AssemblyName} version {currentVersion.ToString(3)} ({ThisAssembly.Project.DateTime})");
+            output.WriteLine($"{ThisAssembly.Project.AssemblyName} version {currentVersion.ToNormalizedString()} ({ThisAssembly.Project.DateTime})");
 
             if (NoOp)
                 return;
@@ -60,9 +63,9 @@ namespace Devlooped
                 // Couldn't check latest version for some reason
                 output.WriteLine($"Latest version at {repositoryUrl}/releases/latest");
             else if (latestVersion > currentVersion)
-                output.WriteLine($"New version {latestVersion} is available. Run 'dnx {ThisAssembly.Project.AssemblyName} -- update-self' to update. See {repositoryUrl}/releases/tag/v{latestVersion}");
+                output.WriteLine($"New version {latestVersion.ToNormalizedString()} is available. Run 'dnx {ThisAssembly.Project.AssemblyName} -- update-self' to update. See {repositoryUrl}/releases/tag/v{latestVersion.ToNormalizedString()}");
             else if (currentVersion == developmentVersion)
-                output.WriteLine($"Latest version {latestVersion} is available at {repositoryUrl}/releases/tag/v{latestVersion}");
+                output.WriteLine($"Latest version {latestVersion.ToNormalizedString()} is available at {repositoryUrl}/releases/tag/v{latestVersion.ToNormalizedString()}");
 
             output.WriteLine();
         }
@@ -79,15 +82,15 @@ namespace Devlooped
                 latestVersion != developmentVersion &&
                 latestVersion > currentVersion)
             {
-                output.WriteLine($"New version {latestVersion} is available. Run 'dnx {ThisAssembly.Project.AssemblyName} -- update-self' to update. See {repositoryUrl}/releases/tag/v{latestVersion}");
+                output.WriteLine($"New version {latestVersion.ToNormalizedString()} is available. Run 'dnx {ThisAssembly.Project.AssemblyName} -- update-self' to update. See {repositoryUrl}/releases/tag/v{latestVersion.ToNormalizedString()}");
             }
         }
 
-        async Task<Version> GetLatestAsync()
+        async Task<NuGetVersion> GetLatestAsync()
         {
             var lastChecked = configuration.GetDateTime("checked");
             var latestSaved = configuration.GetString("latest");
-            var latestVersion = Version.TryParse(latestSaved, out var parsed) ? parsed : developmentVersion;
+            var latestVersion = ParseVersion(latestSaved) ?? developmentVersion;
 
             // We check once a week at most.
             if (lastChecked == null ||
@@ -99,15 +102,22 @@ namespace Devlooped
                 if (response.StatusCode == HttpStatusCode.Found)
                 {
                     var latestTagUrl = response.Headers.Location.ToString();
-                    latestVersion = new Version(latestTagUrl.Split('/').Last().Trim('v'));
-                    configuration = configuration
-                        .SetString("latest", latestVersion.ToString(3), saveLevel)
-                        // NOTE: we only save checked date if we succeeded at checking latest.
-                        .SetDateTime("checked", DateTime.Now, saveLevel);
+                    var tag = latestTagUrl.Split('/').Last().TrimStart('v');
+                    if (ParseVersion(tag) is NuGetVersion parsedLatest)
+                    {
+                        latestVersion = parsedLatest;
+                        configuration = configuration
+                            .SetString("latest", latestVersion.ToNormalizedString(), saveLevel)
+                            // NOTE: we only save checked date if we succeeded at checking latest.
+                            .SetDateTime("checked", DateTime.Now, saveLevel);
+                    }
                 }
             }
 
             return latestVersion;
         }
+
+        static NuGetVersion ParseVersion(string value)
+            => !string.IsNullOrEmpty(value) && NuGetVersion.TryParse(value, out var version) ? version : null;
     }
 }
