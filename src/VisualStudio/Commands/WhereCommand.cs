@@ -1,64 +1,107 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.CommandLine;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using vswhere;
 
-namespace Devlooped
+namespace Devlooped;
+
+class WhereCommand : Command
 {
-    class WhereCommand : Command<WhereCommandDescriptor>
+    readonly WhereService whereService;
+    readonly SharedOptions.ChannelOptions channelOptions;
+    readonly Option<string> skuOption;
+    readonly Option<string> filterOption;
+    readonly Option<bool> firstOption;
+    readonly Option<string> propOption = new("--prop", "--property")
     {
-        readonly WhereService whereService;
+        Description = "The name of a property to return",
+    };
+    readonly Option<bool> listOption = new("--list")
+    {
+        Description = "Shows result as a list",
+    };
+    readonly Option<string[]> requiresOption = new("--requires")
+    {
+        Description = "A workload ID",
+    };
 
-        public WhereCommand(WhereCommandDescriptor descriptor, WhereService whereService) : base(descriptor) =>
-            this.whereService = whereService;
+    public WhereCommand(WhereService whereService)
+        : base(Commands.Where, "Locates the installed version(s) of Visual Studio that satisfy the requested requirements, optionally retrieving installation properties from it.")
+    {
+        this.whereService = whereService;
 
-        public override async Task ExecuteAsync(TextWriter output)
+        channelOptions = SharedOptions.AddChannelOptions(this, "show");
+        skuOption = SharedOptions.SkuOption();
+        filterOption = SharedOptions.FilterOption();
+        firstOption = SharedOptions.FirstOption("show");
+
+        Options.Add(skuOption);
+        Options.Add(filterOption);
+        Options.Add(firstOption);
+        Options.Add(propOption);
+        Options.Add(listOption);
+        Options.Add(requiresOption);
+
+        TreatUnmatchedTokensAsErrors = false;
+
+        SetAction(async (parseResult, _) =>
         {
-            var instances = (await whereService.GetAllInstancesAsync(
-                Descriptor.Options,
-                Descriptor.WorkloadsArguments.Concat(Descriptor.ExtraArguments))).ToList();
+            await ExecuteAsync(parseResult, parseResult.InvocationConfiguration.Output);
+            return 0;
+        });
+    }
 
-            foreach (var instance in instances)
+    async Task ExecuteAsync(ParseResult parse, TextWriter output)
+    {
+        var filter = CommandHelpers.GetFilter(parse, channelOptions, skuOption, filterOption, firstOption);
+        var workloads = CommandHelpers.GetWorkloadIds(parse, requiresOption);
+        var extra = CommandHelpers.ToWorkloadArgs("requires", workloads).Concat(parse.UnmatchedTokens);
+
+        var property = parse.GetValue(propOption);
+        var showList = parse.GetValue(listOption);
+
+        var instances = (await whereService.GetAllInstancesAsync(filter, extra)).ToList();
+
+        foreach (var instance in instances)
+        {
+            var properties = GetProperties(instance);
+
+            if (string.IsNullOrEmpty(property))
             {
-                var properties = GetProperties(instance);
+                output.WriteLine($"{instance.DisplayName} - Version {instance.Catalog.ProductDisplayVersion}");
 
-                if (string.IsNullOrEmpty(Descriptor.Property))
+                if (!showList)
                 {
-                    output.WriteLine($"{instance.DisplayName} - Version {instance.Catalog.ProductDisplayVersion}");
+                    foreach (var prop in properties)
+                        output.WriteLine($"{prop.PropertyName}: {prop.PropertyValue}");
 
-                    if (!Descriptor.ShowList)
-                    {
-                        foreach (var prop in properties)
-                            output.WriteLine($"{prop.PropertyName}: {prop.PropertyValue}");
-
-                        output.WriteLine();
-                    }
-                }
-                else
-                {
-                    Console.WriteLine(
-                        properties
-                            .Where(x => x.PropertyName == Descriptor.Property)
-                            .Select(x => x.PropertyValue)
-                            .FirstOrDefault() ?? string.Empty);
+                    output.WriteLine();
                 }
             }
+            else
+            {
+                Console.WriteLine(
+                    properties
+                        .Where(x => x.PropertyName == property)
+                        .Select(x => x.PropertyValue)
+                        .FirstOrDefault() ?? string.Empty);
+            }
         }
-
-        IEnumerable<(string PropertyName, object PropertyValue)> GetProperties(VisualStudioInstance instance)
-        {
-            var props = GetProperties(instance, "Catalog", "Properties").ToList();
-            props.AddRange(GetProperties(instance.Catalog).Select(x => ($"Catalog.{x.PropertyName}", x.PropertyValue)));
-            props.AddRange(GetProperties(instance.Properties).Select(x => ($"Properties.{x.PropertyName}", x.PropertyValue)));
-
-            return props;
-        }
-
-        IEnumerable<(string PropertyName, object PropertyValue)> GetProperties<T>(T instance, params string[] skipProps) =>
-            instance.GetType().GetProperties()
-                .Where(x => skipProps == null || !skipProps.Contains(x.Name))
-                .Select(x => (x.Name, x.GetValue(instance)));
     }
+
+    static IEnumerable<(string PropertyName, object PropertyValue)> GetProperties(VisualStudioInstance instance)
+    {
+        var props = GetProperties(instance, "Catalog", "Properties").ToList();
+        props.AddRange(GetProperties(instance.Catalog).Select(x => ($"Catalog.{x.PropertyName}", x.PropertyValue)));
+        props.AddRange(GetProperties(instance.Properties).Select(x => ($"Properties.{x.PropertyName}", x.PropertyValue)));
+        return props;
+    }
+
+    static IEnumerable<(string PropertyName, object PropertyValue)> GetProperties<T>(T instance, params string[] skipProps) =>
+        instance.GetType().GetProperties()
+            .Where(x => skipProps == null || !skipProps.Contains(x.Name))
+            .Select(x => (x.Name, x.GetValue(instance)));
 }

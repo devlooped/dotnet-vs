@@ -1,51 +1,85 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using System.CommandLine;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using vswhere;
 
-namespace Devlooped
+namespace Devlooped;
+
+class ModifyCommand : Command
 {
-    class ModifyCommand : Command<ModifyCommandDescriptor>
+    readonly WhereService whereService;
+    readonly InstallerService installerService;
+    readonly SharedOptions.ChannelOptions channelOptions;
+    readonly Option<string> skuOption;
+    readonly Option<string> filterOption;
+    readonly Option<bool> firstOption;
+    readonly Option<string[]> addOption = new("--add")
     {
-        readonly WhereService whereService;
-        readonly InstallerService installerService;
+        Description = "A workload ID",
+    };
+    readonly Option<string[]> removeOption = new("--remove")
+    {
+        Description = "A workload ID",
+    };
 
-        public ModifyCommand(ModifyCommandDescriptor descriptor, WhereService whereService, InstallerService installerService)
-            : base(descriptor)
+    public ModifyCommand(WhereService whereService, InstallerService installerService)
+        : base(Commands.Modify, "Modifies an installation of Visual Studio.")
+    {
+        this.whereService = whereService;
+        this.installerService = installerService;
+
+        channelOptions = SharedOptions.AddChannelOptions(this, "modify");
+        skuOption = SharedOptions.SkuOption();
+        filterOption = SharedOptions.FilterOption();
+        firstOption = SharedOptions.FirstOption("modify");
+
+        Options.Add(skuOption);
+        Options.Add(filterOption);
+        Options.Add(firstOption);
+        Options.Add(addOption);
+        Options.Add(removeOption);
+
+        TreatUnmatchedTokensAsErrors = false;
+
+        SetAction(async (parseResult, _) =>
         {
-            this.whereService = whereService;
-            this.installerService = installerService;
-        }
+            await ExecuteAsync(parseResult, parseResult.InvocationConfiguration.Output);
+            return 0;
+        });
+    }
 
-        public override async Task ExecuteAsync(TextWriter output)
+    async Task ExecuteAsync(ParseResult parse, TextWriter output)
+    {
+        var filter = CommandHelpers.GetFilter(parse, channelOptions, skuOption, filterOption, firstOption);
+        var added = CommandHelpers.GetWorkloadIds(parse, addOption);
+        var removed = CommandHelpers.GetWorkloadIds(parse, removeOption);
+        var extra = parse.UnmatchedTokens;
+
+        var instances = await whereService.GetAllInstancesAsync(filter);
+        var instance = new Chooser().Choose(instances, output);
+
+        if (instance != null)
         {
-            var instances = await whereService.GetAllInstancesAsync(Descriptor.Options);
+            var args = new List<string>();
 
-            var instance = new Chooser().Choose(instances, output);
+            if (added.Length > 0 || removed.Length > 0 || extra.Contains("--config"))
+                args.Add("--passive");
 
-            if (instance != null)
-            {
-                var args = new List<string>();
+            args.AddRange(CommandHelpers.ToWorkloadArgs("add", added));
+            args.AddRange(CommandHelpers.ToWorkloadArgs("remove", removed));
 
-                if (Descriptor.WorkloadsAdded.Any() || Descriptor.WorkloadsRemoved.Any() || Descriptor.ExtraArguments.Contains("--config"))
-                    args.Add("--passive"); // otherwise let the user to select the workload in the UI
+            args.Add("--installPath");
+            args.Add(instance.InstallationPath);
 
-                args.AddRange(Descriptor.WorkloadsAdded);
-                args.AddRange(Descriptor.WorkloadsRemoved);
+            args.AddRange(extra);
 
-                args.Add("--installPath");
-                args.Add(instance.InstallationPath);
-
-                args.AddRange(Descriptor.ExtraArguments);
-
-                // If the channel is not a built-in one, use the existing Uri for updates.
-                var channel = instance.GetChannel();
-                if (channel != null)
-                    await installerService.ModifyAsync(instance.InstallationVersion.Major.ToString(), channel, instance.GetSku(), args, output);
-                else
-                    await installerService.ModifyAsync(instance.ChannelUri.Replace("/channel", ""), instance.GetSku(), args, output);
-            }
+            var channel = instance.GetChannel();
+            if (channel != null)
+                await installerService.ModifyAsync(instance.InstallationVersion.Major.ToString(), channel, instance.GetSku(), args, output);
+            else
+                await installerService.ModifyAsync(instance.ChannelUri.Replace("/channel", ""), instance.GetSku(), args, output);
         }
     }
 }

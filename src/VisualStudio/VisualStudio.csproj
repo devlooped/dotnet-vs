@@ -43,9 +43,9 @@ See full documentation at $(PackageProjectUrl).
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="all" />
+    <PackageReference Include="System.CommandLine" Version="2.0.9" />
     <PackageReference Include="System.Text.Json" Version="10.0.9" />
     <PackageReference Include="vswhere" Version="3.1.7" PrivateAssets="all" />
-    <PackageReference Include="Mono.Options" Version="6.12.0.148" />
     <PackageReference Include="ThisAssembly.AssemblyInfo" Version="2.1.2" PrivateAssets="all" />
     <PackageReference Include="ThisAssembly.Project" Version="2.1.2" PrivateAssets="all" />
     <PackageReference Include="System.Management" Version="10.0.9" />
@@ -61,7 +61,7 @@ See full documentation at $(PackageProjectUrl).
   <ItemGroup>
     <None Remove="Docs\alias.md" />
     <None Remove="Docs\client.md" />
-    <None Include="..\..\readme.md" PackagePath="readme.md" Pack="true" />
+    <None Include="readme.md" PackagePath="readme.md" Pack="true" />
   </ItemGroup>
 
   <ItemGroup>

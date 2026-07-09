@@ -1,4 +1,3 @@
-﻿using System;
 using System.Threading.Tasks;
 using vswhere;
 using Xunit;
@@ -12,7 +11,7 @@ namespace Devlooped.Tests
         {
             var builder = new VisualStudioPredicateBuilder();
 
-            var predicate = await builder.BuildPredicateAsync(GetOptions(sku: Sku.Enterprise));
+            var predicate = await builder.BuildPredicateAsync(GetFilter(sku: Sku.Enterprise));
 
             Assert.True(predicate(new vswhere.VisualStudioInstance().WithSku(Sku.Enterprise)));
             Assert.False(predicate(new vswhere.VisualStudioInstance().WithSku(Sku.Professional)));
@@ -26,7 +25,7 @@ namespace Devlooped.Tests
         {
             var builder = new VisualStudioPredicateBuilder();
 
-            var predicate = await builder.BuildPredicateAsync(GetOptions(channel: Channel.Insiders));
+            var predicate = await builder.BuildPredicateAsync(GetFilter(channel: Channel.Insiders));
 
             Assert.True(predicate(new vswhere.VisualStudioInstance().WithChannel(Channel.Insiders)));
             Assert.False(predicate(new vswhere.VisualStudioInstance().WithChannel(Channel.IntPreview)));
@@ -39,7 +38,7 @@ namespace Devlooped.Tests
         {
             var builder = new VisualStudioPredicateBuilder();
 
-            var predicate = await builder.BuildPredicateAsync(GetOptions(expression: "x => x.InstanceId == \"123\""));
+            var predicate = await builder.BuildPredicateAsync(GetFilter(expression: "x => x.InstanceId == \"123\""));
 
             Assert.True(predicate(new vswhere.VisualStudioInstance() { InstanceId = "123" }));
             Assert.False(predicate(new vswhere.VisualStudioInstance() { InstanceId = "456" }));
@@ -51,12 +50,12 @@ namespace Devlooped.Tests
         {
             var builder = new VisualStudioPredicateBuilder();
 
-            var options = GetOptions(
+            var filter = GetFilter(
                 sku: Sku.Professional,
                 channel: Channel.IntPreview,
                 expression: "x => x.InstanceId == \"123\"");
 
-            var predicate = await builder.BuildPredicateAsync(options);
+            var predicate = await builder.BuildPredicateAsync(filter);
 
             Assert.True(predicate(new vswhere.VisualStudioInstance() { InstanceId = "123" }.WithSku(Sku.Professional).WithChannel(Channel.IntPreview)));
             Assert.False(predicate(new vswhere.VisualStudioInstance() { InstanceId = "456" }.WithSku(Sku.Professional).WithChannel(Channel.IntPreview)));
@@ -64,10 +63,7 @@ namespace Devlooped.Tests
             Assert.False(predicate(new vswhere.VisualStudioInstance() { InstanceId = "123" }.WithSku(Sku.Professional).WithChannel(Channel.Stable)));
         }
 
-        IOptions GetOptions(Sku? sku = null, Channel? channel = null, string expression = null) =>
-            new Options(
-                new SkuOption(sku),
-                new ChannelOption("test", channel),
-                new FilterOption(expression));
+        static VisualStudioFilter GetFilter(Sku? sku = null, Channel? channel = null, string expression = null) =>
+            new VisualStudioFilter(Channel: channel, Sku: sku, Expression: expression);
     }
 }

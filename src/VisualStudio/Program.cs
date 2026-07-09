@@ -1,141 +1,122 @@
-﻿using System;
-using System.Collections.Immutable;
+using System;
+using System.CommandLine;
+using System.CommandLine.Help;
 using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace Devlooped
+namespace Devlooped;
+
+class Program
 {
-    class Program
+    static readonly VersionChecker versionChecker = new();
+
+    readonly TextWriter output;
+    readonly string[] args;
+    readonly VsRootCommand rootCommand;
+    readonly ArgumentPreprocessor preprocessor;
+    readonly CancellationTokenSource cts = new();
+
+    static Task<int> Main(string[] args)
     {
-        static readonly VersionChecker versionChecker = new VersionChecker();
+        var program = new Program(Console.Out, args);
 
-        readonly CommandFactory commandFactory;
-        readonly TextWriter output;
-        readonly string[] args;
-        Command executingCommand;
-
-        static Task<int> Main(string[] args)
+        Console.CancelKeyPress += async (sender, e) =>
         {
-            var program = new Program(Console.Out, new CommandFactory(), args);
+            e.Cancel = true;
+            await program.CancelAsync();
+        };
 
-            Console.CancelKeyPress += async (sender, e) => await program.CancelAsync();
+        return program.RunAsync();
+    }
 
-            return program.RunAsync();
-        }
+    public Program(TextWriter output, params string[] args)
+        : this(output, new VsRootCommand(), new ArgumentPreprocessor(), args)
+    {
+    }
 
-        public Program(TextWriter output, CommandFactory commandFactory, params string[] args)
+    public Program(TextWriter output, VsRootCommand rootCommand, ArgumentPreprocessor preprocessor, params string[] args)
+    {
+        this.output = output;
+        this.args = args ?? Array.Empty<string>();
+        this.rootCommand = rootCommand;
+        this.preprocessor = preprocessor;
+    }
+
+    // Back-compat constructor used by older tests
+    public Program(TextWriter output, ArgumentPreprocessor preprocessor, params string[] args)
+        : this(output, new VsRootCommand(), preprocessor, args)
+    {
+    }
+
+    public Task CancelAsync()
+    {
+        ClientCommand.ActiveSession?.Dispose();
+        cts.Cancel();
+        return Task.CompletedTask;
+    }
+
+    public async Task<int> RunAsync()
+    {
+        if (preprocessor.IsTopLevelHelp(args))
         {
-            this.output = output;
-            this.args = args;
-            this.commandFactory = commandFactory;
-        }
-
-        public async Task CancelAsync()
-        {
-            if (executingCommand is IAsyncDisposable disposableCommand)
-                await disposableCommand.DisposeAsync();
-            else
-                (executingCommand as IDisposable)?.Dispose();
-        }
-
-        public async Task<int> RunAsync()
-        {
-            if (args.Length != 0 && new[] { "?", "-?", "/?", "-h", "/h", "--help", "/help" }.Contains(args[0]))
-            {
-                ShowUsage();
-                return 0;
-            }
-            if (args.Length != 0 && VersionOption.IsDefined(new[] { args[0] }))
-            {
-                // Only consider --version if it's the *first* argument defined.
-                await ShowVersion();
-                return 0;
-            }
-
-            var commandName = args.Length == 0 ? Commands.Run : args[0];
-            var commandArgs = ImmutableArray.Create(args.Length == 0 ? args : args.Skip(1).ToArray());
-            try
-            {
-                executingCommand = await commandFactory.CreateCommandAsync(commandName, commandArgs);
-
-                await executingCommand.ExecuteAsync(output);
-            }
-            catch (ShowUsageException ex)
-            {
-                var writer = new DefaultTextWriter(output);
-
-                if (!string.IsNullOrEmpty(ex.CommandDescriptor.Description))
-                {
-                    writer.WriteLine(ex.CommandDescriptor.Description);
-                    writer.WriteLine();
-                }
-
-                writer.WriteLine($"Usage: {ThisAssembly.Project.AssemblyName} {commandName} [options] [--save=]");
-
-                ex.CommandDescriptor.ShowUsage(writer);
-                ShowExamples(commandName);
-
-                return 0;
-            }
-            catch (Exception ex) when (!DebugOption.IsDefined(args))
-            {
-                output.WriteLine(ex.Message);
-
-                return ErrorCodes.Error;
-            }
-
-            await versionChecker.ShowUpdateAsync(output);
-
+            ShowUsage();
             return 0;
         }
 
-        protected bool NoVersionChecks
+        if (preprocessor.IsTopLevelVersion(args))
         {
-            get => versionChecker.NoOp;
-            set => versionChecker.NoOp = value;
+            await ShowVersion();
+            return 0;
         }
 
-        protected virtual async Task ShowVersion() => await versionChecker.ShowVersionAsync(output);
-
-        protected virtual void ShowUsage()
+        try
         {
-            output.WriteLine();
-            output.WriteLine($"Usage: {ThisAssembly.Project.AssemblyName} [command] [options|-?|-h|--help] [--save=ALIAS[--global]]");
-            output.WriteLine();
-            output.WriteLine("Supported commands:");
+            var processed = preprocessor.Process(args);
+            var parseResult = rootCommand.Parse(processed);
 
-            var maxWidth = commandFactory.GetRegisteredCommands().Select(x => x.Key.Length).Max() + 5;
-            foreach (var command in commandFactory.GetRegisteredCommands().OrderBy(x => x.Key))
-                output.WriteLine($"  {command.Key.GetNormalizedString(maxWidth)}{command.Value.Description}");
-        }
-
-        protected virtual void ShowExamples(string commandName)
-        {
-            if (Assembly.GetExecutingAssembly().GetManifestResourceStream("VisualStudio.Docs." + commandName + ".md") is Stream stream)
+            var config = new InvocationConfiguration
             {
-                using var reader = new StreamReader(stream);
-                var showLine = false;
-                var line = default(string);
-                while ((line = reader.ReadLine()) != null && !line.StartsWith("<!-- EXAMPLES_END"))
-                {
-                    if (line.StartsWith("<!-- EXAMPLES_BEGIN"))
-                    {
-                        // It means that we found the first comment and the file contains examples to be shown
-                        output.WriteLine();
-                        output.WriteLine("Examples:");
-                        output.WriteLine();
+                Output = output,
+                Error = output,
+                EnableDefaultExceptionHandler = false,
+            };
 
-                        showLine = true;
-                    }
-                    else if (showLine && !line.Trim().StartsWith("```"))
-                    {
-                        // Don't render the code formatting block
-                        output.WriteLine(line);
-                    }
-                }
-            }
+            var exitCode = await parseResult.InvokeAsync(config, cts.Token);
+
+            // Help / non-success: do not run version update check (matches prior behavior).
+            if (exitCode != 0 || parseResult.Action is HelpAction or ExamplesHelpAction)
+                return exitCode;
         }
+        catch (Exception ex) when (!SharedOptions.IsDebug(args))
+        {
+            output.WriteLine(ex.Message);
+            return ErrorCodes.Error;
+        }
+
+        await versionChecker.ShowUpdateAsync(output);
+        return 0;
+    }
+
+    protected bool NoVersionChecks
+    {
+        get => versionChecker.NoOp;
+        set => versionChecker.NoOp = value;
+    }
+
+    protected virtual async Task ShowVersion() => await versionChecker.ShowVersionAsync(output);
+
+    protected virtual void ShowUsage()
+    {
+        output.WriteLine();
+        output.WriteLine($"Usage: {ThisAssembly.Project.AssemblyName} [command] [options|-?|-h|--help] [--save=ALIAS[--global]]");
+        output.WriteLine();
+        output.WriteLine("Supported commands:");
+
+        var commands = rootCommand.Subcommands.Where(c => !c.Hidden).OrderBy(c => c.Name).ToList();
+        var maxWidth = commands.Select(x => x.Name.Length).DefaultIfEmpty(0).Max() + 5;
+        foreach (var command in commands)
+            output.WriteLine($"  {command.Name.GetNormalizedString(maxWidth)}{command.Description}");
     }
 }

@@ -1,26 +1,33 @@
-﻿using System.Diagnostics;
+using System.CommandLine;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Devlooped
+namespace Devlooped;
+
+class UpdateSelfCommand : Command
 {
-    class UpdateSelfCommand : Command<UpdateSelfCommandDescriptor>
+    public UpdateSelfCommand()
+        : base(Commands.System.UpdateSelf, "Updates the dotnet-vs tool itself")
     {
-        public UpdateSelfCommand(UpdateSelfCommandDescriptor descriptor) : base(descriptor) { }
+        Hidden = true;
 
-        public override Task ExecuteAsync(TextWriter output)
+        SetAction((parseResult, _) =>
         {
-            // Fire and forget, otherwise we will get access denied
-            Process.Start(
-                new ProcessStartInfo("dotnet")
-                {
-                    ArgumentList = { "tool", "update", "-g", "dotnet-vs" }
-                });
+            Execute(parseResult.InvocationConfiguration.Output);
+            return Task.FromResult(0);
+        });
+    }
 
-            output.WriteLine("Running \"dotnet tool update -g dotnet-vs\"...");
-            output.WriteLine("dotnet will continue running in background");
+    static void Execute(TextWriter output)
+    {
+        Process.Start(
+            new ProcessStartInfo("dotnet")
+            {
+                ArgumentList = { "tool", "update", "-g", "dotnet-vs" }
+            });
 
-            return Task.CompletedTask;
-        }
+        output.WriteLine("Running \"dotnet tool update -g dotnet-vs\"...");
+        output.WriteLine("dotnet will continue running in background");
     }
 }

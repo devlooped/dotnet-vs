@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -14,13 +14,15 @@ namespace Devlooped
         readonly string vswherePath = Path.Combine(Path.GetDirectoryName((Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly()).Location), "vswhere.exe");
 
         public Task<IEnumerable<VisualStudioInstance>> GetAllInstancesAsync() =>
-            GetAllInstancesAsync(Options.Empty);
+            GetAllInstancesAsync(new VisualStudioFilter());
 
-        public Task<IEnumerable<VisualStudioInstance>> GetAllInstancesAsync(IOptions options) =>
-            GetAllInstancesAsync(options, Enumerable.Empty<string>());
+        public Task<IEnumerable<VisualStudioInstance>> GetAllInstancesAsync(VisualStudioFilter filter) =>
+            GetAllInstancesAsync(filter, Enumerable.Empty<string>());
 
-        public async Task<IEnumerable<VisualStudioInstance>> GetAllInstancesAsync(IOptions options, IEnumerable<string> extraArguments)
+        public async Task<IEnumerable<VisualStudioInstance>> GetAllInstancesAsync(VisualStudioFilter filter, IEnumerable<string> extraArguments)
         {
+            filter ??= new VisualStudioFilter();
+
             var psi = new ProcessStartInfo(vswherePath)
             {
                 RedirectStandardOutput = true,
@@ -51,34 +53,12 @@ namespace Devlooped
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 });
 
-            var result = instances.Where(await new VisualStudioPredicateBuilder().BuildPredicateAsync(options));
+            var result = instances.Where(await new VisualStudioPredicateBuilder().BuildPredicateAsync(filter));
 
-            if (options.GetValue<FirstOption, bool>())
+            if (filter.First)
                 return result.Take(1);
 
             return result;
-        }
-
-        public void ShowUsage(ITextWriter output)
-        {
-            output.WriteLine();
-            output.WriteLine("[vswhere.exe options]");
-
-            var psi = new ProcessStartInfo(vswherePath)
-            {
-                RedirectStandardOutput = true,
-                ArgumentList = { "-nologo", "-?" }
-            };
-
-            var process = Process.Start(psi);
-            string line;
-            while ((line = process.StandardOutput.ReadLine()) != null)
-            {
-                if (line.StartsWith("Usage:") || line.StartsWith("Options:"))
-                    continue;
-
-                output.WriteLine(line);
-            }
         }
     }
 }

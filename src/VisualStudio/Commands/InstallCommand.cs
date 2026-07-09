@@ -1,77 +1,110 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.CommandLine;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Devlooped
+namespace Devlooped;
+
+class InstallCommand : Command
 {
-    class InstallCommand : Command<InstallCommandDescriptor>
+    readonly InstallerService installerService;
+    readonly SharedOptions.ChannelOptions channelOptions;
+    readonly Option<string> skuOption;
+    readonly Option<string> filterOption;
+    readonly Option<string> nicknameOption;
+    readonly Option<string[]> addOption = new("--add")
     {
-        readonly InstallerService installerService;
+        Description = "A workload ID",
+    };
 
-        public InstallCommand(InstallCommandDescriptor descriptor, InstallerService installerService) : base(descriptor) =>
-            this.installerService = installerService;
+    public InstallCommand(InstallerService installerService)
+        : base(Commands.Install, "Installs a specific edition of Visual Studio.")
+    {
+        this.installerService = installerService;
 
-        public override async Task ExecuteAsync(TextWriter output)
+        channelOptions = SharedOptions.AddChannelOptions(this, "install");
+        skuOption = SharedOptions.SkuOption();
+        filterOption = SharedOptions.FilterOption();
+        nicknameOption = SharedOptions.NicknameOption();
+
+        Options.Add(skuOption);
+        Options.Add(filterOption);
+        Options.Add(nicknameOption);
+        Options.Add(addOption);
+
+        TreatUnmatchedTokensAsErrors = false;
+
+        SetAction(async (parseResult, _) =>
         {
-            var args = new List<string>();
+            await ExecuteAsync(parseResult, parseResult.InvocationConfiguration.Output);
+            return 0;
+        });
+    }
 
-            args.AddRange(Descriptor.WorkloadArgs);
+    async Task ExecuteAsync(ParseResult parse, TextWriter output)
+    {
+        var channel = channelOptions.GetChannel(parse);
+        var sku = SharedOptions.ParseSku(parse.GetValue(skuOption)) ?? Sku.Community;
+        var nickname = parse.GetValue(nicknameOption);
+        var workloads = CommandHelpers.GetWorkloadIds(parse, addOption);
+        var extra = parse.UnmatchedTokens;
 
-            if (!string.IsNullOrEmpty(Descriptor.Nickname))
-            {
-                args.Add("--nickname");
-                args.Add(Descriptor.Nickname);
-            }
+        var args = new List<string>();
+        args.AddRange(CommandHelpers.ToWorkloadArgs("add", workloads));
 
-            if (!Descriptor.ExtraArguments.Any(x => x.TrimStart('-') == "config") && File.Exists(".vsconfig"))
-                args.AddRange(new[] { "--config", ".vsconfig" });
-
-            args.AddRange(Descriptor.ExtraArguments);
-
-            var vs = await installerService.GetLatestMajorAsync();
-            var installBase = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-                "Microsoft Visual Studio",
-                vs);
-
-            // There is at least one install already, so use nicknames for the new one.
-            if (Directory.Exists(installBase) && !args.Contains("--nickname"))
-            {
-                args.Add("--nickname");
-                args.Add(ChannelFolderName(Descriptor.Channel) ?? Descriptor.Sku.ToString().Substring(0, 3));
-            }
-
-            var installPath = Path.Combine(installBase, Descriptor.Sku.ToString());
-            var customPath = Directory.Exists(installPath);
-            if (customPath)
-            {
-                installPath = Path.Combine(installBase, ChannelFolderName(Descriptor.Channel) ?? Descriptor.Sku.ToString());
-                if (Directory.Exists(installPath))
-                {
-                    var prefix = Descriptor.Channel == Channel.Insiders ? "Pre" :
-                        Descriptor.Channel == Channel.IntPreview ? "Int" : string.Empty;
-                    installPath = Path.Combine(installBase, prefix + Descriptor.Sku.ToString());
-                }
-            }
-
-            if (customPath)
-            {
-                args.Add("--installPath");
-                args.Add(installPath);
-            }
-
-            await installerService.InstallAsync(vs, Descriptor.Channel, Descriptor.Sku, args, output);
+        if (!string.IsNullOrEmpty(nickname))
+        {
+            args.Add("--nickname");
+            args.Add(nickname);
         }
 
-        static string ChannelFolderName(Channel? channel)
-            => channel switch
+        if (!extra.Any(x => x.TrimStart('-') == "config") && File.Exists(".vsconfig"))
+            args.AddRange(new[] { "--config", ".vsconfig" });
+
+        args.AddRange(extra);
+
+        var vs = await installerService.GetLatestMajorAsync();
+        var installBase = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+            "Microsoft Visual Studio",
+            vs);
+
+        if (Directory.Exists(installBase) && !args.Contains("--nickname"))
+        {
+            args.Add("--nickname");
+            args.Add(ChannelFolderName(channel) ?? sku.ToString().Substring(0, 3));
+        }
+
+        var installPath = Path.Combine(installBase, sku.ToString());
+        var customPath = Directory.Exists(installPath);
+        if (customPath)
+        {
+            installPath = Path.Combine(installBase, ChannelFolderName(channel) ?? sku.ToString());
+            if (Directory.Exists(installPath))
             {
-                Channel.Insiders => "Insiders",
-                Channel.IntPreview => "IntPreview",
-                Channel.Main => "main",
-                _ => null,
-            };
+                var prefix = channel == Channel.Insiders ? "Pre" :
+                    channel == Channel.IntPreview ? "Int" : string.Empty;
+                installPath = Path.Combine(installBase, prefix + sku.ToString());
+            }
+        }
+
+        if (customPath)
+        {
+            args.Add("--installPath");
+            args.Add(installPath);
+        }
+
+        await installerService.InstallAsync(vs, channel, sku, args, output);
     }
+
+    static string ChannelFolderName(Channel? channel) =>
+        channel switch
+        {
+            Channel.Insiders => "Insiders",
+            Channel.IntPreview => "IntPreview",
+            Channel.Main => "main",
+            _ => null,
+        };
 }

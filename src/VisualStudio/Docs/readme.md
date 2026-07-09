@@ -20,9 +20,9 @@ To get the CI version:
 dotnet tool update -g dotnet-vs --no-cache --add-source https://pkg.kzu.app/index.json
 ```
 
-Command line parsing is done with [Mono.Options](https://www.nuget.org/packages/mono.options) so 
-all the following variants for arguments are supported: `-flag`, `--flag`, `/flag`, `-flag=value`, `--flag=value`, 
-`/flag=value`, `-flag:value`, `--flag:value`, `/flag:value`, `-flag value`, `--flag value`, `/flag value`.
+Command line parsing is done with [System.CommandLine](https://www.nuget.org/packages/System.CommandLine),
+with a compatibility layer that still accepts common legacy forms such as `-flag`, `--flag`, `/flag`,
+`-flag=value`, `--flag=value`, `-flag:value`, `--flag:value`, and bare channel/SKU/workload shortcuts.
 
 Supported commands:
 

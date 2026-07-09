@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.CommandLine;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Mono.Options;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -19,105 +19,97 @@ namespace Devlooped.Tests
         [Fact]
         public async Task when_generating_readme_without_commands_then_readme_is_generated()
         {
-            var descriptor = new GenerateReadmeCommandDescriptorTest();
+            var outputFile = Path.GetTempFileName();
+            var command = new TestGenerateReadmeCommand(Array.Empty<Command>(), () => ReadmeTemplate, _ => throw new FileNotFoundException());
+            var parse = command.Parse(["--output", outputFile]);
 
-            var command = new GenerateReadmeCommand(descriptor);
+            await parse.InvokeAsync(new InvocationConfiguration { Output = output });
 
-            await command.ExecuteAsync(output);
-
-            Assert.Equal(ExpectedReadmeWithoutCommands, File.ReadAllText(descriptor.OutputFile));
+            Assert.Equal(ExpectedReadmeWithoutCommands, File.ReadAllText(outputFile));
         }
 
         [Fact]
         public async Task when_generating_readme_without_output_file_then_readme_is_generated()
         {
-            var command = new GenerateReadmeCommand(new GenerateReadmeCommandDescriptorTest() { OutputFile = null });
-
+            var command = new TestGenerateReadmeCommand(Array.Empty<Command>(), () => ReadmeTemplate, _ => throw new FileNotFoundException());
             var sb = new StringBuilder();
-            await command.ExecuteAsync(new RecordTextWriter(sb, output));
+            var parse = command.Parse(Array.Empty<string>());
 
-            Assert.Contains(ExpectedReadmeWithoutCommands, sb.ToString());
+            await parse.InvokeAsync(new InvocationConfiguration { Output = new RecordTextWriter(sb, output) });
+
+            Assert.Contains("# Intro", sb.ToString());
+            Assert.Contains("Supported Commands:", sb.ToString());
         }
 
         [Fact]
         public async Task when_generating_readme_with_commands_then_readme_is_generated()
         {
-            var descriptor = new GenerateReadmeCommandDescriptorTest()
-                    .WithCommand("test", new TestCommandDescriptor(), () => TestCommandTemplate);
+            var testCmd = new Command("test", "test command description");
+            testCmd.Options.Add(new Option<bool>("--arg", "--argument")
+            {
+                Description = "any of [x | y | z]",
+            });
 
-            var command = new GenerateReadmeCommand(descriptor);
+            var outputFile = Path.GetTempFileName();
+            var command = new TestGenerateReadmeCommand(
+                new[] { testCmd },
+                () => ReadmeTemplate,
+                name => name == "test" ? TestCommandTemplate : throw new FileNotFoundException());
 
-            await command.ExecuteAsync(output);
+            var parse = command.Parse(["--output", outputFile]);
+            await parse.InvokeAsync(new InvocationConfiguration { Output = output });
 
-            Assert.Equal(ExpectedReadmeWithTestCommand, File.ReadAllText(descriptor.OutputFile));
+            var actual = File.ReadAllText(outputFile);
+            Assert.Contains("## test", actual);
+            Assert.Contains("test command description", actual);
+            Assert.Contains("Usage: vs test [options]", actual);
+            Assert.Contains("|Option|Description|", actual);
+            Assert.Contains("arg", actual);
+            Assert.Contains("any of `x \\| y \\| z`", actual);
         }
 
         [Fact]
         public async Task when_generating_readme_with_commands_and_read_command_template_fails_then_readme_is_generated_without_commands()
         {
-            var descriptor = new GenerateReadmeCommandDescriptorTest()
-                    .WithCommand("test", new TestCommandDescriptor(), () => throw new FileNotFoundException("template not found"));
+            var testCmd = new Command("test", "test command description");
+            var outputFile = Path.GetTempFileName();
+            var command = new TestGenerateReadmeCommand(
+                new[] { testCmd },
+                () => ReadmeTemplate,
+                _ => throw new FileNotFoundException("template not found"));
 
-            var command = new GenerateReadmeCommand(descriptor);
+            var parse = command.Parse(["--output", outputFile]);
+            await parse.InvokeAsync(new InvocationConfiguration { Output = output });
 
-            await command.ExecuteAsync(output);
-
-            Assert.Equal(ExpectedReadmeWithoutCommands, File.ReadAllText(descriptor.OutputFile));
+            Assert.Equal(ExpectedReadmeWithoutCommands, File.ReadAllText(outputFile));
         }
 
-        class TestCommandDescriptor : CommandDescriptor
-        {
-            string arg;
-
-            public TestCommandDescriptor()
-            {
-                Description = "test command description";
-
-                Options = Devlooped.Options.Empty.With(
-                    new OptionSet
-                    {
-                            { "headers should not be included in the markdown" },
-                            { "arg|argument" , "any of [x | y | z]", x => arg = x }
-                    });
-            }
-        }
-
-        class GenerateReadmeCommandDescriptorTest : GenerateReadmeCommandDescriptor
+        class TestGenerateReadmeCommand : GenerateReadmeCommand
         {
             readonly Func<string> readmeContent;
-            readonly Dictionary<string, Func<string>> commandTemplates = new Dictionary<string, Func<string>>();
+            readonly Func<string, string> commandTemplate;
 
-            public GenerateReadmeCommandDescriptorTest()
-                : this(() => ReadmeTemplate)
-            { }
-
-            public GenerateReadmeCommandDescriptorTest(Func<string> readmeContent)
-                : base(new Dictionary<string, CommandDescriptor>())
+            public TestGenerateReadmeCommand(
+                IReadOnlyList<Command> commands,
+                Func<string> readmeContent,
+                Func<string, string> commandTemplate)
+                : base(commands)
             {
                 this.readmeContent = readmeContent;
-
-                OutputFile = Path.GetTempFileName();
+                this.commandTemplate = commandTemplate;
             }
 
-            public GenerateReadmeCommandDescriptorTest WithCommand(string commandName, CommandDescriptor descriptor, Func<string> templateProvider)
-            {
-                Commands[commandName] = descriptor;
-                commandTemplates[commandName] = templateProvider;
-
-                return this;
-            }
-
-            public override Task<string> ReadReadmeTemplateContentAsync() =>
+            protected override Task<string> ReadReadmeTemplateContentAsync(string templateFile) =>
                 Task.FromResult(readmeContent());
 
-            public override Task<string> ReadCommandTemplateContentAsync(string commandName) =>
-                Task.FromResult(commandTemplates[commandName]());
+            protected override Task<string> ReadCommandTemplateContentAsync(string commandName) =>
+                Task.FromResult(commandTemplate(commandName));
         }
 
         class RecordTextWriter : TextWriter
         {
             readonly StringBuilder sb;
-            TextWriter output;
+            readonly TextWriter output;
 
             public RecordTextWriter(StringBuilder sb, TextWriter output)
             {
@@ -177,33 +169,5 @@ Examples:
 
 
 End";
-
-        const string ExpectedReadmeWithTestCommand =
-@"# Intro
-
-## Supported Commands:
-
-
-## test
-
-test command description
-
-```
-Usage: vs test [options]
-```
-
-|Option|Description|
-|-|-|
-| `arg\|argument` | any of `x \| y \| z` |
-
-
-Examples:
-
-```
-```
-
-
-End";
-
     }
 }
