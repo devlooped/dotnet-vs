@@ -60,9 +60,10 @@ See full documentation at $(PackageProjectUrl).
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Docs\alias.md" />
-    <None Remove="Docs\client.md" />
-    <None Include="readme.md" PackagePath="readme.md" Pack="true" />
+    <!-- Docs/*.md are EmbeddedResource only; keep them out of None so nested
+         Docs/readme.md cannot compete with the package PackageReadmeFile. -->
+    <None Remove="Docs\*.md" />
+    <None Update="readme.md" PackagePath="readme.md" Pack="true" />
   </ItemGroup>
 
   <ItemGroup>
