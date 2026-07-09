@@ -1,6 +1,5 @@
-<h1 id="vs"><img src="https://raw.githubusercontent.com/devlooped/dotnet-vs/main/docs/img/icon.svg" alt="icon" height="32" width="32" style="vertical-align: text-top; border: 0px; padding: 0px; margin: 0px">  vs</h1>
-
-A global tool for running, managing and querying Visual Studio installations
+![Icon](https://raw.githubusercontent.com/devlooped/dotnet-vs/main/docs/img/icon-32.png) dnx vs
+============
 
 [![Version](https://img.shields.io/nuget/v/vs.svg?color=royalblue)](https://www.nuget.org/packages/vs)
 [![Downloads](https://img.shields.io/nuget/dt/vs.svg?color=darkmagenta)](https://www.nuget.org/packages/vs)
@@ -17,8 +16,11 @@ dnx vs -- [command] [options]
 To get the CI version:
 
 ```
-dnx vs --prerelease --add-source https://pkg.kzu.app/index.json -- [command] [options]
+dnx vs --prerelease --source https://pkg.kzu.app/index.json -- [command] [options]
 ```
+
+<!-- #content -->
+A global tool for running, managing and querying Visual Studio installations
 
 Command line parsing is done with [System.CommandLine](https://www.nuget.org/packages/System.CommandLine),
 with a compatibility layer that still accepts common legacy forms such as `-flag`, `--flag`, `/flag`,
@@ -59,11 +61,22 @@ intuitive command line, such as `dnx vs -- install +mobile -sku:enterprise` or `
 (runs the VS with the mobile workload installed). The *modify* command uses `+` and `-` 
 prefix to add or remove workloads respectively, for example.
 
+<!-- #content -->
+---
+<!-- include https://github.com/devlooped/.github/raw/main/osmf.md -->
+## Open Source Maintenance Fee
 
-## Sponsors
+To ensure the long-term sustainability of this project, users of this package who generate 
+revenue must pay an [Open Source Maintenance Fee](https://opensourcemaintenancefee.org). 
+While the source code is freely available under the terms of the [License](license.txt), 
+this package and other aspects of the project require [adherence to the Maintenance Fee](osmfeula.txt).
 
-<h3 style="vertical-align: text-top" id="by-clarius">
-<img src="https://raw.githubusercontent.com/devlooped/oss/main/assets/images/sponsors.svg" alt="sponsors" height="36" width="36" style="vertical-align: text-top; border: 0px; padding: 0px; margin: 0px">&nbsp;&nbsp;by&nbsp;<a href="https://github.com/clarius">@clarius</a>&nbsp;<img src="https://raw.githubusercontent.com/clarius/branding/main/logo/logo.svg" alt="sponsors" height="36" width="36" style="vertical-align: text-top; border: 0px; padding: 0px; margin: 0px">
-</h3>
+To pay the Maintenance Fee, [become a Sponsor](https://github.com/sponsors/devlooped) at the proper 
+OSMF tier. A single fee covers all of [Devlooped packages](https://www.nuget.org/profiles/Devlooped).
+
+<!-- https://github.com/devlooped/.github/raw/main/osmf.md -->
+---
+<!-- include https://github.com/devlooped/sponsors/raw/main/footer.md -->
+# Sponsors 
 
 *[get mentioned here too](https://github.com/sponsors/devlooped)!*
