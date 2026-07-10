@@ -1,3 +1,4 @@
+using System.Linq;
 using Xunit;
 
 namespace Devlooped.Tests
@@ -56,6 +57,28 @@ namespace Devlooped.Tests
 
             Assert.Equal(parsed, string.Join(' ', removes));
             Assert.Equal(extra, string.Join(' ', leftover));
+        }
+
+        [Fact]
+        public void when_emitting_vswhere_requires_then_uses_single_dash()
+        {
+            // vswhere only accepts -requires; --requires is reported as "Unknown parameter".
+            var args = CommandHelpers.ToWorkloadArgs(
+                "requires",
+                ["Microsoft.VisualStudio.Workload.NativeDesktop"],
+                "-").ToArray();
+
+            Assert.Equal(["-requires", "Microsoft.VisualStudio.Workload.NativeDesktop"], args);
+        }
+
+        [Fact]
+        public void when_emitting_installer_add_then_uses_double_dash()
+        {
+            var args = CommandHelpers.ToWorkloadArgs(
+                "add",
+                ["Microsoft.VisualStudio.Workload.NativeDesktop"]).ToArray();
+
+            Assert.Equal(["--add", "Microsoft.VisualStudio.Workload.NativeDesktop"], args);
         }
     }
 }

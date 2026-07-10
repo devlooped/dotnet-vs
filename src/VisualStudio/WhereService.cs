@@ -38,7 +38,10 @@ namespace Devlooped
             };
 
             foreach (var arg in extraArguments)
-                psi.ArgumentList.Add(arg);
+            {
+                if (arg != null)
+                    psi.ArgumentList.Add(arg);
+            }
 
             var process = Process.Start(psi);
             var output = await process.StandardOutput.ReadToEndAsync();
