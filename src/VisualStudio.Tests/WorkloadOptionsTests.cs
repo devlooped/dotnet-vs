@@ -9,6 +9,7 @@ namespace Devlooped.Tests
         [InlineData("+", "--", "+core", "--requires Microsoft.VisualStudio.Workload.NetCoreTools", "")]
         [InlineData("+", "--", "+core +mobile", "--requires Microsoft.VisualStudio.Workload.NetCoreTools --requires Microsoft.VisualStudio.Workload.NetCrossPlat", "")]
         [InlineData("+", "--", "+core -version [\"16.8,)\"]", "--requires Microsoft.VisualStudio.Workload.NetCoreTools", "-version [\"16.8,)\"]")]
+        [InlineData("+", "--", "+vc", "--requires Microsoft.VisualStudio.Workload.VCTools", "")]
         [InlineData("+", "--", "+Microsoft.VisualStudio.SomeComponent", "--requires Microsoft.VisualStudio.SomeComponent", "")]
         [InlineData("+", "--", "-someswitch", "", "-someswitch")]
         public void when_parsing_requires_then_converts_alias_to_argument(string prefix, string argumentPrefix, string arguments, string parsed, string extra)
