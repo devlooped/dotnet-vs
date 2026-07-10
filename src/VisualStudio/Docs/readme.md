@@ -46,6 +46,7 @@ For commands that receive workload ID switches (i.e. `dnx vs -- where -requires 
 | `desktop` | Microsoft.VisualStudio.Workload.ManagedDesktop |
 | `unity`   | Microsoft.VisualStudio.Workload.ManagedGame |
 | `native`  | Microsoft.VisualStudio.Workload.NativeDesktop |
+| `vc`      | Microsoft.VisualStudio.Workload.VCTools |
 | `web`     | Microsoft.VisualStudio.Workload.NetWeb |
 | `node`    | Microsoft.VisualStudio.Workload.Node |
 | `office`  | Microsoft.VisualStudio.Workload.Office |
@@ -60,6 +61,8 @@ the aliases might use a `+` prefix (like `+mobile`), which might make for a more
 intuitive command line, such as `dnx vs -- install +mobile -sku:enterprise` or `dnx vs -- +mobile` 
 (runs the VS with the mobile workload installed). The *modify* command uses `+` and `-` 
 prefix to add or remove workloads respectively, for example.
+
+See the [full list of workload and component IDs](https://aka.ms/vs/workloads).
 
 <!-- #content -->
 ---

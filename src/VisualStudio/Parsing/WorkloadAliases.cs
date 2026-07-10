@@ -15,6 +15,7 @@ static class WorkloadAliases
         { "desktop", "Microsoft.VisualStudio.Workload.ManagedDesktop" },
         { "unity", "Microsoft.VisualStudio.Workload.ManagedGame" },
         { "native", "Microsoft.VisualStudio.Workload.NativeDesktop" },
+        { "vc", "Microsoft.VisualStudio.Workload.VCTools" },
         { "web", "Microsoft.VisualStudio.Workload.NetWeb" },
         { "node", "Microsoft.VisualStudio.Workload.Node" },
         { "office", "Microsoft.VisualStudio.Workload.Office" },
