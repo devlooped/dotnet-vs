@@ -114,7 +114,7 @@ class RunCommand : Command
             settings.Set<string>("devenv", null);
 
         IEnumerable<VisualStudioInstance> instances = (await whereService
-            .GetAllInstancesAsync(filter, extraArguments: CommandHelpers.ToWorkloadArgs("requires", workloads)))
+            .GetAllInstancesAsync(filter, extraArguments: CommandHelpers.ToWorkloadArgs("requires", workloads, "-")))
             .OrderByDescending(i => i.Catalog.BuildVersion);
 
         if (!string.IsNullOrEmpty(id))

@@ -29,6 +29,11 @@ static class CommandHelpers
         return values ?? Array.Empty<string>();
     }
 
-    public static IEnumerable<string> ToWorkloadArgs(string argumentName, IEnumerable<string> ids) =>
-        ids.SelectMany(id => new[] { "--" + argumentName, id });
+    /// <param name="argumentPrefix">
+    /// Switch prefix for the underlying tool. Use <c>-</c> for vswhere (e.g. <c>-requires</c>)
+    /// and <c>--</c> for the Visual Studio installer (e.g. <c>--add</c>).
+    /// </param>
+    public static IEnumerable<string> ToWorkloadArgs(string argumentName, IEnumerable<string> ids, string argumentPrefix = "--") =>
+        ids.Where(id => !string.IsNullOrEmpty(id))
+            .SelectMany(id => new[] { argumentPrefix + argumentName, id });
 }

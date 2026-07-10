@@ -58,7 +58,8 @@ class WhereCommand : Command
     {
         var filter = CommandHelpers.GetFilter(parse, channelOptions, skuOption, filterOption, firstOption);
         var workloads = CommandHelpers.GetWorkloadIds(parse, requiresOption);
-        var extra = CommandHelpers.ToWorkloadArgs("requires", workloads).Concat(parse.UnmatchedTokens);
+        // vswhere only accepts single-dash switches (e.g. -requires), not --requires.
+        var extra = CommandHelpers.ToWorkloadArgs("requires", workloads, "-").Concat(parse.UnmatchedTokens);
 
         var property = parse.GetValue(propOption);
         var showList = parse.GetValue(listOption);
