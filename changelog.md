@@ -1,5 +1,17 @@
 # Changelog
 
+## [v2.0.1](https://github.com/devlooped/dotnet-vs/tree/v2.0.1) (2026-07-10)
+
+[Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v2.0.0...v2.0.1)
+
+:sparkles: Implemented enhancements:
+
+- Add vc workload alias and docs link to full IDs [\#268](https://github.com/devlooped/dotnet-vs/pull/268) (@kzu)
+
+:bug: Fixed bugs:
+
+- Fix vswhere -requires switch for where/run workload filters [\#267](https://github.com/devlooped/dotnet-vs/pull/267) (@kzu)
+
 ## [v2.0.0](https://github.com/devlooped/dotnet-vs/tree/v2.0.0) (2026-07-09)
 
 [Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v1.3.0...v2.0.0)
