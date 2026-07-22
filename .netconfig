@@ -40,9 +40,9 @@
 
 [file "Directory.Build.rsp"]
 	url = https://github.com/devlooped/oss/blob/main/Directory.Build.rsp
-	etag = 0ccae83fc51f400bfd7058170bfec7aba11455e24a46a0d7e6a358da6486e255
+	etag = 9872addf980da78842d42e70e72f90fb10ba52c1c2ccddc8aa9a2b83e0005679
 	weak
-	sha = 0f7f7f7e8a29de9b535676f75fe7c67e629a5e8c
+	sha = 320a5c5710f269ccb038b5e74146fed8b5a114ae
 
 [file "_config.yml"]
 	url = https://github.com/devlooped/oss/blob/main/_config.yml
@@ -62,9 +62,9 @@
 
 [file "src/Directory.Build.targets"]
 	url = https://github.com/devlooped/oss/blob/main/src/Directory.Build.targets
-	etag = 2cca66d8a1adbae24dc2efee53a55fa09949242eb35b86c5fd66425da18c6107
+	etag = 22005ab28676aa6d790171003057c81fe4ceec01251626385a3dcef3417ae3cd
 	weak
-	sha = dcd5f0a9a00a5b0c23d41a71dcc66ea41dc5f75d
+	sha = 3a758f47e8955c15a016b3db08f383781cbdee26
 
 [file "src/kzu.snk"]
 	url = https://github.com/devlooped/oss/blob/main/src/kzu.snk
@@ -105,9 +105,9 @@
 	weak
 [file ".github/workflows/includes.yml"]
 	url = https://github.com/devlooped/oss/blob/main/.github/workflows/includes.yml
-	sha = 7c1c6e615b5785e0ac9db33cb17343d6c1de16ff
+	sha = d571412f07b0fb3c40023dc906f64906d7ed2b46
 
-	etag = 5e6a10be141ee629201bfad01eae09b5c36a67f541ec7ab411ae400b5d73de1d
+	etag = ab627107749577bb619b024aff93027359b66b4c3f5a85a36b235e428387cd17
 	weak
 [file ".github/release.yml"]
 	url = https://github.com/devlooped/oss/blob/main/.github/release.yml
