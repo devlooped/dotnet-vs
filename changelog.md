@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.0.2](https://github.com/devlooped/dotnet-vs/tree/v2.0.2) (2026-08-15)
+
+[Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v2.0.1...v2.0.2)
+
+:sparkles: Implemented enhancements:
+
+- Add --version to install and update commands [\#275](https://github.com/devlooped/dotnet-vs/pull/275) (@kzu)
+
 ## [v2.0.1](https://github.com/devlooped/dotnet-vs/tree/v2.0.1) (2026-07-10)
 
 [Full Changelog](https://github.com/devlooped/dotnet-vs/compare/v2.0.0...v2.0.1)
