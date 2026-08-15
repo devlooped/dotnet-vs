@@ -26,7 +26,11 @@ namespace Devlooped
             if (!string.IsNullOrEmpty(filter.Expression))
                 filterPredicate = await CSharpScript.EvaluateAsync<Func<VisualStudioInstance, bool>>(filter.Expression, scriptOptions);
 
-            return x => skuPredicate(x) && channelPredicate(x) && filterPredicate(x);
+            Func<VisualStudioInstance, bool> versionPredicate = _ => true;
+            if (!string.IsNullOrEmpty(filter.Version))
+                versionPredicate = x => VisualStudioVersion.Matches(x.Catalog?.ProductSemanticVersion, filter.Version);
+
+            return x => skuPredicate(x) && channelPredicate(x) && filterPredicate(x) && versionPredicate(x);
         }
     }
 }

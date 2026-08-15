@@ -63,7 +63,25 @@ namespace Devlooped.Tests
             Assert.False(predicate(new vswhere.VisualStudioInstance() { InstanceId = "123" }.WithSku(Sku.Professional).WithChannel(Channel.Stable)));
         }
 
-        static VisualStudioFilter GetFilter(Sku? sku = null, Channel? channel = null, string expression = null) =>
-            new VisualStudioFilter(Channel: channel, Sku: sku, Expression: expression);
+        [Fact]
+        public async Task when_evaluating_version_then_predicate_matches_semantic_prefix()
+        {
+            var builder = new VisualStudioPredicateBuilder();
+
+            var predicate = await builder.BuildPredicateAsync(GetFilter(version: "18.7"));
+
+            Assert.True(predicate(new vswhere.VisualStudioInstance
+            {
+                Catalog = new vswhere.VisualStudioCatalog { ProductSemanticVersion = "18.7.3" }
+            }));
+            Assert.False(predicate(new vswhere.VisualStudioInstance
+            {
+                Catalog = new vswhere.VisualStudioCatalog { ProductSemanticVersion = "18.8.0" }
+            }));
+            Assert.False(predicate(new vswhere.VisualStudioInstance()));
+        }
+
+        static VisualStudioFilter GetFilter(Sku? sku = null, Channel? channel = null, string expression = null, string version = null) =>
+            new VisualStudioFilter(Channel: channel, Sku: sku, Expression: expression, Version: version);
     }
 }

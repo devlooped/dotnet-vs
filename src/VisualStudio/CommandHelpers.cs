@@ -13,14 +13,16 @@ static class CommandHelpers
         Option<string> skuOption,
         Option<string> filterOption = null,
         Option<bool> firstOption = null,
-        Option<bool> allOption = null)
+        Option<bool> allOption = null,
+        Option<string> versionOption = null)
     {
         return new VisualStudioFilter(
             Channel: channelOptions.GetChannel(parse),
             Sku: SharedOptions.ParseSku(parse.GetValue(skuOption)),
             Expression: filterOption != null ? parse.GetValue(filterOption) : null,
             First: firstOption != null && parse.GetValue(firstOption),
-            All: allOption != null && parse.GetValue(allOption));
+            All: allOption != null && parse.GetValue(allOption),
+            Version: versionOption != null ? parse.GetValue(versionOption) : null);
     }
 
     public static string[] GetWorkloadIds(ParseResult parse, Option<string[]> option)

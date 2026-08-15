@@ -57,6 +57,12 @@ static class SharedOptions
             Description = "Expression to filter VS instances. E.g. `x => x.InstanceId = '123'`",
         };
 
+    public static Option<string> VersionOption(string verb) =>
+        new("--version", "-v")
+        {
+            Description = $"{verb} specific (semantic) version, such as 18.7 or 18.7.3",
+        };
+
     public static Option<bool> FirstOption(string verb) =>
         new("--first")
         {
@@ -142,14 +148,16 @@ static class SharedOptions
         Option<string> sku,
         Option<string> filter = null,
         Option<bool> first = null,
-        Option<bool> all = null)
+        Option<bool> all = null,
+        Option<string> version = null)
     {
         return new VisualStudioFilter(
             Channel: channel.GetChannel(parse),
             Sku: ParseSku(parse.GetValue(sku)),
             Expression: filter != null ? parse.GetValue(filter) : null,
             First: first != null && parse.GetValue(first),
-            All: all != null && parse.GetValue(all));
+            All: all != null && parse.GetValue(all),
+            Version: version != null ? parse.GetValue(version) : null);
     }
 
     public static Sku? ParseSku(string sku)

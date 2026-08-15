@@ -16,6 +16,7 @@ class UpdateCommand : Command
     readonly Option<string> filterOption;
     readonly Option<bool> firstOption;
     readonly Option<bool> allOption;
+    readonly Option<string> versionOption;
 
     public UpdateCommand(WhereService whereService, InstallerService installerService)
         : base(Commands.Update, "Updates an installation of Visual Studio.")
@@ -28,11 +29,13 @@ class UpdateCommand : Command
         filterOption = SharedOptions.FilterOption();
         firstOption = SharedOptions.FirstOption("Update");
         allOption = SharedOptions.AllOption("Update");
+        versionOption = SharedOptions.VersionOption("Update");
 
         Options.Add(skuOption);
         Options.Add(filterOption);
         Options.Add(firstOption);
         Options.Add(allOption);
+        Options.Add(versionOption);
 
         TreatUnmatchedTokensAsErrors = false;
 
@@ -45,7 +48,7 @@ class UpdateCommand : Command
 
     async Task ExecuteAsync(ParseResult parse, TextWriter output)
     {
-        var filter = CommandHelpers.GetFilter(parse, channelOptions, skuOption, filterOption, firstOption, allOption);
+        var filter = CommandHelpers.GetFilter(parse, channelOptions, skuOption, filterOption, firstOption, allOption, versionOption);
         var all = parse.GetValue(allOption);
         var extraArgs = parse.UnmatchedTokens.ToList();
 

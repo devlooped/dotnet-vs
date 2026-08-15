@@ -67,7 +67,7 @@ namespace Devlooped
             if (int.TryParse(vs, out var major) && major >= 17)
                 args = args.Select(arg => arg == "Microsoft.VisualStudio.Workload.NetCoreTools" ? "Microsoft.NetCore.Component.DevelopmentTools" : arg);
 
-            return RunAsync(command, $"https://aka.ms/vs/{vs}/{MapChannel(channel)}", sku, args, output);
+            return RunAsync(command, $"https://aka.ms/vs/{vs}/{MapChannel(vs, channel)}", sku, args, output);
         }
 
         async Task RunAsync(string command, string channelUri, Sku? sku, IEnumerable<string> args, TextWriter output)
@@ -96,12 +96,16 @@ namespace Devlooped
             process.WaitForExit();
         }
 
-        string MapChannel(Channel? channel)
-            => channel switch
+        string MapChannel(string vs, Channel? channel)
+            => (channel, vs) switch
             {
-                Channel.Insiders => "insiders",
-                Channel.IntPreview => "intpreview",
-                Channel.Main => "int.main",
+                (Channel.Insiders, "15" or "16" or "17") => "pre",
+                (Channel.Insiders, _) => "insiders",
+                (Channel.IntPreview, _) => "intpreview",
+                (Channel.Main, _) => "int.main",
+                // VS 2017-2022 used "release" for the current/stable channel.
+                // VS 2026+ uses "stable".
+                (_, "15" or "16" or "17") => "release",
                 // Stable is the default; Channel.Stable and null both map here.
                 // "release" is accepted on the CLI as a hidden alias for Stable.
                 _ => "stable"
