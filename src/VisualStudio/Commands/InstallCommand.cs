@@ -14,6 +14,7 @@ class InstallCommand : Command
     readonly Option<string> skuOption;
     readonly Option<string> filterOption;
     readonly Option<string> nicknameOption;
+    readonly Option<string> versionOption;
     readonly Option<string[]> addOption = new("--add")
     {
         Description = "A workload ID",
@@ -28,10 +29,12 @@ class InstallCommand : Command
         skuOption = SharedOptions.SkuOption();
         filterOption = SharedOptions.FilterOption();
         nicknameOption = SharedOptions.NicknameOption();
+        versionOption = SharedOptions.VersionOption("Install");
 
         Options.Add(skuOption);
         Options.Add(filterOption);
         Options.Add(nicknameOption);
+        Options.Add(versionOption);
         Options.Add(addOption);
 
         TreatUnmatchedTokensAsErrors = false;
@@ -48,6 +51,7 @@ class InstallCommand : Command
         var channel = channelOptions.GetChannel(parse);
         var sku = SharedOptions.ParseSku(parse.GetValue(skuOption)) ?? Sku.Community;
         var nickname = parse.GetValue(nicknameOption);
+        var version = parse.GetValue(versionOption);
         var workloads = CommandHelpers.GetWorkloadIds(parse, addOption);
         var extra = parse.UnmatchedTokens;
 
@@ -65,7 +69,7 @@ class InstallCommand : Command
 
         args.AddRange(extra);
 
-        var vs = await installerService.GetLatestMajorAsync();
+        var vs = VisualStudioVersion.GetMajor(version) ?? await installerService.GetLatestMajorAsync();
         var installBase = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
             "Microsoft Visual Studio",

@@ -8,4 +8,5 @@ record VisualStudioFilter(
     Sku? Sku = null,
     string Expression = null,
     bool First = false,
-    bool All = false);
+    bool All = false,
+    string Version = null);

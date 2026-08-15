@@ -27,5 +27,11 @@ Examples:
 # Install VS community with the .NET Core, ASP.NET and Azure workloads, 
 # shows installation progress and waits for it to finish before returning
 > dnx vs -- install +core +web +azure
+
+# Install VS 18 Enterprise
+> dnx vs -- install -v:18 -sku:ent
+
+# Install the latest VS 17 (2022) Community
+> dnx vs -- install --version 17
 ```
 <!-- EXAMPLES_END -->

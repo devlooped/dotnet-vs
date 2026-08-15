@@ -18,12 +18,14 @@ namespace Devlooped.Tests
             var all = SharedOptions.AllOption("test");
             var nick = SharedOptions.NicknameOption();
             var exp = SharedOptions.ExperimentalOption("test");
+            var version = SharedOptions.VersionOption("test");
             cmd.Options.Add(sku);
             cmd.Options.Add(filter);
             cmd.Options.Add(first);
             cmd.Options.Add(all);
             cmd.Options.Add(nick);
             cmd.Options.Add(exp);
+            cmd.Options.Add(version);
             cmd.TreatUnmatchedTokensAsErrors = false;
 
             var root = new RootCommand();
@@ -49,7 +51,8 @@ namespace Devlooped.Tests
                 cmd.Options.OfType<Option<string>>().First(o => o.Name == "--sku"),
                 cmd.Options.OfType<Option<string>>().First(o => o.Name == "--filter"),
                 cmd.Options.OfType<Option<bool>>().First(o => o.Name == "--first"),
-                cmd.Options.OfType<Option<bool>>().First(o => o.Name == "--all"));
+                cmd.Options.OfType<Option<bool>>().First(o => o.Name == "--all"),
+                cmd.Options.OfType<Option<string>>().First(o => o.Name == "--version"));
         }
 
         [Theory]
@@ -185,6 +188,22 @@ namespace Devlooped.Tests
             var args = string.IsNullOrEmpty(argument) ? Array.Empty<string>() : new[] { argument };
             var filter = GetFilter(ParseSelection(args));
             Assert.Equal(expectedValue, filter.All);
+        }
+
+        [Theory]
+        [InlineData("", null)]
+        [InlineData("--version=18.7", "18.7")]
+        [InlineData("-v:18.7.3", "18.7.3")]
+        [InlineData("--version", "18")]
+        public void when_parsing_version_argument_then_version_is_set(string argument, string expectedValue)
+        {
+            var args = string.IsNullOrEmpty(argument)
+                ? Array.Empty<string>()
+                : argument == "--version"
+                    ? new[] { "--version", "18" }
+                    : new[] { argument };
+            var filter = GetFilter(ParseSelection(args));
+            Assert.Equal(expectedValue, filter.Version);
         }
 
         [Theory]

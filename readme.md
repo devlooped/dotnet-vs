@@ -107,6 +107,7 @@ Usage: dnx vs -- install [options]
 | `sku` | Edition, one of `e\|ent\|enterprise`, `p\|pro\|professional`, `c\|com\|community`, `b\|build\|buildtools` or `t\|test\|testagent` |
 | `filter` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
 | `nick\|nickname` | Optional nickname to use |
+| `v\|version` | Install specific (semantic) version, such as 18.7 or 18.7.3 |
 | `add` | A workload ID |
 
 
@@ -129,6 +130,12 @@ Examples:
 # Install VS community with the .NET Core, ASP.NET and Azure workloads, 
 # shows installation progress and waits for it to finish before returning
 > dnx vs -- install +core +web +azure
+
+# Install VS 18 Enterprise
+> dnx vs -- install -v:18 -sku:ent
+
+# Install the latest VS 17 (2022) Community
+> dnx vs -- install --version 17
 ```
 <!-- EXAMPLES_END -->
 
@@ -279,7 +286,20 @@ Usage: dnx vs -- update [options]
 | `filter` | Expression to filter VS instances. E.g. `x => x.InstanceId = '123'` |
 | `first` | Update first matching instance. |
 | `all` | Update all instances. |
+| `v\|version` | Update specific (semantic) version, such as 18.7 or 18.7.3 |
 
+
+Examples:
+
+<!-- EXAMPLES_BEGIN -->
+```
+# Update the installed VS 18.7 instance
+> dnx vs -- update -v:18.7
+
+# Update all matching VS 17 instances
+> dnx vs -- update --version 17 --all
+```
+<!-- EXAMPLES_END -->
 
 ## where
 

@@ -23,10 +23,7 @@ class RunCommand : Command
     {
         Description = "If more than one instance matches the criteria, run the first one sorted by descending build version.",
     };
-    readonly Option<string> versionOption = new("--version", "-v")
-    {
-        Description = "Run specific (semantic) version, such as 18.7 or 18.7.3",
-    };
+    readonly Option<string> versionOption;
     readonly Option<bool> waitOption = new("--wait", "-w")
     {
         Description = "Wait for the started Visual Studio to exit.",
@@ -58,6 +55,7 @@ class RunCommand : Command
         skuOption = SharedOptions.SkuOption();
         filterOption = SharedOptions.FilterOption();
         experimentalOption = SharedOptions.ExperimentalOption("run");
+        versionOption = SharedOptions.VersionOption("Run");
 
         Options.Add(skuOption);
         Options.Add(filterOption);
@@ -90,12 +88,11 @@ class RunCommand : Command
             : (bool?)null;
 
         var id = parse.GetValue(idOption);
-        var version = parse.GetValue(versionOption);
         var first = parse.GetValue(firstOption);
         var wait = parse.GetValue(waitOption);
         var disableNodeReuse = parse.GetValue(nodeReuseOption);
         var isExperimental = parse.GetValue(experimentalOption);
-        var filter = CommandHelpers.GetFilter(parse, channelOptions, skuOption, filterOption, firstOption);
+        var filter = CommandHelpers.GetFilter(parse, channelOptions, skuOption, filterOption, firstOption, versionOption: versionOption);
 
         var devenv = settings.Get("devenv");
         if (!string.IsNullOrEmpty(devenv))
@@ -118,13 +115,7 @@ class RunCommand : Command
             .OrderByDescending(i => i.Catalog.BuildVersion);
 
         if (!string.IsNullOrEmpty(id))
-        {
             instances = instances.Where(i => i.InstanceId.Equals(id, StringComparison.OrdinalIgnoreCase));
-        }
-        else if (version != null)
-        {
-            instances = instances.Where(i => i.Catalog.ProductSemanticVersion.StartsWith(version));
-        }
 
         var matches = instances.ToArray();
         if (matches.Length == 1 || (matches.Length > 0 && first))
